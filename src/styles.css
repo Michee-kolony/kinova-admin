@@ -1,0 +1,58 @@
+/* You can add global styles to this file, and also import other style files */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+
+/* styles.css - Fichier global */
+
+/* Variables CSS globales */
+:root {
+  --primary-color: #3B82F6;
+  --primary-gradient: linear-gradient(135deg, #3B82F6, #8B5CF6);
+  --bg-primary: #ffffff;
+  --bg-secondary: #f1f5f9;
+  --sidebar-bg: #ffffff;
+  --text-primary: #0f172a;
+  --text-secondary: #64748b;
+  --border-color: #e2e8f0;
+  --hover-bg: #f1f5f9;
+  --hover-bg-strong: #e2e8f0;
+  --scrollbar-thumb: #cbd5e1;
+}
+
+/* Mode sombre - Appliqué à tout le document */
+.dark {
+  --bg-primary: #18181b;
+  --bg-secondary: #09090b;
+  --sidebar-bg: #18181b;
+  --text-primary: #fafafa;
+  --text-secondary: #a1a1aa;
+  --border-color: #27272a;
+  --hover-bg: #27272a;
+  --hover-bg-strong: #3f3f46;
+  --scrollbar-thumb: #3f3f46;
+}
+
+/* Appliquer les couleurs de fond à tout le corps */
+body {
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+  transition: background-color 0.3s ease, color 0.3s ease;
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+}
+
+/* S'assurer que tout l'écran prend le thème */
+html, body {
+  height: 100%;
+  background-color: var(--bg-secondary);
+}
+
+/* Pour Angular router-outlet */
+router-outlet + * {
+  display: block;
+  min-height: 100%;
+}

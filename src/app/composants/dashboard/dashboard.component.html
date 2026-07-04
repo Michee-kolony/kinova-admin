@@ -1,0 +1,347 @@
+<div class="dashboard-container">
+  <!-- En-tête -->
+  <div class="dashboard-header">
+    <div>
+      <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Tableau de bord</h1>
+      <p class="text-gray-600 dark:text-gray-400 mt-1">Bienvenue dans votre espace d'administration</p>
+    </div>
+    <div class="flex items-center gap-3">
+    </div>
+  </div>
+
+  <!-- Statistiques - Cards -->
+  <div class="stats-grid">
+    <!-- Clients inscrits -->
+    <div class="stat-card">
+      <div class="stat-icon bg-[#ffbf00]">
+        <i class="fas fa-users"></i>
+      </div>
+      <div class="stat-info">
+        <h3>Clients inscrits</h3>
+        <p class="stat-number">1,284</p>
+        <span class="stat-change positive">
+          <i class="fas fa-arrow-up mr-1"></i>+12.5%
+        </span>
+      </div>
+    </div>
+
+    <!-- Vendeurs inscrits -->
+    <div class="stat-card">
+      <div class="stat-icon bg-purple-500">
+        <i class="fas fa-store"></i>
+      </div>
+      <div class="stat-info">
+        <h3>Vendeurs inscrits</h3>
+        <p class="stat-number">342</p>
+        <span class="stat-change positive">
+          <i class="fas fa-arrow-up mr-1"></i>+8.3%
+        </span>
+      </div>
+    </div>
+
+    <!-- Articles publiés -->
+    <div class="stat-card">
+      <div class="stat-icon bg-green-500">
+        <i class="fas fa-newspaper"></i>
+      </div>
+      <div class="stat-info">
+        <h3>Articles publiés</h3>
+        <p class="stat-number">2,847</p>
+        <span class="stat-change positive">
+          <i class="fas fa-arrow-up mr-1"></i>+15.7%
+        </span>
+      </div>
+    </div>
+
+    <!-- Mes articles -->
+    <div class="stat-card">
+      <div class="stat-icon bg-[#ffbf00]">
+        <i class="fas fa-pen-fancy"></i>
+      </div>
+      <div class="stat-info">
+        <h3>Mes articles</h3>
+        <p class="stat-number">124</p>
+        <span class="stat-change neutral">
+          <i class="fas fa-minus mr-1"></i>+2
+        </span>
+      </div>
+    </div>
+
+    <!-- Réclamations -->
+    <div class="stat-card">
+      <div class="stat-icon bg-red-500">
+        <i class="fas fa-exclamation-triangle"></i>
+      </div>
+      <div class="stat-info">
+        <h3>Réclamations</h3>
+        <p class="stat-number">18</p>
+        <span class="stat-change negative">
+          <i class="fas fa-arrow-up mr-1"></i>+3
+        </span>
+      </div>
+    </div>
+
+    <!-- Commandes totales -->
+    <div class="stat-card">
+      <div class="stat-icon bg-indigo-500">
+        <i class="fas fa-shopping-cart"></i>
+      </div>
+      <div class="stat-info">
+        <h3>Commandes totales</h3>
+        <p class="stat-number">1,563</p>
+        <span class="stat-change positive">
+          <i class="fas fa-arrow-up mr-1"></i>+22.1%
+        </span>
+      </div>
+    </div>
+
+ <!-- Articles livrés -->
+<div class="stat-card">
+  <div class="stat-icon" style="background: #ffbf00;">
+    <i class="fas fa-truck" style="color: #1a1a1a;"></i>
+  </div>
+  <div class="stat-info">
+    <h3>Articles livrés</h3>
+    <p class="stat-number">1,563</p>
+    <span class="stat-change positive">
+      <i class="fas fa-arrow-up mr-1"></i>+22.1%
+    </span>
+  </div>
+</div>
+
+<!-- Articles en attente -->
+<div class="stat-card">
+  <div class="stat-icon" style="background: #ffbf00;">
+    <i class="fas fa-clock" style="color: #1a1a1a;"></i>
+  </div>
+  <div class="stat-info">
+    <h3>Articles en attente</h3>
+    <p class="stat-number">1,563</p>
+    <span class="stat-change positive">
+      <i class="fas fa-arrow-up mr-1"></i>+22.1%
+    </span>
+  </div>
+</div>
+
+  </div>
+
+  <!-- Colonne en bas - Commandes récentes -->
+  <div class="orders-section">
+    <div class="orders-header">
+      <div>
+        <h2 class="text-lg font-bold text-gray-900 dark:text-white">
+          <i class="fas fa-clock mr-2 text-[#ffbf00]"></i>
+          Dernières commandes
+        </h2>
+        <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Les 10 dernières commandes entrées</p>
+      </div>
+      <button class="px-4 py-2 bg-[#ffbf00] hover:bg-blue-600 text-white rounded-lg transition-colors text-sm font-medium flex items-center gap-2">
+        <i class="fas fa-eye"></i>
+        Voir toutes
+      </button>
+    </div>
+
+    <!-- Liste des commandes -->
+    <div class="orders-list">
+      <!-- Commande 1 -->
+      <div class="order-item">
+        <div class="order-product">
+          <img src="https://picsum.photos/seed/1/60/60" alt="Produit" class="order-product-image">
+          <div class="order-product-info">
+            <h4 class="order-product-title">iPhone 15 Pro Max</h4>
+            <span class="order-product-price">1 299,99 €</span>
+          </div>
+        </div>
+        <div class="order-status">
+          <span class="status-badge delivered">Livrée</span>
+        </div>
+        <div class="order-actions">
+          <button class="order-btn">
+            <i class="fas fa-eye"></i>
+            Voir
+          </button>
+        </div>
+      </div>
+
+      <!-- Commande 2 -->
+      <div class="order-item">
+        <div class="order-product">
+          <img src="https://picsum.photos/seed/2/60/60" alt="Produit" class="order-product-image">
+          <div class="order-product-info">
+            <h4 class="order-product-title">MacBook Pro 16"</h4>
+            <span class="order-product-price">2 499,00 €</span>
+          </div>
+        </div>
+        <div class="order-status">
+          <span class="status-badge processing">En traitement</span>
+        </div>
+        <div class="order-actions">
+          <button class="order-btn">
+            <i class="fas fa-eye"></i>
+            Voir
+          </button>
+        </div>
+      </div>
+
+      <!-- Commande 3 -->
+      <div class="order-item">
+        <div class="order-product">
+          <img src="https://picsum.photos/seed/3/60/60" alt="Produit" class="order-product-image">
+          <div class="order-product-info">
+            <h4 class="order-product-title">Samsung Galaxy S24 Ultra</h4>
+            <span class="order-product-price">1 399,00 €</span>
+          </div>
+        </div>
+        <div class="order-status">
+          <span class="status-badge pending">En attente</span>
+        </div>
+        <div class="order-actions">
+          <button class="order-btn">
+            <i class="fas fa-eye"></i>
+            Voir
+          </button>
+        </div>
+      </div>
+
+      <!-- Commande 4 -->
+      <div class="order-item">
+        <div class="order-product">
+          <img src="https://picsum.photos/seed/4/60/60" alt="Produit" class="order-product-image">
+          <div class="order-product-info">
+            <h4 class="order-product-title">AirPods Pro 2</h4>
+            <span class="order-product-price">279,00 €</span>
+          </div>
+        </div>
+        <div class="order-status">
+          <span class="status-badge delivered">Livrée</span>
+        </div>
+        <div class="order-actions">
+          <button class="order-btn">
+            <i class="fas fa-eye"></i>
+            Voir
+          </button>
+        </div>
+      </div>
+
+      <!-- Commande 5 -->
+      <div class="order-item">
+        <div class="order-product">
+          <img src="https://picsum.photos/seed/5/60/60" alt="Produit" class="order-product-image">
+          <div class="order-product-info">
+            <h4 class="order-product-title">iPad Pro 12.9"</h4>
+            <span class="order-product-price">1 199,00 €</span>
+          </div>
+        </div>
+        <div class="order-status">
+          <span class="status-badge shipped">Expédiée</span>
+        </div>
+        <div class="order-actions">
+          <button class="order-btn">
+            <i class="fas fa-eye"></i>
+            Voir
+          </button>
+        </div>
+      </div>
+
+      <!-- Commande 6 -->
+      <div class="order-item">
+        <div class="order-product">
+          <img src="https://picsum.photos/seed/6/60/60" alt="Produit" class="order-product-image">
+          <div class="order-product-info">
+            <h4 class="order-product-title">Apple Watch Series 9</h4>
+            <span class="order-product-price">449,00 €</span>
+          </div>
+        </div>
+        <div class="order-status">
+          <span class="status-badge processing">En traitement</span>
+        </div>
+        <div class="order-actions">
+          <button class="order-btn">
+            <i class="fas fa-eye"></i>
+            Voir
+          </button>
+        </div>
+      </div>
+
+      <!-- Commande 7 -->
+      <div class="order-item">
+        <div class="order-product">
+          <img src="https://picsum.photos/seed/7/60/60" alt="Produit" class="order-product-image">
+          <div class="order-product-info">
+            <h4 class="order-product-title">Dell XPS 13"</h4>
+            <span class="order-product-price">1 899,00 €</span>
+          </div>
+        </div>
+        <div class="order-status">
+          <span class="status-badge pending">En attente</span>
+        </div>
+        <div class="order-actions">
+          <button class="order-btn">
+            <i class="fas fa-eye"></i>
+            Voir
+          </button>
+        </div>
+      </div>
+
+      <!-- Commande 8 -->
+      <div class="order-item">
+        <div class="order-product">
+          <img src="https://picsum.photos/seed/8/60/60" alt="Produit" class="order-product-image">
+          <div class="order-product-info">
+            <h4 class="order-product-title">Sony WH-1000XM5</h4>
+            <span class="order-product-price">399,00 €</span>
+          </div>
+        </div>
+        <div class="order-status">
+          <span class="status-badge delivered">Livrée</span>
+        </div>
+        <div class="order-actions">
+          <button class="order-btn">
+            <i class="fas fa-eye"></i>
+            Voir
+          </button>
+        </div>
+      </div>
+
+      <!-- Commande 9 -->
+      <div class="order-item">
+        <div class="order-product">
+          <img src="https://picsum.photos/seed/9/60/60" alt="Produit" class="order-product-image">
+          <div class="order-product-info">
+            <h4 class="order-product-title">Canon EOS R6</h4>
+            <span class="order-product-price">2 699,00 €</span>
+          </div>
+        </div>
+        <div class="order-status">
+          <span class="status-badge shipped">Expédiée</span>
+        </div>
+        <div class="order-actions">
+          <button class="order-btn">
+            <i class="fas fa-eye"></i>
+            Voir
+          </button>
+        </div>
+      </div>
+
+      <!-- Commande 10 -->
+      <div class="order-item">
+        <div class="order-product">
+          <img src="https://picsum.photos/seed/10/60/60" alt="Produit" class="order-product-image">
+          <div class="order-product-info">
+            <h4 class="order-product-title">Nintendo Switch OLED</h4>
+            <span class="order-product-price">349,00 €</span>
+          </div>
+        </div>
+        <div class="order-status">
+          <span class="status-badge pending">En attente</span>
+        </div>
+        <div class="order-actions">
+          <button class="order-btn">
+            <i class="fas fa-eye"></i>
+            Voir
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

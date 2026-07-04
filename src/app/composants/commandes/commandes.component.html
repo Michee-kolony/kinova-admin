@@ -1,0 +1,346 @@
+<div class="commandes-container">
+  <!-- En-tête -->
+  <div class="commandes-header">
+    <div>
+      <h1 class="text-2xl font-bold text-gray-900 dark:text-white">
+        <i class="fas fa-shopping-cart mr-3" style="color: #ffbf00;"></i>
+        Gestion des commandes
+      </h1>
+      <p class="text-gray-600 dark:text-gray-400 mt-1">Gérez toutes les commandes de votre plateforme</p>
+    </div>
+    <div class="flex items-center gap-3">
+      <div class="relative">
+        <input 
+          type="text" 
+          placeholder="Rechercher une commande..." 
+          class="pl-10 pr-4 py-2 border border-gray-300 bg-transparent dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent w-64">
+        <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+      </div>
+      <button class="px-4 py-2 text-white rounded-lg transition-colors text-sm font-medium flex items-center gap-2" style="background: #ffbf00; color: #1a1a1a;">
+        <i class="fas fa-file-export"></i>
+        Exporter
+      </button>
+    </div>
+  </div>
+
+  <!-- Liste des commandes -->
+  <div class="orders-table-container">
+    <div class="orders-table-header">
+      <h2 class="text-lg font-bold text-gray-900 dark:text-white">
+        <i class="fas fa-list-ul mr-2" style="color: #ffbf00;"></i>
+        Liste des commandes
+      </h2>
+      <div class="flex items-center gap-2">
+        <span class="text-sm text-gray-500 dark:text-gray-400">Trier par :</span>
+        <select class="px-3 py-1.5 border bg-trransparent border-gray-300 dark:border-gray-600 rounded-lg   text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400">
+          <option>Plus récentes</option>
+          <option>Plus anciennes</option>
+          <option>Prix croissant</option>
+          <option>Prix décroissant</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Tableau -->
+    <div class="overflow-x-auto">
+      <table class="orders-table">
+        <thead>
+          <tr>
+            <th>Client</th>
+            <th>Article</th>
+            <th>Prix</th>
+            <th>Vendeur</th>
+            <th>Statut</th>
+            <th>Date</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Commande 1 -->
+          <tr>
+            <td>
+              <div class="flex items-center gap-3">
+                <img src="https://ui-avatars.com/api/?name=Jean+Dupont&background=ffbf00&color=1a1a1a&size=32" alt="Client" class="w-8 h-8 rounded-full">
+                <span class="font-medium text-gray-900 dark:text-white">Jean Dupont</span>
+              </div>
+            </td>
+            <td>
+              <div class="flex items-center gap-3">
+                <img src="https://picsum.photos/seed/1/40/40" alt="Produit" class="w-10 h-10 rounded-lg object-cover border border-gray-200 dark:border-gray-700">
+                <span class="text-gray-700 dark:text-gray-300">iPhone 15 Pro Max</span>
+              </div>
+            </td>
+            <td class="font-semibold" style="color: #ffbf00;">1 299,99 $</td>
+            <td>
+              <div class="flex items-center gap-2">
+                <img src="https://ui-avatars.com/api/?name=Marie+Martin&background=ffbf00&color=1a1a1a&size=24" alt="Vendeur" class="w-6 h-6 rounded-full">
+                <span class="text-gray-700 dark:text-gray-300">Marie Martin</span>
+              </div>
+            </td>
+            <td>
+              <span class="status-badge-delivered">Livrée</span>
+            </td>
+            <td class="text-gray-500 dark:text-gray-400 text-sm">15/01/2024</td>
+            <td>
+              <button class="action-btn-view">
+                <i class="fas fa-eye"></i>
+                Voir
+              </button>
+            </td>
+          </tr>
+
+          <!-- Commande 2 -->
+          <tr>
+            <td>
+              <div class="flex items-center gap-3">
+                <img src="https://ui-avatars.com/api/?name=Sophie+Leroy&background=ffbf00&color=1a1a1a&size=32" alt="Client" class="w-8 h-8 rounded-full">
+                <span class="font-medium text-gray-900 dark:text-white">Sophie Leroy</span>
+              </div>
+            </td>
+            <td>
+              <div class="flex items-center gap-3">
+                <img src="https://picsum.photos/seed/2/40/40" alt="Produit" class="w-10 h-10 rounded-lg object-cover border border-gray-200 dark:border-gray-700">
+                <span class="text-gray-700 dark:text-gray-300">MacBook Pro 16"</span>
+              </div>
+            </td>
+            <td class="font-semibold" style="color: #ffbf00;">2 499,00 €</td>
+            <td>
+              <div class="flex items-center gap-2">
+                <img src="https://ui-avatars.com/api/?name=Pierre+Durand&background=ffbf00&color=1a1a1a&size=24" alt="Vendeur" class="w-6 h-6 rounded-full">
+                <span class="text-gray-700 dark:text-gray-300">Pierre Durand</span>
+              </div>
+            </td>
+            <td>
+              <span class="status-badge-processing">En traitement</span>
+            </td>
+            <td class="text-gray-500 dark:text-gray-400 text-sm">14/01/2024</td>
+            <td>
+              <button class="action-btn-view">
+                <i class="fas fa-eye"></i>
+                Voir
+              </button>
+            </td>
+          </tr>
+
+          <!-- Commande 3 -->
+          <tr>
+            <td>
+              <div class="flex items-center gap-3">
+                <img src="https://ui-avatars.com/api/?name=Lucas+Moreau&background=ffbf00&color=1a1a1a&size=32" alt="Client" class="w-8 h-8 rounded-full">
+                <span class="font-medium text-gray-900 dark:text-white">Lucas Moreau</span>
+              </div>
+            </td>
+            <td>
+              <div class="flex items-center gap-3">
+                <img src="https://picsum.photos/seed/3/40/40" alt="Produit" class="w-10 h-10 rounded-lg object-cover border border-gray-200 dark:border-gray-700">
+                <span class="text-gray-700 dark:text-gray-300">Samsung Galaxy S24 Ultra</span>
+              </div>
+            </td>
+            <td class="font-semibold" style="color: #ffbf00;">1 399,00 €</td>
+            <td>
+              <div class="flex items-center gap-2">
+                <img src="https://ui-avatars.com/api/?name=Julie+Petit&background=ffbf00&color=1a1a1a&size=24" alt="Vendeur" class="w-6 h-6 rounded-full">
+                <span class="text-gray-700 dark:text-gray-300">Julie Petit</span>
+              </div>
+            </td>
+            <td>
+              <span class="status-badge-pending">En attente</span>
+            </td>
+            <td class="text-gray-500 dark:text-gray-400 text-sm">13/01/2024</td>
+            <td>
+              <button class="action-btn-view">
+                <i class="fas fa-eye"></i>
+                Voir
+              </button>
+            </td>
+          </tr>
+
+          <!-- Commande 4 -->
+          <tr>
+            <td>
+              <div class="flex items-center gap-3">
+                <img src="https://ui-avatars.com/api/?name=Emma+Bernard&background=ffbf00&color=1a1a1a&size=32" alt="Client" class="w-8 h-8 rounded-full">
+                <span class="font-medium text-gray-900 dark:text-white">Emma Bernard</span>
+              </div>
+            </td>
+            <td>
+              <div class="flex items-center gap-3">
+                <img src="https://picsum.photos/seed/4/40/40" alt="Produit" class="w-10 h-10 rounded-lg object-cover border border-gray-200 dark:border-gray-700">
+                <span class="text-gray-700 dark:text-gray-300">AirPods Pro 2</span>
+              </div>
+            </td>
+            <td class="font-semibold" style="color: #ffbf00;">279,00 €</td>
+            <td>
+              <div class="flex items-center gap-2">
+                <img src="https://ui-avatars.com/api/?name=Paul+Robert&background=ffbf00&color=1a1a1a&size=24" alt="Vendeur" class="w-6 h-6 rounded-full">
+                <span class="text-gray-700 dark:text-gray-300">Paul Robert</span>
+              </div>
+            </td>
+            <td>
+              <span class="status-badge-shipped">Expédiée</span>
+            </td>
+            <td class="text-gray-500 dark:text-gray-400 text-sm">12/01/2024</td>
+            <td>
+              <button class="action-btn-view">
+                <i class="fas fa-eye"></i>
+                Voir
+              </button>
+            </td>
+          </tr>
+
+          <!-- Commande 5 -->
+          <tr>
+            <td>
+              <div class="flex items-center gap-3">
+                <img src="https://ui-avatars.com/api/?name=Thomas+David&background=ffbf00&color=1a1a1a&size=32" alt="Client" class="w-8 h-8 rounded-full">
+                <span class="font-medium text-gray-900 dark:text-white">Thomas David</span>
+              </div>
+            </td>
+            <td>
+              <div class="flex items-center gap-3">
+                <img src="https://picsum.photos/seed/5/40/40" alt="Produit" class="w-10 h-10 rounded-lg object-cover border border-gray-200 dark:border-gray-700">
+                <span class="text-gray-700 dark:text-gray-300">iPad Pro 12.9"</span>
+              </div>
+            </td>
+            <td class="font-semibold" style="color: #ffbf00;">1 199,00 €</td>
+            <td>
+              <div class="flex items-center gap-2">
+                <img src="https://ui-avatars.com/api/?name=Claire+Simon&background=ffbf00&color=1a1a1a&size=24" alt="Vendeur" class="w-6 h-6 rounded-full">
+                <span class="text-gray-700 dark:text-gray-300">Claire Simon</span>
+              </div>
+            </td>
+            <td>
+              <span class="status-badge-pending">En attente</span>
+            </td>
+            <td class="text-gray-500 dark:text-gray-400 text-sm">11/01/2024</td>
+            <td>
+              <button class="action-btn-view">
+                <i class="fas fa-eye"></i>
+                Voir
+              </button>
+            </td>
+          </tr>
+
+          <!-- Commande 6 -->
+          <tr>
+            <td>
+              <div class="flex items-center gap-3">
+                <img src="https://ui-avatars.com/api/?name=Laura+Michel&background=ffbf00&color=1a1a1a&size=32" alt="Client" class="w-8 h-8 rounded-full">
+                <span class="font-medium text-gray-900 dark:text-white">Laura Michel</span>
+              </div>
+            </td>
+            <td>
+              <div class="flex items-center gap-3">
+                <img src="https://picsum.photos/seed/6/40/40" alt="Produit" class="w-10 h-10 rounded-lg object-cover border border-gray-200 dark:border-gray-700">
+                <span class="text-gray-700 dark:text-gray-300">Apple Watch Series 9</span>
+              </div>
+            </td>
+            <td class="font-semibold" style="color: #ffbf00;">449,00 €</td>
+            <td>
+              <div class="flex items-center gap-2">
+                <img src="https://ui-avatars.com/api/?name=Marc+Laurent&background=ffbf00&color=1a1a1a&size=24" alt="Vendeur" class="w-6 h-6 rounded-full">
+                <span class="text-gray-700 dark:text-gray-300">Marc Laurent</span>
+              </div>
+            </td>
+            <td>
+              <span class="status-badge-delivered">Livrée</span>
+            </td>
+            <td class="text-gray-500 dark:text-gray-400 text-sm">10/01/2024</td>
+            <td>
+              <button class="action-btn-view">
+                <i class="fas fa-eye"></i>
+                Voir
+              </button>
+            </td>
+          </tr>
+
+          <!-- Commande 7 -->
+          <tr>
+            <td>
+              <div class="flex items-center gap-3">
+                <img src="https://ui-avatars.com/api/?name=Nicolas+Petit&background=ffbf00&color=1a1a1a&size=32" alt="Client" class="w-8 h-8 rounded-full">
+                <span class="font-medium text-gray-900 dark:text-white">Nicolas Petit</span>
+              </div>
+            </td>
+            <td>
+              <div class="flex items-center gap-3">
+                <img src="https://picsum.photos/seed/7/40/40" alt="Produit" class="w-10 h-10 rounded-lg object-cover border border-gray-200 dark:border-gray-700">
+                <span class="text-gray-700 dark:text-gray-300">Dell XPS 13"</span>
+              </div>
+            </td>
+            <td class="font-semibold" style="color: #ffbf00;">1 899,00 €</td>
+            <td>
+              <div class="flex items-center gap-2">
+                <img src="https://ui-avatars.com/api/?name=Anne+Thomas&background=ffbf00&color=1a1a1a&size=24" alt="Vendeur" class="w-6 h-6 rounded-full">
+                <span class="text-gray-700 dark:text-gray-300">Anne Thomas</span>
+              </div>
+            </td>
+            <td>
+              <span class="status-badge-processing">En traitement</span>
+            </td>
+            <td class="text-gray-500 dark:text-gray-400 text-sm">09/01/2024</td>
+            <td>
+              <button class="action-btn-view">
+                <i class="fas fa-eye"></i>
+                Voir
+              </button>
+            </td>
+          </tr>
+
+          <!-- Commande 8 -->
+          <tr>
+            <td>
+              <div class="flex items-center gap-3">
+                <img src="https://ui-avatars.com/api/?name=Camille+Roux&background=ffbf00&color=1a1a1a&size=32" alt="Client" class="w-8 h-8 rounded-full">
+                <span class="font-medium text-gray-900 dark:text-white">Camille Roux</span>
+              </div>
+            </td>
+            <td>
+              <div class="flex items-center gap-3">
+                <img src="https://picsum.photos/seed/8/40/40" alt="Produit" class="w-10 h-10 rounded-lg object-cover border border-gray-200 dark:border-gray-700">
+                <span class="text-gray-700 dark:text-gray-300">Sony WH-1000XM5</span>
+              </div>
+            </td>
+            <td class="font-semibold" style="color: #ffbf00;">399,00 €</td>
+            <td>
+              <div class="flex items-center gap-2">
+                <img src="https://ui-avatars.com/api/?name=David+Blanc&background=ffbf00&color=1a1a1a&size=24" alt="Vendeur" class="w-6 h-6 rounded-full">
+                <span class="text-gray-700 dark:text-gray-300">David Blanc</span>
+              </div>
+            </td>
+            <td>
+              <span class="status-badge-shipped">Expédiée</span>
+            </td>
+            <td class="text-gray-500 dark:text-gray-400 text-sm">08/01/2024</td>
+            <td>
+              <button class="action-btn-view">
+                <i class="fas fa-eye"></i>
+                Voir
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination-container">
+      <div class="flex items-center gap-2">
+        <span class="text-sm text-gray-600 dark:text-gray-400">Affichage 1-8 sur 1 563 commandes</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <button class="pagination-btn">
+          <i class="fas fa-chevron-left"></i>
+        </button>
+        <button class="pagination-btn active" style="background: #ffbf00; color: #1a1a1a;">1</button>
+        <button class="pagination-btn">2</button>
+        <button class="pagination-btn">3</button>
+        <button class="pagination-btn">...</button>
+        <button class="pagination-btn">15</button>
+        <button class="pagination-btn">
+          <i class="fas fa-chevron-right"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

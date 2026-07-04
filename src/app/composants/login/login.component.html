@@ -1,0 +1,126 @@
+<div class="login-container">
+  <!-- Colonne gauche - Formulaire -->
+  <div class="login-left">
+    <div class="login-card">
+      <!-- Logo -->
+      <div class="login-logo">
+        <div class="logo-icon">
+         <img src="images/splash.png" alt="Logo AdminPro">
+        </div>
+        <span class="logo-text">KI<span>NOVA</span></span>
+      </div>
+
+      <!-- Titre -->
+      <div class="login-header">
+        <h1>Bienvenue</h1>
+        <p>Connectez-vous à votre espace d'administration</p>
+      </div>
+
+      <!-- Formulaire -->
+      <form (ngSubmit)="onSubmit()" class="login-form">
+        <div class="form-group">
+          <label class="form-label">
+            <i class="fas fa-envelope"></i>
+            Adresse email
+          </label>
+          <input 
+            type="email" 
+            [(ngModel)]="loginData.email"
+            name="email"
+            placeholder="admin@exemple.com" 
+            class="form-input"
+            required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">
+            <i class="fas fa-lock"></i>
+            Mot de passe
+          </label>
+          <div class="password-input-wrapper">
+            <input 
+              [type]="showPassword ? 'text' : 'password'"
+              [(ngModel)]="loginData.password"
+              name="password"
+              placeholder="••••••••" 
+              class="form-input password-input"
+              required>
+            <button 
+              type="button"
+              (click)="togglePassword()"
+              class="password-toggle">
+              <i [class]="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="form-options">
+          <label class="checkbox-label">
+            <input type="checkbox" [(ngModel)]="rememberMe" name="remember">
+            <span class="checkmark"></span>
+            Se souvenir de moi
+          </label>
+          <a href="#" class="forgot-link">Mot de passe oublié ?</a>
+        </div>
+
+        <button type="submit" class="btn-login">
+          <i class="fas fa-sign-in-alt"></i>
+          Se connecter
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Colonne droite - Image / Animation -->
+  <div class="login-right hidden lg:flex">
+    <div class="login-right-content">
+      <!-- Badge -->
+      <div class="right-badge">
+        <i class="fas fa-shield-alt"></i>
+        Administration sécurisée
+      </div>
+
+      <!-- Titre -->
+      <h2 class="right-title">Gérez votre plateforme en toute simplicité</h2>
+      <p class="right-subtitle">
+        Accédez à toutes vos fonctionnalités d'administration depuis un seul endroit
+      </p>
+
+      <!-- Image / GIF -->
+      <div class="right-image-container">
+        <img 
+          src="images/front.gif" 
+          alt="Dashboard Animation"
+          class="right-image">
+        <!-- Fallback image si le GIF ne charge pas -->
+        <div class="fallback-image">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <rect x="3" y="3" width="7" height="7" rx="1"/>
+            <rect x="14" y="3" width="7" height="7" rx="1"/>
+            <rect x="3" y="14" width="7" height="7" rx="1"/>
+            <rect x="14" y="14" width="7" height="7" rx="1"/>
+            <path d="M3 3l18 18"/>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Statistiques -->
+      <div class="right-stats">
+        <div class="stat-item">
+          <span class="stat-number">12K+</span>
+          <span class="stat-label">Utilisateurs</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+          <span class="stat-number">150+</span>
+          <span class="stat-label">Vendeurs</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+          <span class="stat-number">98%</span>
+          <span class="stat-label">Satisfaction</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

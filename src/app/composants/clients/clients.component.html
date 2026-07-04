@@ -1,0 +1,202 @@
+<div class="clients-container">
+  <!-- En-tête -->
+  <div class="clients-header">
+    <div>
+      <h1 class="text-2xl font-bold text-gray-900 dark:text-white">
+        <i class="fas fa-users mr-3" style="color: #ffbf00;"></i>
+        Gestion des clients
+      </h1>
+      <p class="text-gray-600 dark:text-gray-400 mt-1">Gérez tous vos clients inscrits sur la plateforme</p>
+    </div>
+    <div class="flex items-center gap-3">
+      <button class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg transition-colors text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-2">
+        <i class="fas fa-file-export"></i>
+        Exporter
+      </button>
+    </div>
+  </div>
+
+  <!-- Statistiques rapides -->
+  <div class="stats-mini-grid">
+    <div class="stat-mini-card">
+      <div class="stat-mini-icon" style="background: #ffbf00;">
+        <i class="fas fa-users" style="color: #1a1a1a;"></i>
+      </div>
+      <div>
+        <p class="stat-mini-label">Total clients</p>
+        <p class="stat-mini-value">1,284</p>
+      </div>
+    </div>
+    <div class="stat-mini-card">
+      <div class="stat-mini-icon" style="background: #ffbf00;">
+        <i class="fas fa-male" style="color: #1a1a1a;"></i>
+      </div>
+      <div>
+        <p class="stat-mini-label">Hommes</p>
+        <p class="stat-mini-value">689</p>
+      </div>
+    </div>
+    <div class="stat-mini-card">
+      <div class="stat-mini-icon" style="background: #ffbf00;">
+        <i class="fas fa-female" style="color: #1a1a1a;"></i>
+      </div>
+      <div>
+        <p class="stat-mini-label">Femmes</p>
+        <p class="stat-mini-value">595</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Barre de recherche et filtres -->
+  <div class="search-filters-container">
+    <div class="search-wrapper">
+      <div class="relative flex-1">
+        <input 
+          type="text" 
+          [(ngModel)]="searchTerm"
+          (input)="filterClients()"
+          placeholder="Rechercher un client par nom, email ou téléphone..." 
+          class="search-input">
+        <i class="fas fa-search search-icon"></i>
+        <button *ngIf="searchTerm" (click)="clearSearch()" class="clear-search">
+          <i class="fas fa-times-circle"></i>
+        </button>
+      </div>
+    </div>
+
+    <div class="filters-wrapper">
+      <button 
+        class="filter-gender-btn"
+        [class.active]="selectedGender === 'all'"
+        (click)="filterByGender('all')">
+        <i class="fas fa-users"></i>
+        Tous
+        <span class="filter-count">1,284</span>
+      </button>
+      <button 
+        class="filter-gender-btn"
+        [class.active]="selectedGender === 'male'"
+        (click)="filterByGender('male')">
+        <i class="fas fa-male" style="color: #3B82F6;"></i>
+        Hommes
+        <span class="filter-count">689</span>
+      </button>
+      <button 
+        class="filter-gender-btn"
+        [class.active]="selectedGender === 'female'"
+        (click)="filterByGender('female')">
+        <i class="fas fa-female" style="color: #EC4899;"></i>
+        Femmes
+        <span class="filter-count">595</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Résultats de recherche -->
+  <div class="search-results" *ngIf="searchTerm">
+    <span class="text-sm text-gray-500 dark:text-gray-400">
+      <i class="fas fa-search mr-2"></i>
+      {{ filteredClients.length }} résultat(s) trouvé(s) pour "{{ searchTerm }}"
+    </span>
+  </div>
+
+  <!-- Grille des clients -->
+  <div class="clients-grid">
+    <div *ngFor="let client of filteredClients" class="client-card">
+      <div class="client-card-inner">
+        <!-- Avatar et statut -->
+        <div class="client-avatar-section">
+          <div class="client-avatar">
+            <img [src]="client.avatar" [alt]="client.name">
+            <span class="online-status" [class.online]="client.online"></span>
+          </div>
+          <div class="client-gender-badge" [class.male]="client.gender === 'male'" [class.female]="client.gender === 'female'">
+            <i [class]="client.gender === 'male' ? 'fas fa-male' : 'fas fa-female'"></i>
+          </div>
+        </div>
+
+        <!-- Informations -->
+        <div class="client-info">
+          <h3 class="client-name">{{ client.name }}</h3>
+          <p class="client-email">
+            <i class="fas fa-envelope" style="color: #ffbf00;"></i>
+            {{ client.email }}
+          </p>
+          <p class="client-phone">
+            <i class="fas fa-phone" style="color: #ffbf00;"></i>
+            {{ client.phone }}
+          </p>
+          <p class="client-location">
+            <i class="fas fa-map-marker-alt" style="color: #ffbf00;"></i>
+            {{ client.location }}
+          </p>
+        </div>
+
+        <!-- Statistiques -->
+        <div class="client-stats">
+          <div class="stat-item">
+            <span class="stat-value">{{ client.orders }}</span>
+            <span class="stat-label">Commandes</span>
+          </div>
+          <div class="stat-divider"></div>
+          <div class="stat-item">
+            <span class="stat-value">{{ client.totalSpent }}</span>
+            <span class="stat-label">Dépensé</span>
+          </div>
+          <div class="stat-divider"></div>
+          <div class="stat-item">
+            <span class="stat-value">{{ client.joinDate }}</span>
+            <span class="stat-label">Inscrit</span>
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="client-actions">
+          <button class="action-btn view" title="Voir le profil">
+            <i class="fas fa-eye"></i>
+            Profil
+          </button>
+          <button class="action-btn message" title="Envoyer un message">
+            <i class="fas fa-envelope"></i>
+            Message
+          </button>
+          <button class="action-btn more" title="Plus d'actions">
+            <i class="fas fa-ellipsis-v"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pagination -->
+  <div class="pagination-container">
+    <div class="flex items-center gap-2">
+      <span class="text-sm text-gray-600 dark:text-gray-400">
+        Affichage {{ (currentPage - 1) * itemsPerPage + 1 }} - 
+        {{ Math.min(currentPage * itemsPerPage, filteredClients.length) }} 
+        sur {{ filteredClients.length }} clients
+      </span>
+    </div>
+    <div class="flex items-center gap-2">
+      <button 
+        class="pagination-btn"
+        [disabled]="currentPage === 1"
+        (click)="changePage(currentPage - 1)">
+        <i class="fas fa-chevron-left"></i>
+      </button>
+      <button 
+        *ngFor="let page of getPages()" 
+        class="pagination-btn"
+        [class.active]="page === currentPage"
+        (click)="changePage(page)">
+        {{ page }}
+      </button>
+      <button 
+        class="pagination-btn"
+        [disabled]="currentPage === getTotalPages()"
+        (click)="changePage(currentPage + 1)">
+        <i class="fas fa-chevron-right"></i>
+      </button>
+    </div>
+  </div>
+</div>
