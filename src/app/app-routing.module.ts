@@ -7,6 +7,7 @@ import { ArticlesComponent } from './composants/articles/articles.component';
 import { ClientsComponent } from './composants/clients/clients.component';
 import { VendeursComponent } from './composants/vendeurs/vendeurs.component';
 import { LoginComponent } from './composants/login/login.component';
+import { SettingsComponent } from './composants/settings/settings.component';
 
 const routes: Routes = [
   {path:'', redirectTo: 'login', pathMatch: 'full'},
@@ -18,7 +19,8 @@ const routes: Routes = [
       {path:'commandes', component: CommandesComponent},
       {path:'mesarticles', component : ArticlesComponent},
       {path:'clientlist', component: ClientsComponent},
-      {path:'vendeurlist', component: VendeursComponent}  
+      {path:'vendeurlist', component: VendeursComponent},
+      {path:'settings', component: SettingsComponent}  
       ]
   }
 ];

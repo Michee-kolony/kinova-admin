@@ -119,7 +119,7 @@
       </a>
 
   
-   <a 
+      <a 
         routerLink="/admin/vendeurlist"
         (click)="closeSidebar()"
         routerLinkActive="active"
@@ -129,18 +129,18 @@
         </span>
         <span class="nav-text">Liste des Vendeurs</span>
       </a>
-          <a 
-            routerLink="/admin/support"
-            (click)="closeSidebar()"
-            routerLinkActive="active"
-            class="nav-item">
-            <span class="nav-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-              </svg>
-            </span>
-            <span class="nav-text">Support</span>
-          </a>
+          
+
+  <a 
+        routerLink="/admin/settings"
+        (click)="closeSidebar()"
+        routerLinkActive="active"
+        class="nav-item">
+        <span class="nav-icon">
+          <i class="fas fa-gear"></i>
+        </span>
+        <span class="nav-text">Administrateurs</span>
+      </a>
         </div>
       </nav>
     </div>

@@ -11,6 +11,7 @@ import { ArticlesComponent } from './composants/articles/articles.component';
 import {FormsModule} from "@angular/forms";
 import { ClientsComponent } from './composants/clients/clients.component';
 import { VendeursComponent } from './composants/vendeurs/vendeurs.component';
+import { SettingsComponent } from './composants/settings/settings.component';
 
 @NgModule({
   declarations: [
@@ -21,7 +22,8 @@ import { VendeursComponent } from './composants/vendeurs/vendeurs.component';
     CommandesComponent,
     ArticlesComponent,
     ClientsComponent,
-    VendeursComponent
+    VendeursComponent,
+    SettingsComponent
   ],
   imports: [
     BrowserModule,
