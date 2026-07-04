@@ -63,7 +63,7 @@
           <a href="#" class="forgot-link">Mot de passe oublié ?</a>
         </div>
 
-        <button type="submit" class="btn-login">
+        <button [routerLink]="['/admin/dashboard']" class="btn-login">
           <i class="fas fa-sign-in-alt"></i>
           Se connecter
         </button>
@@ -75,14 +75,14 @@
   <div class="login-right hidden lg:flex">
     <div class="login-right-content">
       <!-- Badge -->
-      <div class="right-badge">
+      <div class="right-badge text-white">
         <i class="fas fa-shield-alt"></i>
         Administration sécurisée
       </div>
 
       <!-- Titre -->
-      <h2 class="right-title">Gérez votre plateforme en toute simplicité</h2>
-      <p class="right-subtitle">
+      <h2 class="right-title text-white">Gérez votre plateforme en toute simplicité</h2>
+      <p class="right-subtitle text-white">
         Accédez à toutes vos fonctionnalités d'administration depuis un seul endroit
       </p>
 
@@ -105,18 +105,18 @@
       </div>
 
       <!-- Statistiques -->
-      <div class="right-stats">
-        <div class="stat-item">
+      <div class="right-stats text-white">
+        <div class="stat-item text-white">
           <span class="stat-number">12K+</span>
           <span class="stat-label">Utilisateurs</span>
         </div>
         <div class="stat-divider"></div>
-        <div class="stat-item">
+        <div class="stat-item text-white">
           <span class="stat-number">150+</span>
           <span class="stat-label">Vendeurs</span>
         </div>
         <div class="stat-divider"></div>
-        <div class="stat-item">
+        <div class="stat-item text-white">
           <span class="stat-number">98%</span>
           <span class="stat-label">Satisfaction</span>
         </div>
