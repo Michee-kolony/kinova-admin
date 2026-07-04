@@ -1,5 +1,7 @@
+// clients.component.ts
 import { Component, OnInit } from '@angular/core';
 import { ThemeService } from '../../services/theme.service';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-clients',
@@ -12,173 +14,152 @@ export class ClientsComponent implements OnInit {
   currentPage: number = 1;
   itemsPerPage: number = 9;
   Math = Math;
+  
+  // URL de l'API
+  private apiUrl = 'https://backend-kinova.onrender.com/client';
 
-  // Liste complète des clients
-  allClients = [
-    {
-      id: 1,
-      name: 'Jean Dupont',
-      email: 'jean.dupont@email.com',
-      phone: '+33 6 12 34 56 78',
-      location: 'Paris, France',
-      gender: 'male',
-      avatar: 'https://ui-avatars.com/api/?name=Jean+Dupont&background=ffbf00&color=1a1a1a&size=80',
-      online: true,
-      orders: 24,
-      totalSpent: '2 450 €',
-      joinDate: 'Jan 2024'
-    },
-    {
-      id: 2,
-      name: 'Sophie Leroy',
-      email: 'sophie.leroy@email.com',
-      phone: '+33 6 98 76 54 32',
-      location: 'Lyon, France',
-      gender: 'female',
-      avatar: 'https://ui-avatars.com/api/?name=Sophie+Leroy&background=ffbf00&color=1a1a1a&size=80',
-      online: false,
-      orders: 18,
-      totalSpent: '1 890 €',
-      joinDate: 'Fév 2024'
-    },
-    {
-      id: 3,
-      name: 'Lucas Moreau',
-      email: 'lucas.moreau@email.com',
-      phone: '+33 6 45 67 89 01',
-      location: 'Marseille, France',
-      gender: 'male',
-      avatar: 'https://ui-avatars.com/api/?name=Lucas+Moreau&background=ffbf00&color=1a1a1a&size=80',
-      online: true,
-      orders: 32,
-      totalSpent: '3 200 €',
-      joinDate: 'Déc 2023'
-    },
-    {
-      id: 4,
-      name: 'Emma Bernard',
-      email: 'emma.bernard@email.com',
-      phone: '+33 6 78 90 12 34',
-      location: 'Toulouse, France',
-      gender: 'female',
-      avatar: 'https://ui-avatars.com/api/?name=Emma+Bernard&background=ffbf00&color=1a1a1a&size=80',
-      online: true,
-      orders: 15,
-      totalSpent: '1 560 €',
-      joinDate: 'Mar 2024'
-    },
-    {
-      id: 5,
-      name: 'Thomas David',
-      email: 'thomas.david@email.com',
-      phone: '+33 6 34 56 78 90',
-      location: 'Nice, France',
-      gender: 'male',
-      avatar: 'https://ui-avatars.com/api/?name=Thomas+David&background=ffbf00&color=1a1a1a&size=80',
-      online: false,
-      orders: 8,
-      totalSpent: '980 €',
-      joinDate: 'Avr 2024'
-    },
-    {
-      id: 6,
-      name: 'Laura Michel',
-      email: 'laura.michel@email.com',
-      phone: '+33 6 56 78 90 12',
-      location: 'Nantes, France',
-      gender: 'female',
-      avatar: 'https://ui-avatars.com/api/?name=Laura+Michel&background=ffbf00&color=1a1a1a&size=80',
-      online: true,
-      orders: 42,
-      totalSpent: '4 250 €',
-      joinDate: 'Nov 2023'
-    },
-    {
-      id: 7,
-      name: 'Nicolas Petit',
-      email: 'nicolas.petit@email.com',
-      phone: '+33 6 67 89 01 23',
-      location: 'Strasbourg, France',
-      gender: 'male',
-      avatar: 'https://ui-avatars.com/api/?name=Nicolas+Petit&background=ffbf00&color=1a1a1a&size=80',
-      online: false,
-      orders: 12,
-      totalSpent: '1 340 €',
-      joinDate: 'Mai 2024'
-    },
-    {
-      id: 8,
-      name: 'Camille Roux',
-      email: 'camille.roux@email.com',
-      phone: '+33 6 89 01 23 45',
-      location: 'Bordeaux, France',
-      gender: 'female',
-      avatar: 'https://ui-avatars.com/api/?name=Camille+Roux&background=ffbf00&color=1a1a1a&size=80',
-      online: true,
-      orders: 27,
-      totalSpent: '2 780 €',
-      joinDate: 'Fév 2024'
-    },
-    {
-      id: 9,
-      name: 'Pierre Durand',
-      email: 'pierre.durand@email.com',
-      phone: '+33 6 12 34 56 78',
-      location: 'Lille, France',
-      gender: 'male',
-      avatar: 'https://ui-avatars.com/api/?name=Pierre+Durand&background=ffbf00&color=1a1a1a&size=80',
-      online: true,
-      orders: 6,
-      totalSpent: '890 €',
-      joinDate: 'Juin 2024'
-    },
-    {
-      id: 10,
-      name: 'Julie Petit',
-      email: 'julie.petit@email.com',
-      phone: '+33 6 98 76 54 32',
-      location: 'Rennes, France',
-      gender: 'female',
-      avatar: 'https://ui-avatars.com/api/?name=Julie+Petit&background=ffbf00&color=1a1a1a&size=80',
-      online: false,
-      orders: 9,
-      totalSpent: '1 100 €',
-      joinDate: 'Juil 2024'
-    },
-    {
-      id: 11,
-      name: 'Paul Robert',
-      email: 'paul.robert@email.com',
-      phone: '+33 6 45 67 89 01',
-      location: 'Reims, France',
-      gender: 'male',
-      avatar: 'https://ui-avatars.com/api/?name=Paul+Robert&background=ffbf00&color=1a1a1a&size=80',
-      online: true,
-      orders: 19,
-      totalSpent: '2 150 €',
-      joinDate: 'Aou 2024'
-    },
-    {
-      id: 12,
-      name: 'Claire Simon',
-      email: 'claire.simon@email.com',
-      phone: '+33 6 78 90 12 34',
-      location: 'Le Havre, France',
-      gender: 'female',
-      avatar: 'https://ui-avatars.com/api/?name=Claire+Simon&background=ffbf00&color=1a1a1a&size=80',
-      online: true,
-      orders: 35,
-      totalSpent: '3 450 €',
-      joinDate: 'Sep 2024'
-    }
-  ];
-
+  // Données réelles provenant du backend
+  allClients: any[] = [];
   filteredClients: any[] = [];
   paginatedClients: any[] = [];
 
-  constructor(public themeService: ThemeService) {}
+  // Statistiques
+  totalClients: number = 0;
+  maleCount: number = 0;
+  femaleCount: number = 0;
+
+  // États de chargement
+  loading: boolean = false;
+  error: string | null = null;
+
+  constructor(
+    public themeService: ThemeService,
+    private http: HttpClient
+  ) {}
 
   ngOnInit() {
+    this.loadClients();
+  }
+
+  loadClients() {
+    this.loading = true;
+    this.error = null;
+    
+    this.http.get<any[]>(this.apiUrl).subscribe({
+      next: (clients) => {
+        // Transformer les données du backend pour correspondre à votre affichage
+        this.allClients = this.transformClients(clients);
+        this.updateStatistics();
+        this.filteredClients = [...this.allClients];
+        this.updatePagination();
+        this.loading = false;
+      },
+      error: (error) => {
+        console.error('Erreur lors du chargement des clients:', error);
+        this.error = 'Impossible de charger les clients. Veuillez réessayer.';
+        this.loading = false;
+        // En cas d'erreur, on garde les données mockées pour le développement
+        this.loadMockData();
+      }
+    });
+  }
+
+  // Transformer les données du backend pour l'affichage
+  transformClients(clients: any[]): any[] {
+    return clients.map((client, index) => ({
+      ...client,
+      // Générer un avatar basé sur le nom
+      avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(client.name)}&background=ffbf00&color=1a1a1a&size=80`,
+      // Simuler le statut en ligne (alternance)
+      online: index % 2 === 0,
+      // Générer des données simulées pour les commandes
+      orders: Math.floor(Math.random() * 50) + 1,
+      totalSpent: `${(Math.floor(Math.random() * 50) + 1) * 100} €`,
+      joinDate: this.formatDate(client.date),
+      // Extraire la ville de l'email ou utiliser une valeur par défaut
+      location: this.extractLocation(client.email),
+      // Standardiser le genre pour le filtrage
+      gender: this.standardizeGender(client.genre)
+    }));
+  }
+
+  // Standardiser le genre
+  standardizeGender(genre: string): string {
+    if (genre === 'Homme' || genre === 'male' || genre === 'M') {
+      return 'male';
+    } else if (genre === 'Femme' || genre === 'female' || genre === 'F') {
+      return 'female';
+    }
+    return 'other';
+  }
+
+  // Extraire une localisation à partir de l'email
+  extractLocation(email: string): string {
+    const domains: { [key: string]: string } = {
+      'gmail.com': 'International',
+      'yahoo.com': 'International',
+      'outlook.com': 'International',
+      'hotmail.com': 'International'
+    };
+    
+    try {
+      const domain = email.split('@')[1];
+      return domains[domain] || 'Congo, RDC';
+    } catch {
+      return 'Congo, RDC';
+    }
+  }
+
+  // Formater la date
+  formatDate(dateString: string): string {
+    try {
+      const date = new Date(dateString);
+      const months = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Aou', 'Sep', 'Oct', 'Nov', 'Déc'];
+      return `${months[date.getMonth()]} ${date.getFullYear()}`;
+    } catch {
+      return 'N/A';
+    }
+  }
+
+  // Mettre à jour les statistiques
+  updateStatistics() {
+    this.totalClients = this.allClients.length;
+    this.maleCount = this.allClients.filter(c => c.gender === 'male').length;
+    this.femaleCount = this.allClients.filter(c => c.gender === 'female').length;
+  }
+
+  // Données mockées en cas d'erreur
+  loadMockData() {
+    const mockClients = [
+      {
+        id: 1,
+        name: 'Jean Dupont',
+        email: 'jean.dupont@email.com',
+        telephone: '+33 6 12 34 56 78',
+        location: 'Paris, France',
+        gender: 'male',
+        avatar: 'https://ui-avatars.com/api/?name=Jean+Dupont&background=ffbf00&color=1a1a1a&size=80',
+        online: true,
+        orders: 24,
+        totalSpent: '2 450 €',
+        joinDate: 'Jan 2024'
+      },
+      {
+        id: 2,
+        name: 'Sophie Leroy',
+        email: 'sophie.leroy@email.com',
+        telephone: '+33 6 98 76 54 32',
+        location: 'Lyon, France',
+        gender: 'female',
+        avatar: 'https://ui-avatars.com/api/?name=Sophie+Leroy&background=ffbf00&color=1a1a1a&size=80',
+        online: false,
+        orders: 18,
+        totalSpent: '1 890 €',
+        joinDate: 'Fév 2024'
+      }
+    ];
+    this.allClients = mockClients;
+    this.updateStatistics();
     this.filteredClients = [...this.allClients];
     this.updatePagination();
   }
@@ -192,7 +173,7 @@ export class ClientsComponent implements OnInit {
       this.filteredClients = this.allClients.filter(client =>
         client.name.toLowerCase().includes(search) ||
         client.email.toLowerCase().includes(search) ||
-        client.phone.includes(search)
+        (client.telephone && client.telephone.includes(search))
       );
     }
 
@@ -266,5 +247,10 @@ export class ClientsComponent implements OnInit {
     }
     
     return pages;
+  }
+
+  // Rafraîchir les données
+  refreshClients() {
+    this.loadClients();
   }
 }

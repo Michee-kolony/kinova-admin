@@ -12,6 +12,8 @@ import {FormsModule} from "@angular/forms";
 import { ClientsComponent } from './composants/clients/clients.component';
 import { VendeursComponent } from './composants/vendeurs/vendeurs.component';
 import { SettingsComponent } from './composants/settings/settings.component';
+import { HttpClientModule } from '@angular/common/http';
+import { ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -28,7 +30,9 @@ import { SettingsComponent } from './composants/settings/settings.component';
   imports: [
     BrowserModule,
     AppRoutingModule,
-    FormsModule
+    FormsModule,
+    HttpClientModule,
+    ReactiveFormsModule
   ],
   providers: [],
   bootstrap: [AppComponent]
