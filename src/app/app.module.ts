@@ -15,6 +15,7 @@ import { SettingsComponent } from './composants/settings/settings.component';
 import { HttpClientModule } from '@angular/common/http';
 import { ReactiveFormsModule } from '@angular/forms';
 import { CategorieComponent } from './composants/categorie/categorie.component';
+import { ReclamationsComponent } from './composants/reclamations/reclamations.component';
 
 @NgModule({
   declarations: [
@@ -27,7 +28,8 @@ import { CategorieComponent } from './composants/categorie/categorie.component';
     ClientsComponent,
     VendeursComponent,
     SettingsComponent,
-    CategorieComponent
+    CategorieComponent,
+    ReclamationsComponent
   ],
   imports: [
     BrowserModule,

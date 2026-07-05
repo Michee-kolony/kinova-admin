@@ -2,432 +2,249 @@
   <!-- En-tête -->
   <div class="articles-header">
     <div>
-      <h1 class="text-2xl font-bold text-gray-900 dark:text-white">
-        <i class="fas fa-newspaper mr-3" style="color: #ffbf00;"></i>
-        Gestion des articles
-      </h1>
-      <p class="text-gray-600 dark:text-gray-400 mt-1">Gérez tous vos articles publiés et à venir</p>
+      <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Gestion des articles</h1>
+      <p class="text-gray-600 dark:text-gray-400 mt-1">Gérez tous vos articles</p>
     </div>
-    <button (click)="openModal()" class="px-5 py-2.5 rounded-lg transition-colors text-sm font-medium flex items-center gap-2" style="background: #ffbf00; color: #1a1a1a;">
-      <i class="fas fa-plus"></i>
-      Nouvel article
+    <button 
+      (click)="openModal()" 
+      class="px-5 py-2.5 rounded-lg transition-colors text-sm font-medium flex items-center gap-2" 
+      style="background: #ffbf00; color: #1a1a1a;">
+      <i class="fas fa-plus"></i> Nouvel article
     </button>
   </div>
 
+  <!-- Messages -->
+  <div *ngIf="successMessage" class="alert alert-success">
+    <i class="fas fa-check-circle"></i> {{ successMessage }}
+  </div>
+  <div *ngIf="errorMessage" class="alert alert-error">
+    <i class="fas fa-exclamation-circle"></i> {{ errorMessage }}
+  </div>
 
+  <!-- Chargement -->
+  <div *ngIf="isLoading" class="loading-spinner">
+    Chargement des articles <i class="fas fa-spinner fa-spin text-yellow-500"></i>
+  </div>
 
   <!-- Liste des articles -->
-  <div class="articles-grid">
-    <!-- Article 1 -->
-    <div class="article-card">
+  <div class="articles-grid" *ngIf="!isLoading">
+    <div *ngFor="let article of articles" class="article-card">
       <div class="article-image">
-        <img src="https://picsum.photos/seed/1/400/250" alt="Article">
-        <div class="article-status published">
-          <i class="fas fa-check-circle"></i>
-          Publié
-        </div>
+        <img [src]="getFirstImage(article.images)" [alt]="article.nom">
       </div>
       <div class="article-content">
         <div class="article-header">
-          <h3 class="article-title">iPhone 15 Pro Max - Le nouveau fleuron d'Apple</h3>
+          <h3 class="article-title">{{ article.nom }}</h3>
           <div class="article-actions">
-            <button (click)="openModal()" class="action-btn edit" title="Modifier">
+            <button class="action-btn edit" title="Modifier">
               <i class="fas fa-pen"></i>
             </button>
-            <button class="action-btn delete" title="Supprimer">
+            <button (click)="confirmDelete(article)" class="action-btn delete" title="Supprimer">
               <i class="fas fa-trash"></i>
             </button>
           </div>
         </div>
+        
         <div class="article-meta">
           <span class="meta-item">
             <i class="fas fa-calendar-alt" style="color: #ffbf00;"></i>
-            15 Jan 2024
+            {{ formatDate(article.createdAt || article.datePublication) }}
           </span>
           <span class="meta-item">
             <i class="fas fa-eye" style="color: #ffbf00;"></i>
-            1 234 vues
+            {{ formatVues(article.vues) }} vues
           </span>
           <span class="meta-item">
             <i class="fas fa-tag" style="color: #ffbf00;"></i>
-            Technologie
+            {{ article.categorie }}
+          </span>
+          <span class="meta-item" *ngIf="article.prix">
+            <i class="fas fa-dollar-sign" style="color: #ffbf00;"></i>
+            {{ article.prix }} $
+          </span>
+          <span class="meta-item" *ngIf="article.reduction > 0" style="color: #22c55e;">
+            <i class="fas fa-percent" style="color: #22c55e;"></i>
+            -{{ article.reduction }}%
           </span>
         </div>
-        <p class="article-description">
-          Découvrez le nouvel iPhone 15 Pro Max avec ses fonctionnalités révolutionnaires...
-        </p>
-        <div class="article-footer">
-          <div class="article-author">
-            <img src="https://ui-avatars.com/api/?name=Admin&background=ffbf00&color=1a1a1a&size=24" alt="Auteur">
-            <span>Administrateur</span>
-          </div>
-          <button class="view-btn">
-            <i class="fas fa-eye"></i>
-            Voir
-          </button>
-        </div>
-      </div>
-    </div>
 
-    <!-- Article 2 -->
-    <div class="article-card">
-      <div class="article-image">
-        <img src="https://picsum.photos/seed/2/400/250" alt="Article">
-        <div class="article-status draft">
-          <i class="fas fa-pencil"></i>
-          Brouillon
-        </div>
-      </div>
-      <div class="article-content">
-        <div class="article-header">
-          <h3 class="article-title">Guide complet pour réussir sa transformation digitale</h3>
-          <div class="article-actions">
-            <button (click)="openModal()" class="action-btn edit" title="Modifier">
-              <i class="fas fa-pen"></i>
-            </button>
-            <button class="action-btn delete" title="Supprimer">
-              <i class="fas fa-trash"></i>
-            </button>
-          </div>
-        </div>
-        <div class="article-meta">
-          <span class="meta-item">
-            <i class="fas fa-calendar-alt" style="color: #ffbf00;"></i>
-            12 Jan 2024
-          </span>
-          <span class="meta-item">
-            <i class="fas fa-eye" style="color: #ffbf00;"></i>
-            0 vues
-          </span>
-          <span class="meta-item">
-            <i class="fas fa-tag" style="color: #ffbf00;"></i>
-            Business
-          </span>
-        </div>
-        <p class="article-description">
-          Toutes les clés pour réussir votre transformation digitale en 2024...
-        </p>
+        <p class="article-description">{{ article.description | slice:0:120 }}...</p>
+        
         <div class="article-footer">
           <div class="article-author">
-            <img src="https://ui-avatars.com/api/?name=Admin&background=ffbf00&color=1a1a1a&size=24" alt="Auteur">
-            <span>Administrateur</span>
+            <img [src]="'https://ui-avatars.com/api/?name=' + (article.vendeurNom || 'Admin') + '&background=ffbf00&color=1a1a1a&size=24'" alt="Auteur">
+            <span>{{ article.vendeurNom || 'Administrateur' }}</span>
           </div>
           <button class="view-btn">
-            <i class="fas fa-eye"></i>
-            Voir
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Article 3 -->
-    <div class="article-card">
-      <div class="article-image">
-        <img src="https://picsum.photos/seed/3/400/250" alt="Article">
-        <div class="article-status pending">
-          <i class="fas fa-clock"></i>
-          En attente
-        </div>
-      </div>
-      <div class="article-content">
-        <div class="article-header">
-          <h3 class="article-title">Les tendances du marché en 2024</h3>
-          <div class="article-actions">
-            <button (click)="openModal()" class="action-btn edit" title="Modifier">
-              <i class="fas fa-pen"></i>
-            </button>
-            <button class="action-btn delete" title="Supprimer">
-              <i class="fas fa-trash"></i>
-            </button>
-          </div>
-        </div>
-        <div class="article-meta">
-          <span class="meta-item">
-            <i class="fas fa-calendar-alt" style="color: #ffbf00;"></i>
-            10 Jan 2024
-          </span>
-          <span class="meta-item">
-            <i class="fas fa-eye" style="color: #ffbf00;"></i>
-            567 vues
-          </span>
-          <span class="meta-item">
-            <i class="fas fa-tag" style="color: #ffbf00;"></i>
-            Marketing
-          </span>
-        </div>
-        <p class="article-description">
-          Analyse des tendances qui vont marquer le marché cette année...
-        </p>
-        <div class="article-footer">
-          <div class="article-author">
-            <img src="https://ui-avatars.com/api/?name=Admin&background=ffbf00&color=1a1a1a&size=24" alt="Auteur">
-            <span>Administrateur</span>
-          </div>
-          <button class="view-btn">
-            <i class="fas fa-eye"></i>
-            Voir
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Article 4 -->
-    <div class="article-card">
-      <div class="article-image">
-        <img src="https://picsum.photos/seed/4/400/250" alt="Article">
-        <div class="article-status published">
-          <i class="fas fa-check-circle"></i>
-          Publié
-        </div>
-      </div>
-      <div class="article-content">
-        <div class="article-header">
-          <h3 class="article-title">Comment optimiser votre référencement SEO</h3>
-          <div class="article-actions">
-            <button (click)="openModal()" class="action-btn edit" title="Modifier">
-              <i class="fas fa-pen"></i>
-            </button>
-            <button class="action-btn delete" title="Supprimer">
-              <i class="fas fa-trash"></i>
-            </button>
-          </div>
-        </div>
-        <div class="article-meta">
-          <span class="meta-item">
-            <i class="fas fa-calendar-alt" style="color: #ffbf00;"></i>
-            08 Jan 2024
-          </span>
-          <span class="meta-item">
-            <i class="fas fa-eye" style="color: #ffbf00;"></i>
-            2 891 vues
-          </span>
-          <span class="meta-item">
-            <i class="fas fa-tag" style="color: #ffbf00;"></i>
-            SEO
-          </span>
-        </div>
-        <p class="article-description">
-          Guide pratique pour améliorer votre référencement naturel sur Google...
-        </p>
-        <div class="article-footer">
-          <div class="article-author">
-            <img src="https://ui-avatars.com/api/?name=Admin&background=ffbf00&color=1a1a1a&size=24" alt="Auteur">
-            <span>Administrateur</span>
-          </div>
-          <button class="view-btn">
-            <i class="fas fa-eye"></i>
-            Voir
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Article 5 -->
-    <div class="article-card">
-      <div class="article-image">
-        <img src="https://picsum.photos/seed/5/400/250" alt="Article">
-        <div class="article-status draft">
-          <i class="fas fa-pencil"></i>
-          Brouillon
-        </div>
-      </div>
-      <div class="article-content">
-        <div class="article-header">
-          <h3 class="article-title">Les meilleures pratiques pour une UX/UI réussie</h3>
-          <div class="article-actions">
-            <button (click)="openModal()" class="action-btn edit" title="Modifier">
-              <i class="fas fa-pen"></i>
-            </button>
-            <button class="action-btn delete" title="Supprimer">
-              <i class="fas fa-trash"></i>
-            </button>
-          </div>
-        </div>
-        <div class="article-meta">
-          <span class="meta-item">
-            <i class="fas fa-calendar-alt" style="color: #ffbf00;"></i>
-            05 Jan 2024
-          </span>
-          <span class="meta-item">
-            <i class="fas fa-eye" style="color: #ffbf00;"></i>
-            45 vues
-          </span>
-          <span class="meta-item">
-            <i class="fas fa-tag" style="color: #ffbf00;"></i>
-            Design
-          </span>
-        </div>
-        <p class="article-description">
-          Les principes fondamentaux pour une expérience utilisateur optimale...
-        </p>
-        <div class="article-footer">
-          <div class="article-author">
-            <img src="https://ui-avatars.com/api/?name=Admin&background=ffbf00&color=1a1a1a&size=24" alt="Auteur">
-            <span>Administrateur</span>
-          </div>
-          <button class="view-btn">
-            <i class="fas fa-eye"></i>
-            Voir
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Article 6 -->
-    <div class="article-card">
-      <div class="article-image">
-        <img src="https://picsum.photos/seed/6/400/250" alt="Article">
-        <div class="article-status published">
-          <i class="fas fa-check-circle"></i>
-          Publié
-        </div>
-      </div>
-      <div class="article-content">
-        <div class="article-header">
-          <h3 class="article-title">La cybersécurité pour les entreprises</h3>
-          <div class="article-actions">
-            <button (click)="openModal()" class="action-btn edit" title="Modifier">
-              <i class="fas fa-pen"></i>
-            </button>
-            <button class="action-btn delete" title="Supprimer">
-              <i class="fas fa-trash"></i>
-            </button>
-          </div>
-        </div>
-        <div class="article-meta">
-          <span class="meta-item">
-            <i class="fas fa-calendar-alt" style="color: #ffbf00;"></i>
-            03 Jan 2024
-          </span>
-          <span class="meta-item">
-            <i class="fas fa-eye" style="color: #ffbf00;"></i>
-            789 vues
-          </span>
-          <span class="meta-item">
-            <i class="fas fa-tag" style="color: #ffbf00;"></i>
-            Sécurité
-          </span>
-        </div>
-        <p class="article-description">
-          Protégez votre entreprise contre les menaces cybernétiques...
-        </p>
-        <div class="article-footer">
-          <div class="article-author">
-            <img src="https://ui-avatars.com/api/?name=Admin&background=ffbf00&color=1a1a1a&size=24" alt="Auteur">
-            <span>Administrateur</span>
-          </div>
-          <button class="view-btn">
-            <i class="fas fa-eye"></i>
-            Voir
+            <i class="fas fa-eye"></i> Voir
           </button>
         </div>
       </div>
     </div>
   </div>
+
+  <!-- Aucun article -->
+  <div *ngIf="articles.length === 0 && !isLoading" class="empty-state">
+    <i class="fas fa-box-open" style="font-size: 48px; color: #ffbf00;"></i>
+    <h3>Aucun article</h3>
+    <p>Créez votre premier article</p>
+  </div>
 </div>
 
-<!-- ===== MODALE ===== -->
+<!-- ===== MODALE DE CRÉATION ===== -->
 <div *ngIf="isModalOpen" class="modal-overlay" (click)="closeModal()">
   <div class="modal-container" (click)="$event.stopPropagation()">
-    <!-- En-tête modale -->
     <div class="modal-header">
       <h2 class="modal-title">
         <i class="fas fa-pen-fancy mr-2" style="color: #ffbf00;"></i>
-        {{ isEditing ? 'Modifier l\'article' : 'Nouvel article' }}
+        Nouvel article
       </h2>
       <button (click)="closeModal()" class="modal-close">
         <i class="fas fa-times"></i>
       </button>
     </div>
 
-    <!-- Corps modale -->
     <div class="modal-body">
       <form (ngSubmit)="saveArticle()">
-        <!-- Titre -->
+        <!-- Nom -->
         <div class="form-group">
           <label class="form-label">
-            <i class="fas fa-heading mr-2" style="color: #ffbf00;"></i>
-            Titre de l'article
+            <i class="fas fa-box mr-2" style="color:#ffbf00;"></i> Nom *
           </label>
-          <input 
-            type="text" 
-            [(ngModel)]="articleData.title" 
-            name="title"
-            placeholder="Entrez le titre de votre article..." 
-            class="form-input"
-            required>
+          <input type="text" [(ngModel)]="articleData.nom" name="nom" class="form-input" placeholder="Nom du produit" required>
+        </div>
+
+        <!-- Prix -->
+        <div class="form-group">
+          <label class="form-label">
+            <i class="fas fa-dollar-sign mr-2" style="color:#ffbf00;"></i> Prix *
+          </label>
+          <input type="number" [(ngModel)]="articleData.prix" name="prix" class="form-input" placeholder="Prix" required min="0">
+        </div>
+
+        <!-- Réduction -->
+        <div class="form-group">
+          <label class="form-label">
+            <i class="fas fa-percent mr-2" style="color:#ffbf00;"></i> Réduction (%)
+          </label>
+          <input type="number" min="0" max="100" [(ngModel)]="articleData.reduction" name="reduction" class="form-input" placeholder="0">
         </div>
 
         <!-- Catégorie -->
         <div class="form-group">
           <label class="form-label">
-            <i class="fas fa-tag mr-2" style="color: #ffbf00;"></i>
-            Catégorie
+            <i class="fas fa-tags mr-2 text-yellow-500"></i> Catégorie *
           </label>
-          <select [(ngModel)]="articleData.category" name="category" class="form-input" required>
-            <option value="">Sélectionnez une catégorie</option>
-            <option value="Technologie">Technologie</option>
-            <option value="Business">Business</option>
-            <option value="Marketing">Marketing</option>
-            <option value="SEO">SEO</option>
-            <option value="Design">Design</option>
-            <option value="Sécurité">Sécurité</option>
+          <select [(ngModel)]="articleData.categorie" name="categorie" class="form-input" required>
+            <option value="">Choisir</option>
+            <option *ngFor="let cat of categories" [value]="cat.nom || cat">{{ cat.nom || cat }}</option>
           </select>
         </div>
 
-        <!-- Image -->
+        <!-- Genre -->
         <div class="form-group">
           <label class="form-label">
-            <i class="fas fa-image mr-2" style="color: #ffbf00;"></i>
-            Image de couverture
+            <i class="fas fa-user mr-2" style="color:#ffbf00;"></i> Genre *
+          </label>
+          <select [(ngModel)]="articleData.genre" name="genre" class="form-input" required>
+            <option value="">Choisir</option>
+            <option value="Homme">Homme</option>
+            <option value="Femme">Femme</option>
+          </select>
+        </div>
+
+        <!-- Images -->
+        <div class="form-group">
+          <label class="form-label">
+            <i class="fas fa-images mr-2" style="color:#ffbf00;"></i> Images (max 3)
           </label>
           <div class="image-upload">
-            <div *ngIf="!articleData.image" class="upload-area" (click)="fileInput.click()">
-              <i class="fas fa-cloud-upload-alt" style="font-size: 40px; color: #ffbf00;"></i>
-              <p class="upload-text">Cliquez pour uploader une image</p>
-              <span class="upload-subtext">PNG, JPG ou WEBP (max 5MB)</span>
+            <div class="upload-area" (click)="fileInput.click()">
+              <i class="fas fa-cloud-upload-alt" style="font-size:40px;color:#ffbf00"></i>
+              <p class="upload-text">Cliquez pour sélectionner des images</p>
             </div>
-            <div *ngIf="articleData.image" class="image-preview">
-              <img [src]="articleData.image" alt="Aperçu">
-              <button type="button" (click)="articleData.image = ''" class="remove-image">
-                <i class="fas fa-times-circle"></i>
+            <input type="file" #fileInput multiple accept="image/*" style="display:none" (change)="onFileSelected($event)">
+          </div>
+
+          <div class="grid grid-cols-3 gap-3 mt-4">
+            <div class="relative" *ngFor="let image of articleData.images; let i=index">
+              <img [src]="image" class="rounded-lg h-28 w-full object-cover">
+              <button type="button" class="absolute top-2 right-2 bg-red-600 text-white rounded-full w-6 h-6 flex items-center justify-center" (click)="removeImage(i)">
+                <i class="fas fa-times"></i>
               </button>
             </div>
-            <input 
-              type="file" 
-              #fileInput
-              (change)="onFileSelected($event)"
-              accept="image/*"
-              style="display: none;">
           </div>
         </div>
 
-        <!-- Contenu -->
+        <!-- Description -->
         <div class="form-group">
           <label class="form-label">
-            <i class="fas fa-align-left mr-2" style="color: #ffbf00;"></i>
-            Contenu
+            <i class="fas fa-align-left mr-2" style="color:#ffbf00;"></i> Description *
           </label>
-          <textarea 
-            [(ngModel)]="articleData.content" 
-            name="content"
-            rows="5"
-            placeholder="Rédigez le contenu de votre article..." 
-            class="form-input"
-            required></textarea>
+          <textarea rows="5" class="form-input" [(ngModel)]="articleData.description" name="description" placeholder="Description du produit" required></textarea>
         </div>
 
         <!-- Actions -->
         <div class="modal-actions">
-          <button type="button" (click)="closeModal()" class="btn-cancel">
-            Annuler
-          </button>
-          <button type="submit" class="btn-submit" style="background: #ffbf00; color: #1a1a1a;">
-            <i class="fas fa-save mr-2"></i>
-            {{ isEditing ? 'Mettre à jour' : 'Publier' }}
+          <button type="button" class="btn-cancel" (click)="closeModal()" [disabled]="isLoading">Annuler</button>
+          <button type="submit" class="btn-submit" style="background:#ffbf00;color:#1a1a1a" [disabled]="isLoading">
+            <i class="fas fa-spinner fa-spin mr-2" *ngIf="isLoading"></i>
+            <i class="fas fa-save mr-2" *ngIf="!isLoading"></i>
+            Publier
           </button>
         </div>
       </form>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MODALE DE CONFIRMATION DE SUPPRESSION ===== -->
+<div *ngIf="isDeleteModalOpen" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm" (click)="closeDeleteModal()">
+  <div class="bg-gray-100 dark:bg-[#171515] rounded-2xl shadow-2xl max-w-md w-full mx-4 p-6 transform transition-all" (click)="$event.stopPropagation()">
+    <!-- Icône et titre -->
+    <div class="text-center">
+      <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-red-100 dark:bg-red-900/30 mb-4">
+        <i class="fas fa-trash-alt text-red-600 dark:text-red-400 text-2xl"></i>
+      </div>
+      <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2">
+        Confirmer la suppression
+      </h3>
+      <p class="text-gray-600 dark:text-gray-400 mb-6">
+        Êtes-vous sûr de vouloir supprimer l'article 
+        <span class="font-semibold text-gray-900 dark:text-white">"{{ articleToDelete?.nom }}"</span> ?
+        <br>
+        <span class="text-sm text-red-500">Cette action est irréversible.</span>
+      </p>
+    </div>
+
+    <!-- Informations de l'article -->
+    <div *ngIf="articleToDelete" class="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4 mb-6">
+      <div class="flex items-center gap-3">
+        <img [src]="getFirstImage(articleToDelete.images)" alt="Aperçu" class="w-16 h-16 rounded-lg object-cover">
+        <div class="flex-1 min-w-0">
+          <p class="text-sm font-medium text-gray-900 dark:text-white truncate">{{ articleToDelete.nom }}</p>
+          <p class="text-sm text-gray-500 dark:text-gray-400">{{ articleToDelete.categorie }} • {{ articleToDelete.prix }} $</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Boutons d'action -->
+    <div class="flex flex-col sm:flex-row gap-3">
+      <button 
+        type="button" 
+        (click)="closeDeleteModal()" 
+        class="flex-1 px-4 py-2.5 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg transition-colors duration-200">
+        Annuler
+      </button>
+      <button 
+        type="button" 
+        (click)="deleteArticle(articleToDelete?._id)" 
+        [disabled]="isLoading"
+        class="flex-1 px-4 py-2.5 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-lg transition-colors duration-200 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
+        <i class="fas fa-spinner fa-spin" *ngIf="isLoading"></i>
+        <i class="fas fa-trash" *ngIf="!isLoading"></i>
+        {{ isLoading ? 'Suppression...' : 'Supprimer' }}
+      </button>
     </div>
   </div>
 </div>
