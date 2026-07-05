@@ -142,6 +142,7 @@
         <span class="nav-text">Administrateurs</span>
       </a>
 
+
          <button 
         (click)="toggleTheme()"
         class="theme-toggle">
@@ -164,7 +165,16 @@
         <span class="toggle-text">
           {{ themeService.isDark() ? 'Mode Clair' : 'Mode Sombre' }}
         </span>
-      </button>    
+      </button>   
+      
+        <button
+        (click)="logout()"
+        class="nav-item">
+        <span class="nav-icon">
+          <i class="fas fa-power-off"></i>
+        </span>
+        <span class="nav-text">Déconnexion</span>
+      </button>
 
         </div>
       </nav>

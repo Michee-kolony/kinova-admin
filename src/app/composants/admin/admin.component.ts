@@ -2,6 +2,7 @@
 import { Component, HostListener, Inject, PLATFORM_ID } from '@angular/core';
 import { ThemeService } from '../../services/theme.service';
 import { isPlatformBrowser } from '@angular/common';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-admin',
@@ -14,7 +15,8 @@ export class AdminComponent {
 
   constructor(
     public themeService: ThemeService,
-    @Inject(PLATFORM_ID) platformId: Object
+    @Inject(PLATFORM_ID) platformId: Object,
+    private router : Router
   ) {
     this.isBrowser = isPlatformBrowser(platformId);
     
@@ -72,4 +74,15 @@ export class AdminComponent {
       this.closeSidebar();
     }
   }
+
+
+  logout() {
+  // Supprimer les données de connexion
+  localStorage.removeItem('auth_token');
+  localStorage.removeItem('user_data');
+
+  // Redirection vers la page de connexion
+  this.router.navigate(['/login']);
+}
+
 }

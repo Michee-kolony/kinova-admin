@@ -8,11 +8,12 @@ import { ClientsComponent } from './composants/clients/clients.component';
 import { VendeursComponent } from './composants/vendeurs/vendeurs.component';
 import { LoginComponent } from './composants/login/login.component';
 import { SettingsComponent } from './composants/settings/settings.component';
+import { authGuard } from './guards/auth.guard';
 
 const routes: Routes = [
   {path:'', redirectTo: 'login', pathMatch: 'full'},
   {path:'login', component: LoginComponent},
-  {path:'admin', component: AdminComponent,
+  {path:'admin', component: AdminComponent, canActivateChild: [authGuard],
     children:[
       {path:'', redirectTo: 'dashboard', pathMatch: 'full'},
       {path:'dashboard', component: DashboardComponent},
