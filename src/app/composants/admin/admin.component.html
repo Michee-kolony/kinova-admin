@@ -73,7 +73,7 @@
   routerLinkActive="active"
   class="nav-item">
   <span class="nav-icon">
-    <i class="fas fa-chart-pie"></i>
+    <i class="fa-solid fa-border-all"></i>
   </span>
   <span class="nav-text">Dashboard</span>
 </a>
@@ -145,7 +145,7 @@
 
          <button 
         (click)="toggleTheme()"
-        class="theme-toggle">
+        class="theme-toggle mt-2">
         <span class="toggle-icon">
           <svg *ngIf="!themeService.isDark()" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
@@ -169,7 +169,7 @@
       
         <button
         (click)="logout()"
-        class="nav-item">
+        class="nav-item  w-full mt-1 border">
         <span class="nav-icon">
           <i class="fas fa-power-off"></i>
         </span>
