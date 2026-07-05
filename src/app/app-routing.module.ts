@@ -9,6 +9,7 @@ import { VendeursComponent } from './composants/vendeurs/vendeurs.component';
 import { LoginComponent } from './composants/login/login.component';
 import { SettingsComponent } from './composants/settings/settings.component';
 import { authGuard } from './guards/auth.guard';
+import { CategorieComponent } from './composants/categorie/categorie.component';
 
 const routes: Routes = [
   {path:'', redirectTo: 'login', pathMatch: 'full'},
@@ -21,7 +22,8 @@ const routes: Routes = [
       {path:'mesarticles', component : ArticlesComponent},
       {path:'clientlist', component: ClientsComponent},
       {path:'vendeurlist', component: VendeursComponent},
-      {path:'settings', component: SettingsComponent}  
+      {path:'settings', component: SettingsComponent},
+      {path:'categorie', component: CategorieComponent}  
       ]
   }
 ];
