@@ -1,0 +1,210 @@
+<div class="min-h-screen bg-gray-100 dark:bg-[#171515] p-8">
+
+<button [routerLink]="['/admin/mesarticles']" class="pb-5"><i class="fa-solid fa-arrow-left"></i> Retourner</button>
+
+  <!-- Chargement -->
+
+  <div
+    *ngIf="loading"
+    class="flex justify-center items-center h-[70vh]">
+
+    <div
+      class="w-14 h-14 border-4 border-[#ffbf00] border-t-transparent rounded-full animate-spin">
+    </div>
+
+  </div>
+
+
+  <div
+    *ngIf="!loading && article"
+    class="max-w-7xl mx-auto bg-white dark:bg-[#171515] rounded-3xl shadow-lg overflow-hidden">
+
+    <div class="grid lg:grid-cols-2 bg-gray-100 dark:bg-[#171515]">
+
+      <!-- Images -->
+
+      <div class="p-8">
+
+        <div
+          class="rounded-2xl overflow-hidden">
+
+          <img
+            [src]="imagePrincipale"
+            class="w-full h-[550px] object-cover">
+
+        </div>
+
+
+        <div class="grid grid-cols-3 gap-4 mt-5">
+
+          <img
+            *ngFor="let img of article.images"
+            [src]="img"
+            (click)="changerImage(img)"
+            class="cursor-pointer rounded-xl h-36 object-cover border-2 hover:border-orange-500 transition">
+
+        </div>
+
+      </div>
+
+
+      <!-- Informations -->
+
+      <div class="p-10 flex flex-col bg-gray-100 dark:bg-[#171515]">
+
+        <span
+          class="inline-block bg-orange-100 text-orange-600 px-4 py-1 rounded-full text-sm font-semibold w-fit">
+
+          {{article.categorie}}
+
+        </span>
+
+
+        <h1
+          class="text-4xl font-bold mt-4">
+
+          {{article.nom}}
+
+        </h1>
+
+
+        <div class="mt-5">
+
+          <span
+            class="text-4xl font-bold text-yellow-500">
+
+            {{article.prixFinal}} $
+
+          </span>
+
+          <span
+            *ngIf="article.reduction>0"
+            class="ml-4 text-xl line-through text-gray-400">
+
+            {{article.prix}} $
+
+          </span>
+
+        </div>
+
+
+        <div class="mt-8 space-y-4">
+
+          <div class="flex justify-between border-b pb-3">
+
+            <span class="font-semibold">
+              Catégorie
+            </span>
+
+            <span>
+              {{article.categorie}}
+            </span>
+
+          </div>
+
+
+          <div class="flex justify-between border-b pb-3">
+
+            <span class="font-semibold">
+              Genre
+            </span>
+
+            <span>
+              {{article.genre}}
+            </span>
+
+          </div>
+
+
+          <div class="flex justify-between border-b pb-3">
+
+            <span class="font-semibold">
+              Réduction
+            </span>
+
+            <span>
+              {{article.reduction}} %
+            </span>
+
+          </div>
+
+
+          <div class="flex justify-between border-b pb-3">
+
+            <span class="font-semibold">
+              Vendeur
+            </span>
+
+            <span>
+              {{article.vendeurNom}}
+            </span>
+
+          </div>
+
+
+          <div class="flex justify-between border-b pb-3">
+
+            <span class="font-semibold">
+              Téléphone
+            </span>
+
+            <span>
+              {{article.vendeurTelephone}}
+            </span>
+
+          </div>
+
+
+          <div class="flex justify-between border-b pb-3">
+
+            <span class="font-semibold">
+              Publication
+            </span>
+
+            <span>
+
+              {{article.createdAt | date:'dd/MM/yyyy'}}
+
+            </span>
+
+          </div>
+
+        </div>
+
+
+        <div class="mt-8">
+
+          <h2 class="text-2xl font-bold mb-3">
+
+            Description
+
+          </h2>
+
+          <p class="leading-8">
+
+            {{article.description}}
+
+          </p>
+
+        </div>
+
+
+        <div class="mt-auto pt-10 flex gap-4">
+
+          <button
+            class="flex-1 bg-[#ffbf00] text-white py-4 rounded-xl font-bold transition">
+
+            Modifier
+
+          </button>
+
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>

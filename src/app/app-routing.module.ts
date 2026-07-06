@@ -11,6 +11,7 @@ import { SettingsComponent } from './composants/settings/settings.component';
 import { authGuard } from './guards/auth.guard';
 import { CategorieComponent } from './composants/categorie/categorie.component';
 import { ReclamationsComponent } from './composants/reclamations/reclamations.component';
+import { DetailarticleComponent } from './composants/detailarticle/detailarticle.component';
 
 const routes: Routes = [
   {path:'', redirectTo: 'login', pathMatch: 'full'},
@@ -25,7 +26,8 @@ const routes: Routes = [
       {path:'vendeurlist', component: VendeursComponent},
       {path:'settings', component: SettingsComponent},
       {path:'categorie', component: CategorieComponent},
-      {path:'reclamations', component: ReclamationsComponent}  
+      {path:'reclamations', component: ReclamationsComponent},
+      {path:'details/:id', component: DetailarticleComponent}  
       ]
   }
 ];

@@ -217,4 +217,6 @@ export class ArticlesComponent implements OnInit {
   getFirstImage(images: string[]): string {
     return images?.length ? images[0] : 'https://picsum.photos/seed/default/400/300';
   }
+
+  
 }
