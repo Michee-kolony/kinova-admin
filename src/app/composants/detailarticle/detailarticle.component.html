@@ -1,203 +1,219 @@
 <div class="min-h-screen bg-gray-100 dark:bg-[#171515] p-8">
 
-<button [routerLink]="['/admin/mesarticles']" class="pb-5"><i class="fa-solid fa-arrow-left"></i> Retourner</button>
+<button [routerLink]="['/admin/mesarticles']" class="pb-5">
+  <i class="fa-solid fa-arrow-left"></i> Retourner
+</button>
 
-  <!-- Chargement -->
+<!-- LOADING -->
+<div *ngIf="loading" class="flex justify-center items-center h-[70vh]">
+  <div class="w-14 h-14 border-4 border-[#ffbf00] border-t-transparent rounded-full animate-spin"></div>
+</div>
 
-  <div
-    *ngIf="loading"
-    class="flex justify-center items-center h-[70vh]">
+<!-- ARTICLE -->
+<div *ngIf="!loading && article"
+  class="max-w-7xl mx-auto bg-white dark:bg-[#171515] rounded-3xl shadow-lg overflow-hidden">
 
-    <div
-      class="w-14 h-14 border-4 border-[#ffbf00] border-t-transparent rounded-full animate-spin">
+  <div class="grid lg:grid-cols-2 bg-gray-100 dark:bg-[#171515]">
+
+    <!-- IMAGES -->
+    <div class="p-8">
+      <img [src]="imagePrincipale" class="w-full h-[550px] object-cover rounded-2xl">
+
+      <div class="grid grid-cols-3 gap-4 mt-5">
+        <img *ngFor="let img of article.images"
+          [src]="img"
+          (click)="changerImage(img)"
+          class="cursor-pointer rounded-xl h-36 object-cover border-2 hover:border-orange-500">
+      </div>
     </div>
 
-  </div>
+    <!-- INFOS -->
+    <div class="p-10 flex flex-col">
 
+      <span class="bg-[#ffbf00]/10 text-[#ffbf00] px-4 py-1 rounded-full w-fit">
+        {{article.categorie}}
+      </span>
 
-  <div
-    *ngIf="!loading && article"
-    class="max-w-7xl mx-auto bg-white dark:bg-[#171515] rounded-3xl shadow-lg overflow-hidden">
+      <h1 class="text-4xl font-bold mt-4">{{article.nom}}</h1>
 
-    <div class="grid lg:grid-cols-2 bg-gray-100 dark:bg-[#171515]">
-
-      <!-- Images -->
-
-      <div class="p-8">
-
-        <div
-          class="rounded-2xl overflow-hidden">
-
-          <img
-            [src]="imagePrincipale"
-            class="w-full h-[550px] object-cover">
-
-        </div>
-
-
-        <div class="grid grid-cols-3 gap-4 mt-5">
-
-          <img
-            *ngFor="let img of article.images"
-            [src]="img"
-            (click)="changerImage(img)"
-            class="cursor-pointer rounded-xl h-36 object-cover border-2 hover:border-orange-500 transition">
-
-        </div>
-
-      </div>
-
-
-      <!-- Informations -->
-
-      <div class="p-10 flex flex-col bg-gray-100 dark:bg-[#171515]">
-
-        <span
-          class="inline-block bg-orange-100 text-orange-600 px-4 py-1 rounded-full text-sm font-semibold w-fit">
-
-          {{article.categorie}}
-
+      <div class="mt-5">
+        <span class="text-4xl font-bold text-yellow-500">
+          {{article.prixFinal}} $
         </span>
 
+        <span *ngIf="article.reduction>0"
+          class="ml-4 text-xl line-through text-gray-400">
+          {{article.prix}} $
+        </span>
+      </div>
 
-        <h1
-          class="text-4xl font-bold mt-4">
+      <div class="mt-8 space-y-3">
+        <p><b>Genre:</b> {{article.genre}}</p>
+        <p><b>Réduction:</b> {{article.reduction}}%</p>
+        <p><b>Vendeur:</b> {{article.vendeurNom}}</p>
+        <p><b>Téléphone:</b> {{article.vendeurTelephone}}</p>
+        <p><b>Date:</b> {{article.createdAt | date:'dd/MM/yyyy'}}</p>
+      </div>
 
-          {{article.nom}}
+      <p class="mt-6">{{article.description}}</p>
 
-        </h1>
+      <button
+        (click)="openModal()"
+        class="mt-8 bg-[#ffbf00] text-white py-3 rounded-xl font-bold">
+        Modifier
+      </button>
 
+    </div>
+  </div>
+</div>
 
-        <div class="mt-5">
+<!-- MODAL -->
+<div *ngIf="showModal"
+  class="fixed inset-0 bg-black/60  flex justify-center items-center z-50 p-3">
 
-          <span
-            class="text-4xl font-bold text-yellow-500">
+  <div class="bg-gray-100 dark:bg-[#171515] p-6 rounded-xl w-[95%] max-w-2xl
+              max-h-[90vh] overflow-y-auto shadow-xl top-[5%] relative">
 
-            {{article.prixFinal}} $
+    <!-- HEADER -->
+    <div class="flex justify-between items-center mb-6">
+      <h2 class="text-2xl font-bold">
+        Modifier l'article
+      </h2>
 
+      <button (click)="closeModal()"
+        class="text-gray-500 hover:text-red-500 text-xl">
+        ✕
+      </button>
+    </div>
+
+    <!-- FORM GRID -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+      <!-- NOM -->
+      <div>
+        <label class="text-sm font-semibold">Nom de l'article</label>
+        <input [(ngModel)]="formData.nom"
+          class="w-full p-2 border rounded mt-1"
+          placeholder="Nom">
+      </div>
+
+      <!-- PRIX -->
+      <div>
+        <label class="text-sm font-semibold">Prix ($)</label>
+        <input [(ngModel)]="formData.prix"
+          type="number"
+          class="w-full p-2 border rounded mt-1"
+          placeholder="Prix">
+      </div>
+
+      <!-- RÉDUCTION -->
+      <div>
+        <label class="text-sm font-semibold">Réduction (%)</label>
+        <input [(ngModel)]="formData.reduction"
+          type="number"
+          class="w-full p-2 border rounded mt-1"
+          placeholder="Réduction">
+      </div>
+
+      <!-- CATÉGORIE -->
+      <div>
+        <label class="text-sm font-semibold">Catégorie</label>
+        <input [(ngModel)]="formData.categorie"
+          class="w-full p-2 border rounded mt-1"
+          placeholder="Catégorie">
+      </div>
+
+      <!-- GENRE -->
+      <div>
+        <label class="text-sm font-semibold">Genre</label>
+        <select [(ngModel)]="formData.genre"
+          class="w-full p-2 border rounded mt-1">
+
+          <option value="Homme">Homme</option>
+          <option value="Femme">Femme</option>
+
+        </select>
+      </div>
+
+      <!-- VENDEUR -->
+      <div>
+        <label class="text-sm font-semibold">Nom vendeur</label>
+        <input [(ngModel)]="formData.vendeurNom"
+          class="w-full p-2 border rounded mt-1"
+          placeholder="Vendeur">
+      </div>
+
+      <!-- TELEPHONE -->
+      <div>
+        <label class="text-sm font-semibold">Téléphone</label>
+        <input [(ngModel)]="formData.vendeurTelephone"
+          class="w-full p-2 border rounded mt-1"
+          placeholder="Téléphone">
+      </div>
+
+    </div>
+
+    <!-- DESCRIPTION -->
+    <div class="mt-4">
+      <label class="text-sm font-semibold">Description</label>
+      <textarea [(ngModel)]="formData.description"
+        class="w-full p-2 border rounded mt-1"
+        rows="4"
+        placeholder="Description"></textarea>
+    </div>
+
+    <!-- IMAGES PRO DESIGN -->
+    <div class="mt-5">
+
+      <label class="text-sm font-semibold block mb-2">
+        Images du produit
+      </label>
+
+      <!-- UPLOAD BOX -->
+      <div class="border-2 border-dashed border-gray-300 dark:border-gray-600
+                  rounded-xl p-4 text-center bg-gray-100 dark:bg-[#1f1f1f]
+                  hover:border-yellow-500 transition">
+
+        <input type="file"
+          multiple
+          (change)="onFileChange($event)"
+          class="hidden"
+          id="fileUpload">
+
+        <label for="fileUpload"
+          class="cursor-pointer flex flex-col items-center gap-2">
+
+          <i class="fa-solid fa-cloud-arrow-up text-2xl text-yellow-500"></i>
+
+          <span class="text-sm font-medium">
+            Cliquez pour ajouter des images
           </span>
 
-          <span
-            *ngIf="article.reduction>0"
-            class="ml-4 text-xl line-through text-gray-400">
-
-            {{article.prix}} $
-
+          <span class="text-xs text-gray-500">
+            PNG, JPG, JPEG (max 3 images)
           </span>
 
-        </div>
+        </label>
+      </div>
 
+      <!-- IMAGES PREVIEW -->
+      <div class="grid grid-cols-3 gap-3 mt-4">
 
-        <div class="mt-8 space-y-4">
+        <div *ngFor="let img of article.images"
+          class="relative group">
 
-          <div class="flex justify-between border-b pb-3">
+          <img [src]="img"
+            class="h-24 w-full object-cover rounded-lg border">
 
-            <span class="font-semibold">
-              Catégorie
-            </span>
+          <div
+            class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100
+                   transition flex items-center justify-center rounded-lg">
 
-            <span>
-              {{article.categorie}}
-            </span>
-
-          </div>
-
-
-          <div class="flex justify-between border-b pb-3">
-
-            <span class="font-semibold">
-              Genre
-            </span>
-
-            <span>
-              {{article.genre}}
+            <span class="text-white text-xs">
+              Image actuelle
             </span>
 
           </div>
-
-
-          <div class="flex justify-between border-b pb-3">
-
-            <span class="font-semibold">
-              Réduction
-            </span>
-
-            <span>
-              {{article.reduction}} %
-            </span>
-
-          </div>
-
-
-          <div class="flex justify-between border-b pb-3">
-
-            <span class="font-semibold">
-              Vendeur
-            </span>
-
-            <span>
-              {{article.vendeurNom}}
-            </span>
-
-          </div>
-
-
-          <div class="flex justify-between border-b pb-3">
-
-            <span class="font-semibold">
-              Téléphone
-            </span>
-
-            <span>
-              {{article.vendeurTelephone}}
-            </span>
-
-          </div>
-
-
-          <div class="flex justify-between border-b pb-3">
-
-            <span class="font-semibold">
-              Publication
-            </span>
-
-            <span>
-
-              {{article.createdAt | date:'dd/MM/yyyy'}}
-
-            </span>
-
-          </div>
-
-        </div>
-
-
-        <div class="mt-8">
-
-          <h2 class="text-2xl font-bold mb-3">
-
-            Description
-
-          </h2>
-
-          <p class="leading-8">
-
-            {{article.description}}
-
-          </p>
-
-        </div>
-
-
-        <div class="mt-auto pt-10 flex gap-4">
-
-          <button
-            class="flex-1 bg-[#ffbf00] text-white py-4 rounded-xl font-bold transition">
-
-            Modifier
-
-          </button>
-
 
         </div>
 
@@ -205,6 +221,25 @@
 
     </div>
 
+    <!-- ACTIONS -->
+    <div class="flex justify-end gap-3 mt-6">
+
+      <button (click)="closeModal()"
+        class="px-4 py-2 bg-gray-400 rounded">
+        Annuler
+      </button>
+
+      <button (click)="updateArticle()"
+        class="px-4 py-2 bg-green-500 text-white rounded">
+
+        <span *ngIf="!loadingUpdate">Modifier</span>
+        <span *ngIf="loadingUpdate">Chargement...</span>
+
+      </button>
+
+    </div>
+
   </div>
+</div>
 
 </div>
