@@ -59,20 +59,24 @@ export class ArticlesComponent implements OnInit {
     });
   }
 
-  loadArticles(): void {
-    this.isLoading = true;
-    this.http.get<any[]>(this.articleUrl).subscribe({
-      next: (data) => {
-        this.articles = data;
-        this.isLoading = false;
-      },
-      error: () => {
-        this.showError('Impossible de charger les articles');
-        this.isLoading = false;
-      }
-    });
-  }
+ loadArticles(): void {
+  this.isLoading = true;
 
+  this.http.get<any[]>(this.articleUrl).subscribe({
+    next: (data) => {
+
+      this.articles = data.sort((a, b) => {
+        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+      });
+
+      this.isLoading = false;
+    },
+    error: () => {
+      this.showError('Impossible de charger les articles');
+      this.isLoading = false;
+    }
+  });
+}
   openModal(): void {
     this.resetForm();
     this.selectedFiles = [];
