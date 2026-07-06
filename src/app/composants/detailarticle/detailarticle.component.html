@@ -1,7 +1,7 @@
 <div class="min-h-screen bg-gray-100 dark:bg-[#171515] p-8">
 
 <button [routerLink]="['/admin/mesarticles']" class="pb-5">
-  <i class="fa-solid fa-arrow-left"></i> Retourner
+ <i class="fa-solid fa-circle-arrow-left"></i> Retourner
 </button>
 
 <!-- LOADING -->
@@ -93,7 +93,7 @@
       <div>
         <label class="text-sm font-semibold">Nom de l'article</label>
         <input [(ngModel)]="formData.nom"
-          class="w-full p-2 border rounded mt-1"
+          class="w-full p-2  rounded mt-1"
           placeholder="Nom">
       </div>
 
@@ -102,7 +102,7 @@
         <label class="text-sm font-semibold">Prix ($)</label>
         <input [(ngModel)]="formData.prix"
           type="number"
-          class="w-full p-2 border rounded mt-1"
+          class="w-full p-2  rounded mt-1"
           placeholder="Prix">
       </div>
 
@@ -111,7 +111,7 @@
         <label class="text-sm font-semibold">Réduction (%)</label>
         <input [(ngModel)]="formData.reduction"
           type="number"
-          class="w-full p-2 border rounded mt-1"
+          class="w-full p-2  rounded mt-1"
           placeholder="Réduction">
       </div>
 
@@ -119,7 +119,7 @@
       <div>
         <label class="text-sm font-semibold">Catégorie</label>
         <input [(ngModel)]="formData.categorie"
-          class="w-full p-2 border rounded mt-1"
+          class="w-full p-2  rounded mt-1"
           placeholder="Catégorie">
       </div>
 
@@ -127,7 +127,7 @@
       <div>
         <label class="text-sm font-semibold">Genre</label>
         <select [(ngModel)]="formData.genre"
-          class="w-full p-2 border rounded mt-1">
+          class="w-full p-2  rounded mt-1">
 
           <option value="Homme">Homme</option>
           <option value="Femme">Femme</option>
@@ -139,7 +139,7 @@
       <div>
         <label class="text-sm font-semibold">Nom vendeur</label>
         <input [(ngModel)]="formData.vendeurNom"
-          class="w-full p-2 border rounded mt-1"
+          class="w-full p-2 rounded mt-1"
           placeholder="Vendeur">
       </div>
 
@@ -147,7 +147,7 @@
       <div>
         <label class="text-sm font-semibold">Téléphone</label>
         <input [(ngModel)]="formData.vendeurTelephone"
-          class="w-full p-2 border rounded mt-1"
+          class="w-full p-2 rounded mt-1"
           placeholder="Téléphone">
       </div>
 
@@ -157,7 +157,7 @@
     <div class="mt-4">
       <label class="text-sm font-semibold">Description</label>
       <textarea [(ngModel)]="formData.description"
-        class="w-full p-2 border rounded mt-1"
+        class="w-full p-2 rounded mt-1"
         rows="4"
         placeholder="Description"></textarea>
     </div>
