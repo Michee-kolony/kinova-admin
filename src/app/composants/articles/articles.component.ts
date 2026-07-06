@@ -13,6 +13,19 @@ export class ArticlesComponent implements OnInit {
 
   categories: any[] = [];
   articles: any[] = [];
+  filteredArticles: any[] = [];
+  
+  // Filtres
+  searchTerm: string = '';
+  selectedCategory: string = 'all';
+  sortBy: string = 'date_desc';
+  genreFilter: string = '';
+  
+  // Onglets
+  categoryTabs: { label: string; value: string; icon: string }[] = [
+    { label: 'Tous', value: 'all', icon: 'fas fa-th-list' }
+  ];
+
   isModalOpen = false;
   isDeleteModalOpen = false;
   isLoading = false;
@@ -54,29 +67,131 @@ export class ArticlesComponent implements OnInit {
 
   getCategories(): void {
     this.http.get<any[]>(this.categorieUrl).subscribe({
-      next: (data) => this.categories = data,
+      next: (data) => {
+        this.categories = data;
+        this.updateCategoryTabs();
+      },
       error: () => this.showError('Impossible de charger les catégories')
     });
   }
 
- loadArticles(): void {
-  this.isLoading = true;
+  updateCategoryTabs(): void {
+    // Ajouter les catégories existantes aux onglets
+    this.categories.forEach(cat => {
+      const catName = cat.nom || cat;
+      if (!this.categoryTabs.find(tab => tab.value === catName)) {
+        this.categoryTabs.push({
+          label: catName,
+          value: catName,
+          icon: 'fas fa-tag'
+        });
+      }
+    });
+  }
 
-  this.http.get<any[]>(this.articleUrl).subscribe({
-    next: (data) => {
+  loadArticles(): void {
+    this.isLoading = true;
+    this.http.get<any[]>(this.articleUrl).subscribe({
+      next: (data) => {
+        this.articles = data
+          .filter(article => article.vendeurId === this.articleData.vendeurId);
+        this.applyFilters();
+        this.isLoading = false;
+      },
+      error: () => {
+        this.showError('Impossible de charger les articles');
+        this.isLoading = false;
+      }
+    });
+  }
 
-      this.articles = data.sort((a, b) => {
-        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-      });
+  applyFilters(): void {
+    let filtered = [...this.articles];
 
-      this.isLoading = false;
-    },
-    error: () => {
-      this.showError('Impossible de charger les articles');
-      this.isLoading = false;
+    // Filtre par catégorie
+    if (this.selectedCategory !== 'all') {
+      filtered = filtered.filter(article => 
+        article.categorie === this.selectedCategory
+      );
     }
-  });
-}
+
+    // Filtre par recherche
+    if (this.searchTerm.trim()) {
+      const term = this.searchTerm.toLowerCase().trim();
+      filtered = filtered.filter(article =>
+        article.nom.toLowerCase().includes(term) ||
+        article.description.toLowerCase().includes(term) ||
+        article.categorie.toLowerCase().includes(term)
+      );
+    }
+
+    // Filtre par genre
+    if (this.genreFilter) {
+      filtered = filtered.filter(article => 
+        article.genre === this.genreFilter
+      );
+    }
+
+    // Tri
+    filtered = this.sortArticles(filtered);
+
+    this.filteredArticles = filtered;
+  }
+
+  sortArticles(articles: any[]): any[] {
+    switch (this.sortBy) {
+      case 'date_desc':
+        return articles.sort((a, b) => 
+          new Date(b.createdAt || b.datePublication).getTime() - 
+          new Date(a.createdAt || a.datePublication).getTime()
+        );
+      case 'date_asc':
+        return articles.sort((a, b) => 
+          new Date(a.createdAt || a.datePublication).getTime() - 
+          new Date(b.createdAt || b.datePublication).getTime()
+        );
+      case 'prix_asc':
+        return articles.sort((a, b) => 
+          (a.prix - (a.prix * a.reduction / 100)) - 
+          (b.prix - (b.prix * b.reduction / 100))
+        );
+      case 'prix_desc':
+        return articles.sort((a, b) => 
+          (b.prix - (b.prix * b.reduction / 100)) - 
+          (a.prix - (a.prix * a.reduction / 100))
+        );
+      case 'vues_desc':
+        return articles.sort((a, b) => (b.vues || 0) - (a.vues || 0));
+      default:
+        return articles;
+    }
+  }
+
+  selectCategory(category: string): void {
+    this.selectedCategory = category;
+    this.applyFilters();
+  }
+
+  getCategoryCount(category: string): number {
+    if (category === 'all') {
+      return this.articles.length;
+    }
+    return this.articles.filter(article => article.categorie === category).length;
+  }
+
+  clearSearch(): void {
+    this.searchTerm = '';
+    this.applyFilters();
+  }
+
+  resetFilters(): void {
+    this.searchTerm = '';
+    this.selectedCategory = 'all';
+    this.genreFilter = '';
+    this.sortBy = 'date_desc';
+    this.applyFilters();
+  }
+
   openModal(): void {
     this.resetForm();
     this.selectedFiles = [];
@@ -115,7 +230,6 @@ export class ArticlesComponent implements OnInit {
     this.isLoading = true;
     const formData = new FormData();
     
-    // Ajout des champs texte
     formData.append('nom', this.articleData.nom);
     formData.append('prix', this.articleData.prix.toString());
     formData.append('reduction', this.articleData.reduction.toString());
@@ -126,7 +240,6 @@ export class ArticlesComponent implements OnInit {
     formData.append('vendeurNom', this.articleData.vendeurNom);
     formData.append('vendeurTelephone', this.articleData.vendeurTelephone);
 
-    // Ajout des images
     this.selectedFiles.forEach(file => {
       formData.append('images', file);
     });
@@ -145,19 +258,16 @@ export class ArticlesComponent implements OnInit {
     });
   }
 
-  // Ouvre la modale de confirmation de suppression
   confirmDelete(article: any): void {
     this.articleToDelete = article;
     this.isDeleteModalOpen = true;
   }
 
-  // Ferme la modale de confirmation
   closeDeleteModal(): void {
     this.isDeleteModalOpen = false;
     this.articleToDelete = null;
   }
 
-  // Supprime l'article avec l'ID passé en paramètre
   deleteArticle(id: string): void {
     this.isLoading = true;
     this.http.delete(`${this.articleUrl}${id}`).subscribe({
@@ -221,6 +331,4 @@ export class ArticlesComponent implements OnInit {
   getFirstImage(images: string[]): string {
     return images?.length ? images[0] : 'https://picsum.photos/seed/default/400/300';
   }
-
-  
 }
