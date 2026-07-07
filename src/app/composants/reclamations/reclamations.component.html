@@ -1,160 +1,104 @@
-<div class="h-[calc(100vh-80px)] flex bg-gray-100 dark:bg-gray-900 rounded-xl overflow-hidden shadow-lg">
+<div class="flex flex-col lg:flex-row h-[calc(100vh-80px)] bg-gray-100 dark:bg-gray-900 rounded-xl overflow-hidden shadow-lg">
 
     <!-- ===================== LISTE DES MESSAGES ===================== -->
 
-    <div class="w-96 border-r border-gray-200 dark:border-gray-700 bg-gray-50 dark:dark:bg-[#171515] flex flex-col">
+    <div class="w-full lg:w-80 xl:w-96 border-b lg:border-b-0 lg:border-r border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-[#171515] flex flex-col max-h-[300px] lg:max-h-full">
 
-        <!-- Header -->
-
-        <div class="p-5 border-b border-gray-200 dark:border-gray-700">
-
-            <h2 class="text-2xl font-bold text-gray-800 dark:text-white">
-                Réclamations
-            </h2>
-
-            <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                {{reclamations.length}} messages
-            </p>
-
+        <!-- Header compact -->
+        <div class="p-3 lg:p-4 border-b border-gray-200 dark:border-gray-700 flex-shrink-0">
+            <div class="flex items-center justify-between">
+                <h2 class="text-base lg:text-lg font-bold text-gray-800 dark:text-white">
+                    Réclamations
+                </h2>
+                <span class="text-xs px-2 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-full">
+                    {{reclamations.length}}
+                </span>
+            </div>
         </div>
 
-        <!-- Liste -->
-
+        <!-- Liste compacte -->
         <div class="overflow-y-auto flex-1">
-
             <div
                 *ngFor="let message of reclamations"
                 (click)="ouvrirMessage(message)"
                 class="cursor-pointer transition-all duration-200 border-b border-gray-100 dark:border-gray-700 hover:bg-blue-50 dark:hover:bg-gray-700"
                 [ngClass]="{'bg-blue-100 dark:bg-blue-900/30': selectedMessage.id === message.id}">
 
-                <div class="flex items-center p-4 gap-4">
+                <div class="flex items-center p-2 lg:p-3 gap-2 lg:gap-3">
 
-                    <!-- Initiales -->
-
+                    <!-- Initiales plus petites -->
                     <div
-                        class="w-14 h-14 rounded-full bg-[#ffbf00] text-white flex items-center justify-center font-bold text-lg">
-
+                        class="w-8 h-8 lg:w-10 lg:h-10 rounded-full bg-[#ffbf00] text-white flex items-center justify-center font-bold text-xs lg:text-sm flex-shrink-0">
                         {{getInitiales(message.nom)}}
-
                     </div>
 
-                    <!-- Texte -->
-
-                    <div class="flex-1 overflow-hidden">
-
-                        <div class="flex justify-between">
-
-                            <h3 class="font-semibold text-gray-800 dark:text-white truncate">
+                    <!-- Texte compact -->
+                    <div class="flex-1 overflow-hidden min-w-0">
+                        <div class="flex justify-between items-center gap-2">
+                            <h3 class="font-semibold text-sm lg:text-base text-gray-800 dark:text-white truncate">
                                 {{message.nom}}
                             </h3>
-
-                            <span class="text-xs text-gray-400">
+                            <span class="text-[10px] lg:text-xs text-gray-400 flex-shrink-0">
                                 {{message.date}}
                             </span>
-
                         </div>
-
-                        <p class="text-sm font-medium text-gray-600 dark:text-[#ffbf00]  truncate mt-1">
+                        <p class="text-xs lg:text-sm font-medium text-gray-600 dark:text-[#ffbf00] truncate">
                             {{message.sujet}}
                         </p>
-
-                        <p class="text-sm text-gray-500 dark:text-gray-400 truncate mt-1">
+                        <p class="text-xs lg:text-sm text-gray-500 dark:text-gray-400 truncate">
                             {{message.message}}
                         </p>
-
                     </div>
 
                 </div>
 
             </div>
-
         </div>
 
     </div>
 
     <!-- ===================== MESSAGE ===================== -->
 
-    <div class="flex-1 flex flex-col bg-gray-50 dark:dark:bg-[#171515]">
+    <div class="flex-1 flex flex-col bg-gray-50 dark:bg-[#171515] min-h-[300px] lg:min-h-0">
 
-        <!-- Header -->
-
-        <div
-            class="p-6 border-b border-gray-200 dark:border-gray-700 dark:bg-[#171515]">
-
-            <div class="flex items-center gap-4">
-
-                <div
-                    class="w-16 h-16 rounded-full bg-[#ffbf00] text-white flex items-center justify-center text-xl font-bold">
-
+        <!-- Header compact -->
+        <div class="p-3 lg:p-5 border-b border-gray-200 dark:border-gray-700 dark:bg-[#171515] flex-shrink-0">
+            <div class="flex items-center gap-3 lg:gap-4">
+                <div class="w-10 h-10 lg:w-14 lg:h-14 rounded-full bg-[#ffbf00] text-white flex items-center justify-center text-sm lg:text-xl font-bold flex-shrink-0">
                     {{getInitiales(selectedMessage.nom)}}
-
                 </div>
-
-                <div>
-
-                    <h2 class="text-xl font-bold text-gray-800 dark:text-white">
-
+                <div class="min-w-0 flex-1">
+                    <h2 class="text-base lg:text-xl font-bold text-gray-800 dark:text-white truncate">
                         {{selectedMessage.nom}}
-
                     </h2>
-
-                    <p class="text-gray-500 dark:text-gray-400">
-
+                    <p class="text-xs lg:text-sm text-gray-500 dark:text-gray-400 truncate">
                         {{selectedMessage.email}}
-
                     </p>
-
-                    <p class="text-sm ">
-
+                    <p class="text-[10px] lg:text-xs text-gray-400">
                         {{selectedMessage.date}}
-
                     </p>
-
                 </div>
-
             </div>
-
         </div>
 
         <!-- Corps -->
-
-        <div class="flex-1 overflow-y-auto p-8 bg-gray-100 dark:bg-[#171515]">
-
-            <h1
-                class="text-xl font-bold  text-gray-800 dark:text-white mb-6">
-
+        <div class="flex-1 overflow-y-auto p-4 lg:p-8 bg-gray-100 dark:bg-[#171515]">
+            <h1 class="text-base lg:text-xl font-bold text-gray-800 dark:text-white mb-3 lg:mb-6">
                 Objet : {{selectedMessage.sujet}}
-
             </h1>
-
-            <div
-                class=" rounded-xl shadow-sm p-8">
-
-                <p
-                    class="whitespace-pre-line leading-8 text-gray-700 dark:text-gray-300">
-
+            <div class="rounded-xl shadow-sm p-4 lg:p-8 bg-transparent">
+                <p class="whitespace-pre-line leading-6 lg:leading-8 text-sm lg:text-base text-gray-700 dark:text-gray-300">
                     {{selectedMessage.message}}
-
                 </p>
-
             </div>
-
         </div>
 
-        <!-- Actions -->
-
-        <div
-            class="border-t border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-[#171515] p-5 flex justify-end gap-3">
-
-            <button
-                class="px-5 py-2 rounded-lg bg-red-500 hover:bg-red-600 text-white transition">
-
-                  <i class="fas fa-trash-alt text-xs"></i> Supprimer
-
+        <!-- Actions compactes -->
+        <div class="border-t border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-[#171515] p-3 lg:p-5 flex justify-end gap-2 lg:gap-3 flex-shrink-0">
+            <button class="px-3 lg:px-5 py-1.5 lg:py-2 rounded-lg bg-red-500 hover:bg-red-600 text-white transition text-sm lg:text-base">
+                <i class="fas fa-trash-alt text-xs lg:text-sm"></i> <span class="hidden sm:inline">Supprimer</span>
             </button>
         </div>
-
     </div>
 
 </div>

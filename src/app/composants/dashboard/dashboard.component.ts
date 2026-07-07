@@ -1,25 +1,31 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ThemeService } from '../../services/theme.service';
+import { HttpClient } from '@angular/common/http';
+import { AdminService } from '../../services/admin.service';
+import { ClientService } from '../../services/client.service';
+import { ArticleService } from '../../services/article.service';
 
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css'
 })
-export class DashboardComponent {
+export class DashboardComponent implements OnInit {
+
   today: Date = new Date();
+  totalAdmin = 0;
+  totalClient = 0;
+  totalArticle = 0;
 
-  constructor(public themeService: ThemeService) {}
+  constructor(
+    public themeService: ThemeService,
+    private admin: AdminService,
+    private client: ClientService,
+    private article : ArticleService
+    ) {}
 
-  // Données fictives pour les statistiques
-  stats = {
-    clients: 1284,
-    vendeurs: 342,
-    articles: 2847,
-    mesArticles: 124,
-    reclamations: 18,
-    commandes: 1563
-  };
+
+
 
   // Données des commandes récentes
   recentOrders = [
@@ -104,4 +110,35 @@ export class DashboardComponent {
       statusClass: 'pending'
     }
   ];
+
+
+ ngOnInit(): void {
+  this.loadAdmins();
+  this.loadClients();
+  this.loadArticles();
+}
+
+
+
+  loadAdmins() {
+  this.admin.getAdmins().subscribe(admin => {
+    this.totalAdmin = admin.length;
+  });
+}
+
+loadClients() {
+  this.client.getClients().subscribe(client => {
+    this.totalClient = client.length;
+  });
+}
+
+loadArticles() {
+  this.article.getArticles().subscribe(article => {
+    this.totalArticle = article.length;
+  });
+}
+
+  
+
+
 }
