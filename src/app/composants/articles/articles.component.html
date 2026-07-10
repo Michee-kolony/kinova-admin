@@ -2,7 +2,7 @@
   <!-- En-tête -->
   <div class="articles-header">
     <div>
-      <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Gestion des articles</h1>
+      <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Gestion de mes articles</h1>
       <p class="text-gray-600 dark:text-gray-400 mt-1">Gérez tous vos articles</p>
     </div>
     <button 
@@ -22,150 +22,106 @@
   </div>
 
   <!-- ========================= -->
-<!-- RECHERCHE & FILTRES -->
-<!-- ========================= -->
+  <!-- RECHERCHE & FILTRES -->
+  <!-- ========================= -->
 
-<div class="bg-gray-100 dark:bg-[#171515] rounded-2xl shadow-lg  p-6 mb-8">
+  <div class="bg-gray-100 dark:bg-[#171515] rounded-2xl shadow-lg p-6 mb-8">
 
     <!-- Barre de recherche -->
     <div class="relative">
-
-        <i class="fas fa-search absolute left-5 top-1/2 -translate-y-1/2 text-gray-400"></i>
-
-        <input
-            type="text"
-            [(ngModel)]="searchTerm"
-            (ngModelChange)="applyFilters()"
-            placeholder="Rechercher un article..."
-            class="w-full h-14 pl-14 pr-12 rounded-xl  bg-gray-200 dark:bg-black text-gray-900 dark:text-white placeholder:text-gray-400 focus:outline-none  transition-all duration-300">
-
-        <button
-            *ngIf="searchTerm"
-            (click)="clearSearch()"
-            class="absolute right-4 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700 hover:bg-red-500 hover:text-white transition-all">
-
-            <i class="fas fa-times text-sm"></i>
-
-        </button>
-
+      <i class="fas fa-search absolute left-5 top-1/2 -translate-y-1/2 text-gray-400"></i>
+      <input
+        type="text"
+        [(ngModel)]="searchTerm"
+        (ngModelChange)="applyFilters()"
+        placeholder="Rechercher un article..."
+        class="w-full h-14 pl-14 pr-12 rounded-xl bg-gray-200 dark:bg-black text-gray-900 dark:text-white placeholder:text-gray-400 focus:outline-none transition-all duration-300">
+      <button
+        *ngIf="searchTerm"
+        (click)="clearSearch()"
+        class="absolute right-4 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700 hover:bg-red-500 hover:text-white transition-all">
+        <i class="fas fa-times text-sm"></i>
+      </button>
     </div>
 
     <!-- Onglets catégories -->
-
     <div class="mt-6 overflow-x-auto scrollbar-hide">
-
-        <div class="flex gap-3 min-w-max">
-
-            <button
-                *ngFor="let cat of categoryTabs"
-                (click)="selectCategory(cat.value)"
-                class="group flex items-center gap-2 px-2 py-2 rounded-full font-medium whitespace-nowrap transition-all duration-300"
-
-                [ngClass]="selectedCategory === cat.value
-                ? 'bg-yellow-400  text-black shadow-lg'
-                : 'bg-gray-200 dark:bg-black text-gray-700 dark:text-gray-300 hover:border-yellow-400'">
-
-                <i [class]="cat.icon"></i>
-
-                <span>{{cat.label}}</span>
-
-                <span
-                    *ngIf="getCategoryCount(cat.value)>0"
-                    class="px-2 py-0.5 text-xs rounded-full bg-black/10 dark:bg-white/10">
-
-                    {{getCategoryCount(cat.value)}}
-
-                </span>
-
-            </button>
-
-        </div>
-
+      <div class="flex gap-3 min-w-max">
+        <button
+          *ngFor="let cat of categoryTabs"
+          (click)="selectCategory(cat.value)"
+          class="group flex items-center gap-2 px-2 py-2 rounded-full font-medium whitespace-nowrap transition-all duration-300"
+          [ngClass]="selectedCategory === cat.value
+          ? 'bg-yellow-400 text-black shadow-lg'
+          : 'bg-gray-200 dark:bg-black text-gray-700 dark:text-gray-300 hover:border-yellow-400'">
+          <i [class]="cat.icon"></i>
+          <span>{{cat.label}}</span>
+          <span
+            *ngIf="getCategoryCount(cat.value)>0"
+            class="px-2 py-0.5 text-xs rounded-full bg-black/10 dark:bg-white/10">
+            {{getCategoryCount(cat.value)}}
+          </span>
+        </button>
+      </div>
     </div>
 
     <!-- Filtres -->
-
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
-
-        <div class="relative">
-
-            <i class="fas fa-sort absolute left-4 top-1/2 -translate-y-1/2 text-yellow-500"></i>
-
-            <select
-                [(ngModel)]="sortBy"
-                (ngModelChange)="applyFilters()"
-                class="w-full h-12 pl-11 pr-4 rounded-xl  bg-gray-200 dark:bg-black text-gray-900 dark:text-white outline-none focus:ring-2 focus:ring-yellow-400">
-
-                <option value="date_desc">Plus récent</option>
-                <option value="date_asc">Plus ancien</option>
-                <option value="prix_asc">Prix croissant</option>
-                <option value="prix_desc">Prix décroissant</option>
-                <option value="vues_desc">Plus vus</option>
-
-            </select>
-
-        </div>
-
-        <div class="relative">
-
-            <i class="fas fa-user-tag absolute left-4 top-1/2 -translate-y-1/2 text-yellow-500"></i>
-
-            <select
-                [(ngModel)]="genreFilter"
-                (ngModelChange)="applyFilters()"
-                class="w-full h-12 pl-11 pr-4 rounded-xl  dark:border-gray-700 bg-gray-200 dark:bg-black text-gray-900 dark:text-white outline-none focus:ring-2 focus:ring-yellow-400">
-
-                <option value="">Tous les genres</option>
-                <option value="Homme">Homme</option>
-                <option value="Femme">Femme</option>
-                <option value="Mixte">Mixte</option>
-                <option value="Enfants">Enfants</option>
-
-            </select>
-
-        </div>
-
+      <div class="relative">
+        <i class="fas fa-sort absolute left-4 top-1/2 -translate-y-1/2 text-yellow-500"></i>
+        <select
+          [(ngModel)]="sortBy"
+          (ngModelChange)="applyFilters()"
+          class="w-full h-12 pl-11 pr-4 rounded-xl bg-gray-200 dark:bg-black text-gray-900 dark:text-white outline-none focus:ring-2 focus:ring-yellow-400">
+          <option value="date_desc">Plus récent</option>
+          <option value="date_asc">Plus ancien</option>
+          <option value="prix_asc">Prix croissant</option>
+          <option value="prix_desc">Prix décroissant</option>
+          <option value="vues_desc">Plus vus</option>
+        </select>
+      </div>
+      <div class="relative">
+        <i class="fas fa-user-tag absolute left-4 top-1/2 -translate-y-1/2 text-yellow-500"></i>
+        <select
+          [(ngModel)]="genreFilter"
+          (ngModelChange)="applyFilters()"
+          class="w-full h-12 pl-11 pr-4 rounded-xl bg-gray-200 dark:bg-black text-gray-900 dark:text-white outline-none focus:ring-2 focus:ring-yellow-400">
+          <option value="">Tous les genres</option>
+          <option value="Homme">Homme</option>
+          <option value="Femme">Femme</option>
+          <option value="Mixte">Mixte</option>
+          <option value="Enfants">Enfants</option>
+        </select>
+      </div>
     </div>
+  </div>
 
-</div>
+  <!-- ========================= -->
+  <!-- STATISTIQUES -->
+  <!-- ========================= -->
 
-<!-- ========================= -->
-<!-- STATISTIQUES -->
-<!-- ========================= -->
-
-<div
+  <div
     *ngIf="filteredArticles.length > 0"
     class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-6">
-
     <div
-        class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gray-100 dark:bg-yellow-500/10 text-yellow-700 dark:text-yellow-400 font-medium">
-
-        <i class="fas fa-box-open"></i>
-
-        <span>
-
-            {{ filteredArticles.length }}
-            article{{ filteredArticles.length>1?'s':'' }}
-            trouvé{{ filteredArticles.length>1?'s':'' }}
-
-        </span>
-
+      class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gray-100 dark:bg-yellow-500/10 text-yellow-700 dark:text-yellow-400 font-medium">
+      <i class="fas fa-box-open"></i>
+      <span>
+        {{ filteredArticles.length }}
+        article{{ filteredArticles.length>1?'s':'' }}
+        trouvé{{ filteredArticles.length>1?'s':'' }}
+      </span>
     </div>
-
     <div
-        *ngIf="searchTerm"
-        class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gray-100 dark:bg-[#111111] border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300">
-
-        <i class="fas fa-search text-yellow-500"></i>
-
-        <span>
-            Recherche :
-            <strong class="text-yellow-500">"{{searchTerm}}"</strong>
-        </span>
-
+      *ngIf="searchTerm"
+      class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gray-100 dark:bg-[#111111] border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300">
+      <i class="fas fa-search text-yellow-500"></i>
+      <span>
+        Recherche :
+        <strong class="text-yellow-500">"{{searchTerm}}"</strong>
+      </span>
     </div>
-
-</div>
+  </div>
 
   <!-- Chargement -->
   <div *ngIf="isLoading" class="loading-spinner">
@@ -219,6 +175,28 @@
             <i class="fas fa-percent" style="color: #22c55e;"></i>
             -{{ article.reduction }}%
           </span>
+        </div>
+
+        <!-- Affichage du stock -->
+        <div class="article-stock mt-2" *ngIf="article.stock !== undefined">
+          <span class="text-sm" [ngClass]="article.stock > 0 ? 'text-green-500' : 'text-red-500'">
+            <i class="fas" [ngClass]="article.stock > 0 ? 'fa-check-circle' : 'fa-times-circle'"></i>
+            {{ article.stock > 0 ? 'En stock (' + article.stock + ')' : 'Rupture de stock' }}
+          </span>
+        </div>
+
+        <!-- Affichage des couleurs et tailles -->
+        <div class="article-variants" *ngIf="article.couleurs?.length || article.tailles?.length">
+          <div class="flex flex-wrap gap-2 mt-1">
+            <span *ngIf="article.couleurs?.length" class="text-xs text-gray-500 dark:text-gray-400">
+              <i class="fas fa-palette mr-1"></i>
+              {{ article.couleurs.length }} couleur{{ article.couleurs.length > 1 ? 's' : '' }}
+            </span>
+            <span *ngIf="article.tailles?.length" class="text-xs text-gray-500 dark:text-gray-400">
+              <i class="fas fa-ruler mr-1"></i>
+              {{ article.tailles.length }} taille{{ article.tailles.length > 1 ? 's' : '' }}
+            </span>
+          </div>
         </div>
 
         <p class="article-description">{{ article.description | slice:0:120 }}...</p>
@@ -312,6 +290,28 @@
           </select>
         </div>
 
+        <!-- Description -->
+        <div class="form-group">
+          <label class="form-label">
+            <i class="fas fa-align-left mr-2" style="color:#ffbf00;"></i> Description *
+          </label>
+          <textarea rows="5" class="form-input" [(ngModel)]="articleData.description" name="description" placeholder="Description du produit" required></textarea>
+        </div>
+
+        <!-- Stock -->
+        <div class="form-group">
+          <label class="form-label">
+            <i class="fas fa-boxes mr-2" style="color:#ffbf00;"></i> Stock disponible
+          </label>
+          <input 
+            type="number" 
+            min="0" 
+            [(ngModel)]="articleData.stock" 
+            name="stock" 
+            class="form-input" 
+            placeholder="Quantité en stock (0 par défaut)">
+        </div>
+
         <!-- Images -->
         <div class="form-group">
           <label class="form-label">
@@ -321,6 +321,7 @@
             <div class="upload-area" (click)="fileInput.click()">
               <i class="fas fa-cloud-upload-alt" style="font-size:40px;color:#ffbf00"></i>
               <p class="upload-text">Cliquez pour sélectionner des images</p>
+              <p class="text-xs text-gray-500 mt-1">Format: JPG, PNG, WEBP (max 3)</p>
             </div>
             <input type="file" #fileInput multiple accept="image/*" style="display:none" (change)="onFileSelected($event)">
           </div>
@@ -335,12 +336,120 @@
           </div>
         </div>
 
-        <!-- Description -->
+        <!-- Couleurs -->
         <div class="form-group">
           <label class="form-label">
-            <i class="fas fa-align-left mr-2" style="color:#ffbf00;"></i> Description *
+            <i class="fas fa-palette mr-2" style="color:#ffbf00;"></i> Couleurs disponibles
           </label>
-          <textarea rows="5" class="form-input" [(ngModel)]="articleData.description" name="description" placeholder="Description du produit" required></textarea>
+          <div class="flex flex-wrap gap-2 mb-2">
+            <button 
+              *ngFor="let color of availableColors" 
+              type="button"
+              (click)="toggleColor(color)"
+              class="w-8 h-8 rounded-full border-2 transition-all"
+              [ngClass]="isColorSelected(color) ? 'border-yellow-400 scale-110' : 'border-gray-300 dark:border-gray-600'"
+              [style.background]="color"
+              [title]="color">
+            </button>
+          </div>
+          <div class="flex flex-wrap gap-2 mt-2">
+            <span 
+              *ngFor="let color of articleData.couleurs" 
+              class="inline-flex items-center gap-2 px-3 py-1 bg-gray-200 dark:bg-gray-700 rounded-full text-sm">
+              <span class="w-4 h-4 rounded-full inline-block" [style.background]="color"></span>
+              {{ color }}
+              <button type="button" (click)="removeColor(color)" class="text-red-500 hover:text-red-700">
+                <i class="fas fa-times"></i>
+              </button>
+            </span>
+          </div>
+          <input 
+            type="text" 
+            #colorInput
+            (keyup.enter)="addColor(colorInput.value); colorInput.value=''"
+            placeholder="Ajouter une couleur (ex: #ff0000 ou red)" 
+            class="form-input mt-2">
+        </div>
+
+        <!-- Tailles -->
+        <div class="form-group">
+          <label class="form-label">
+            <i class="fas fa-ruler mr-2" style="color:#ffbf00;"></i> Tailles disponibles
+          </label>
+          
+          <!-- Présélections rapides -->
+          <div class="flex flex-wrap gap-2 mb-3">
+            <button 
+              type="button"
+              (click)="applySizePreset('vetement')"
+              class="px-3 py-1 text-xs rounded-full bg-gray-200 dark:bg-gray-700 hover:bg-yellow-400 hover:text-black transition-colors">
+              Vêtements
+            </button>
+            <button 
+              type="button"
+              (click)="applySizePreset('chaussure_femme')"
+              class="px-3 py-1 text-xs rounded-full bg-gray-200 dark:bg-gray-700 hover:bg-yellow-400 hover:text-black transition-colors">
+              Chaussures Femme
+            </button>
+            <button 
+              type="button"
+              (click)="applySizePreset('chaussure_homme')"
+              class="px-3 py-1 text-xs rounded-full bg-gray-200 dark:bg-gray-700 hover:bg-yellow-400 hover:text-black transition-colors">
+              Chaussures Homme
+            </button>
+            <button 
+              type="button"
+              (click)="applySizePreset('chaussure_enfant')"
+              class="px-3 py-1 text-xs rounded-full bg-gray-200 dark:bg-gray-700 hover:bg-yellow-400 hover:text-black transition-colors">
+              Chaussures Enfant
+            </button>
+            <button 
+              type="button"
+              (click)="applySizePreset('accessoire')"
+              class="px-3 py-1 text-xs rounded-full bg-gray-200 dark:bg-gray-700 hover:bg-yellow-400 hover:text-black transition-colors">
+              Accessoire
+            </button>
+          </div>
+
+          <!-- Boutons de tailles -->
+          <div class="flex flex-wrap gap-2 mb-2">
+            <button 
+              *ngFor="let size of currentSizes" 
+              type="button"
+              (click)="toggleSize(size)"
+              class="px-3 py-1 rounded-full text-sm font-medium transition-all"
+              [ngClass]="isSizeSelected(size) ? 'bg-yellow-400 text-black' : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'">
+              {{ size }}
+            </button>
+          </div>
+
+          <!-- Tailles sélectionnées -->
+          <div class="flex flex-wrap gap-2 mt-2">
+            <span 
+              *ngFor="let size of articleData.tailles" 
+              class="inline-flex items-center gap-2 px-3 py-1 bg-yellow-400/20 text-yellow-700 dark:text-yellow-400 rounded-full text-sm font-medium">
+              {{ size }}
+              <button type="button" (click)="removeSize(size)" class="text-red-500 hover:text-red-700">
+                <i class="fas fa-times"></i>
+              </button>
+            </span>
+          </div>
+
+          <!-- Ajout personnalisé -->
+          <div class="flex gap-2 mt-2">
+            <input 
+              type="text" 
+              #sizeInput
+              (keyup.enter)="addSize(sizeInput.value); sizeInput.value=''"
+              placeholder="Ajouter une taille personnalisée" 
+              class="form-input flex-1">
+            <button 
+              type="button" 
+              (click)="addSize(sizeInput.value); sizeInput.value=''"
+              class="px-4 py-2 bg-yellow-400 text-black rounded-lg hover:bg-yellow-500 transition-colors">
+              <i class="fas fa-plus"></i>
+            </button>
+          </div>
         </div>
 
         <!-- Actions -->

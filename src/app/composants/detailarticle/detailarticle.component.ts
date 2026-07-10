@@ -28,10 +28,11 @@ export class DetailarticleComponent implements OnInit {
     genre: '',
     description: '',
     vendeurNom: '',
-    vendeurTelephone: ''
+    vendeurTelephone: '',
+    stock: '',
+    couleurs: '',
+    tailles: ''
   };
-
-  newImages: File[] = [];
 
   constructor(
     private route: ActivatedRoute,
@@ -49,11 +50,11 @@ export class DetailarticleComponent implements OnInit {
       this.http.get<any>(this.articleUrl + id).subscribe({
         next: (data) => {
           this.article = data;
-          this.imagePrincipale = this.article.images[0];
+          this.imagePrincipale = this.article.images?.[0] || '';
           this.loading = false;
         },
         error: (err) => {
-          console.log(err);
+          console.error('Erreur lors du chargement:', err);
           this.loading = false;
         }
       });
@@ -66,14 +67,17 @@ export class DetailarticleComponent implements OnInit {
 
   openModal() {
     this.formData = {
-      nom: this.article.nom,
-      prix: this.article.prix,
-      reduction: this.article.reduction,
-      categorie: this.article.categorie,
-      genre: this.article.genre,
-      description: this.article.description,
-      vendeurNom: this.article.vendeurNom,
-      vendeurTelephone: this.article.vendeurTelephone
+      nom: this.article.nom || '',
+      prix: this.article.prix || '',
+      reduction: this.article.reduction || 0,
+      categorie: this.article.categorie || '',
+      genre: this.article.genre || 'Homme',
+      description: this.article.description || '',
+      vendeurNom: this.article.vendeurNom || '',
+      vendeurTelephone: this.article.vendeurTelephone || '',
+      stock: this.article.stock || '',
+      couleurs: this.article.couleurs?.join(', ') || '',
+      tailles: this.article.tailles?.join(', ') || ''
     };
 
     this.showModal = true;
@@ -81,11 +85,6 @@ export class DetailarticleComponent implements OnInit {
 
   closeModal() {
     this.showModal = false;
-    this.newImages = [];
-  }
-
-  onFileChange(event: any) {
-    this.newImages = Array.from(event.target.files);
   }
 
   updateArticle() {
@@ -93,25 +92,34 @@ export class DetailarticleComponent implements OnInit {
 
     const id = this.article._id;
 
-    const formData = new FormData();
+    // Préparer les données
+    const updateData: any = {
+      nom: this.formData.nom,
+      prix: parseFloat(this.formData.prix) || 0,
+      reduction: parseFloat(this.formData.reduction) || 0,
+      categorie: this.formData.categorie,
+      genre: this.formData.genre,
+      description: this.formData.description,
+      vendeurNom: this.formData.vendeurNom,
+      vendeurTelephone: this.formData.vendeurTelephone,
+      stock: parseInt(this.formData.stock) || 0,
+      couleurs: this.formData.couleurs.split(',').map((c: string) => c.trim()).filter((c: string) => c),
+      tailles: this.formData.tailles.split(',').map((t: string) => t.trim()).filter((t: string) => t)
+    };
 
-    Object.keys(this.formData).forEach(key => {
-      formData.append(key, this.formData[key]);
-    });
+    // Garder les images existantes
+    updateData.images = this.article.images;
 
-    this.newImages.forEach(file => {
-      formData.append('images', file);
-    });
-
-    this.http.put(this.articleUrl + id, formData).subscribe({
+    this.http.put(this.articleUrl + id, updateData).subscribe({
       next: (res: any) => {
         this.loadingUpdate = false;
         this.showModal = false;
         this.loadArticle();
       },
       error: (err) => {
-        console.log(err);
+        console.error('Erreur lors de la mise à jour:', err);
         this.loadingUpdate = false;
+        alert('Erreur lors de la modification. Veuillez réessayer.');
       }
     });
   }

@@ -1,7 +1,7 @@
 <div class="min-h-screen bg-gray-100 dark:bg-[#171515] p-8">
 
-<button [routerLink]="['/admin/mesarticles']" class="pb-5">
- <i class="fa-solid fa-circle-arrow-left"></i> Retourner
+<button [routerLink]="['/admin/mesarticles']" class="pb-5 flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-yellow-500 transition">
+  <i class="fa-solid fa-circle-arrow-left"></i> Retourner
 </button>
 
 <!-- LOADING -->
@@ -23,7 +23,8 @@
         <img *ngFor="let img of article.images"
           [src]="img"
           (click)="changerImage(img)"
-          class="cursor-pointer rounded-xl h-36 object-cover border-2 hover:border-orange-500">
+          class="cursor-pointer rounded-xl h-36 w-full object-cover border-2 hover:border-orange-500 transition"
+          [class.border-orange-500]="img === imagePrincipale">
       </div>
     </div>
 
@@ -34,33 +35,70 @@
         {{article.categorie}}
       </span>
 
-      <h1 class="text-4xl font-bold mt-4">{{article.nom}}</h1>
+      <h1 class="text-4xl font-bold mt-4 dark:text-white">{{article.nom}}</h1>
 
-      <div class="mt-5">
+      <div class="mt-5 flex items-center gap-3">
         <span class="text-4xl font-bold text-yellow-500">
-          {{article.prixFinal}} $
+          {{article.prixFinal || article.prix}} $
         </span>
 
-        <span *ngIf="article.reduction>0"
-          class="ml-4 text-xl line-through text-gray-400">
+        <span *ngIf="article.reduction > 0"
+          class="text-xl line-through text-gray-400">
           {{article.prix}} $
         </span>
+
+        <span *ngIf="article.reduction > 0"
+          class="bg-red-500/10 text-red-500 px-3 py-1 rounded-full text-sm font-semibold">
+          -{{article.reduction}}%
+        </span>
       </div>
 
-      <div class="mt-8 space-y-3">
-        <p><b>Genre:</b> {{article.genre}}</p>
-        <p><b>Réduction:</b> {{article.reduction}}%</p>
-        <p><b>Vendeur:</b> {{article.vendeurNom}}</p>
-        <p><b>Téléphone:</b> {{article.vendeurTelephone}}</p>
-        <p><b>Date:</b> {{article.createdAt | date:'dd/MM/yyyy'}}</p>
+      <div class="mt-8 space-y-3 text-gray-700 dark:text-gray-300">
+        <div class="flex items-center gap-2">
+          <i class="fa-solid fa-tag text-yellow-500 w-5"></i>
+          <span><b>Genre:</b> {{article.genre}}</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <i class="fa-solid fa-user text-yellow-500 w-5"></i>
+          <span><b>Vendeur:</b> {{article.vendeurNom}}</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <i class="fa-solid fa-phone text-yellow-500 w-5"></i>
+          <span><b>Téléphone:</b> {{article.vendeurTelephone}}</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <i class="fa-regular fa-calendar text-yellow-500 w-5"></i>
+          <span><b>Date:</b> {{article.createdAt | date:'dd/MM/yyyy à HH:mm'}}</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <i class="fa-solid fa-boxes-stacked text-yellow-500 w-5"></i>
+          <span><b>Stock:</b> {{article.stock || 'Non spécifié'}}</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <i class="fa-solid fa-palette text-yellow-500 w-5"></i>
+          <span><b>Couleurs:</b> 
+            <span *ngFor="let couleur of article.couleurs; let last = last">
+              <span [style.backgroundColor]="couleur" 
+                    class="inline-block w-4 h-4 rounded-full border border-gray-300 align-middle"></span>
+              <span *ngIf="!last">, </span>
+            </span>
+          </span>
+        </div>
+        <div class="flex items-center gap-2">
+          <i class="fa-solid fa-ruler text-yellow-500 w-5"></i>
+          <span><b>Tailles:</b> {{article.tailles?.join(', ') || 'Non spécifiées'}}</span>
+        </div>
       </div>
 
-      <p class="mt-6">{{article.description}}</p>
+      <div class="mt-6">
+        <p class="text-gray-600 dark:text-gray-400 leading-relaxed">{{article.description}}</p>
+      </div>
 
       <button
         (click)="openModal()"
-        class="mt-8 bg-[#ffbf00] text-white py-3 rounded-xl font-bold">
-        Modifier
+        class="mt-8 bg-[#ffbf00] hover:bg-[#e6a800] text-white py-3 rounded-xl font-bold transition">
+        <i class="fa-solid fa-pen-to-square mr-2"></i>
+        Modifier l'article
       </button>
 
     </div>
@@ -69,171 +107,207 @@
 
 <!-- MODAL -->
 <div *ngIf="showModal"
-  class="fixed inset-0 bg-black/60  flex justify-center items-center z-50 p-3">
+  class="fixed inset-0 bg-black/60 flex justify-center t items-center z-50 p-3">
 
-  <div class="bg-gray-100 dark:bg-[#171515] p-6 rounded-xl w-[95%] max-w-2xl
-              max-h-[90vh] overflow-y-auto shadow-xl top-[5%] relative">
+  <div class="bg-gray-100 dark:bg-[#171515] p-6 mt-[8%] rounded-xl w-[95%] max-w-3xl
+              max-h-[90vh] overflow-y-auto shadow-xl">
 
     <!-- HEADER -->
-    <div class="flex justify-between items-center mb-6">
-      <h2 class="text-2xl font-bold">
+    <div class="flex justify-between items-center mb-6 border-b dark:border-gray-700 pb-4">
+      <h2 class="text-2xl font-bold dark:text-white">
+        <i class="fa-solid fa-pen-to-square text-yellow-500 mr-2"></i>
         Modifier l'article
       </h2>
 
       <button (click)="closeModal()"
-        class="text-gray-500 hover:text-red-500 text-xl">
+        class="text-gray-500 hover:text-red-500 text-2xl transition">
         ✕
       </button>
     </div>
 
-    <!-- FORM GRID -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <!-- FORM -->
+    <div class="space-y-4">
 
-      <!-- NOM -->
-      <div>
-        <label class="text-sm font-semibold">Nom de l'article</label>
-        <input [(ngModel)]="formData.nom"
-          class="w-full p-2  rounded mt-1"
-          placeholder="Nom">
-      </div>
-
-      <!-- PRIX -->
-      <div>
-        <label class="text-sm font-semibold">Prix ($)</label>
-        <input [(ngModel)]="formData.prix"
-          type="number"
-          class="w-full p-2  rounded mt-1"
-          placeholder="Prix">
-      </div>
-
-      <!-- RÉDUCTION -->
-      <div>
-        <label class="text-sm font-semibold">Réduction (%)</label>
-        <input [(ngModel)]="formData.reduction"
-          type="number"
-          class="w-full p-2  rounded mt-1"
-          placeholder="Réduction">
-      </div>
-
-      <!-- CATÉGORIE -->
-      <div>
-        <label class="text-sm font-semibold">Catégorie</label>
-        <input [(ngModel)]="formData.categorie"
-          class="w-full p-2  rounded mt-1"
-          placeholder="Catégorie">
-      </div>
-
-      <!-- GENRE -->
-      <div>
-        <label class="text-sm font-semibold">Genre</label>
-        <select [(ngModel)]="formData.genre"
-          class="w-full p-2  rounded mt-1">
-
-          <option value="Homme">Homme</option>
-          <option value="Femme">Femme</option>
-
-        </select>
-      </div>
-
-      <!-- VENDEUR -->
-      <div>
-        <label class="text-sm font-semibold">Nom vendeur</label>
-        <input [(ngModel)]="formData.vendeurNom"
-          class="w-full p-2 rounded mt-1"
-          placeholder="Vendeur">
-      </div>
-
-      <!-- TELEPHONE -->
-      <div>
-        <label class="text-sm font-semibold">Téléphone</label>
-        <input [(ngModel)]="formData.vendeurTelephone"
-          class="w-full p-2 rounded mt-1"
-          placeholder="Téléphone">
-      </div>
-
-    </div>
-
-    <!-- DESCRIPTION -->
-    <div class="mt-4">
-      <label class="text-sm font-semibold">Description</label>
-      <textarea [(ngModel)]="formData.description"
-        class="w-full p-2 rounded mt-1"
-        rows="4"
-        placeholder="Description"></textarea>
-    </div>
-
-    <!-- IMAGES PRO DESIGN -->
-    <div class="mt-5">
-
-      <label class="text-sm font-semibold block mb-2">
-        Images du produit
-      </label>
-
-      <!-- UPLOAD BOX -->
-      <div class="border-2 border-dashed border-gray-300 dark:border-gray-600
-                  rounded-xl p-4 text-center bg-gray-100 dark:bg-[#1f1f1f]
-                  hover:border-yellow-500 transition">
-
-        <input type="file"
-          multiple
-          (change)="onFileChange($event)"
-          class="hidden"
-          id="fileUpload">
-
-        <label for="fileUpload"
-          class="cursor-pointer flex flex-col items-center gap-2">
-
-          <i class="fa-solid fa-cloud-arrow-up text-2xl text-yellow-500"></i>
-
-          <span class="text-sm font-medium">
-            Cliquez pour ajouter des images
-          </span>
-
-          <span class="text-xs text-gray-500">
-            PNG, JPG, JPEG (max 3 images)
-          </span>
-
-        </label>
-      </div>
-
-      <!-- IMAGES PREVIEW -->
-      <div class="grid grid-cols-3 gap-3 mt-4">
-
-        <div *ngFor="let img of article.images"
-          class="relative group">
-
-          <img [src]="img"
-            class="h-24 w-full object-cover rounded-lg border">
-
-          <div
-            class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100
-                   transition flex items-center justify-center rounded-lg">
-
-            <span class="text-white text-xs">
-              Image actuelle
-            </span>
-
-          </div>
-
+      <!-- LIGNE 1: Nom + Prix -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label class="text-sm font-semibold dark:text-gray-300 block mb-1">
+            <i class="fa-solid fa-tag text-yellow-500 mr-1"></i>
+            Nom de l'article
+          </label>
+          <input [(ngModel)]="formData.nom"
+            class="w-full p-3 bg-gray-100 dark:bg-[#1f1f1f] rounded-lg  focus:border-yellow-500 focus:ring-2 focus:ring-yellow-500/20 outline-none transition dark:text-white"
+            placeholder="Nom du produit">
         </div>
 
+        <div>
+          <label class="text-sm font-semibold dark:text-gray-300 block mb-1">
+            <i class="fa-solid fa-dollar-sign text-yellow-500 mr-1"></i>
+            Prix ($)
+          </label>
+          <input [(ngModel)]="formData.prix"
+            type="number"
+            class="w-full p-3 bg-gray-100 dark:bg-[#1f1f1f] rounded-lg  focus:border-yellow-500 focus:ring-2 focus:ring-yellow-500/20 outline-none transition dark:text-white"
+            placeholder="0.00">
+        </div>
+      </div>
+
+      <!-- LIGNE 2: Réduction + Catégorie -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label class="text-sm font-semibold dark:text-gray-300 block mb-1">
+            <i class="fa-solid fa-percent text-yellow-500 mr-1"></i>
+            Réduction (%)
+          </label>
+          <input [(ngModel)]="formData.reduction"
+            type="number"
+            min="0"
+            max="100"
+            class="w-full p-3 bg-gray-100 dark:bg-[#1f1f1f] rounded-lg  focus:border-yellow-500 focus:ring-2 focus:ring-yellow-500/20 outline-none transition dark:text-white"
+            placeholder="0">
+        </div>
+
+        <div>
+          <label class="text-sm font-semibold dark:text-gray-300 block mb-1">
+            <i class="fa-solid fa-layer-group text-yellow-500 mr-1"></i>
+            Catégorie
+          </label>
+          <input [(ngModel)]="formData.categorie"
+            class="w-full p-3 bg-gray-100 dark:bg-[#1f1f1f] rounded-lg  focus:border-yellow-500 focus:ring-2 focus:ring-yellow-500/20 outline-none transition dark:text-white"
+            placeholder="Ex: Chaussure, Vêtement...">
+        </div>
+      </div>
+
+      <!-- LIGNE 3: Genre + Stock -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label class="text-sm font-semibold dark:text-gray-300 block mb-1">
+            <i class="fa-solid fa-venus-mars text-yellow-500 mr-1"></i>
+            Genre
+          </label>
+          <select [(ngModel)]="formData.genre"
+            class="w-full p-3 bg-gray-100 dark:bg-[#1f1f1f] rounded-lg  focus:border-yellow-500 focus:ring-2 focus:ring-yellow-500/20 outline-none transition dark:text-white">
+            <option value="Homme">👨 Homme</option>
+            <option value="Femme">👩 Femme</option>
+            <option value="Unisexe">👤 Unisexe</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="text-sm font-semibold dark:text-gray-300 block mb-1">
+            <i class="fa-solid fa-boxes-stacked text-yellow-500 mr-1"></i>
+            Stock
+          </label>
+          <input [(ngModel)]="formData.stock"
+            type="number"
+            min="0"
+            class="w-full p-3 bg-gray-100 dark:bg-[#1f1f1f] rounded-lg  focus:border-yellow-500 focus:ring-2 focus:ring-yellow-500/20 outline-none transition dark:text-white"
+            placeholder="Quantité disponible">
+        </div>
+      </div>
+
+      <!-- LIGNE 4: Vendeur + Téléphone -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div hidden>
+          <label class="text-sm font-semibold dark:text-gray-300 block mb-1">
+            <i class="fa-solid fa-user text-yellow-500 mr-1"></i>
+            Nom du vendeur
+          </label>
+          <input  [(ngModel)]="formData.vendeurNom"
+            class="w-full p-3 bg-gray-200 dark:bg-[#1f1f1f] rounded-lg  focus:border-yellow-500 focus:ring-2 focus:ring-yellow-500/20 outline-none transition dark:text-white"
+            placeholder="Nom du vendeur">
+        </div>
+
+        <div>
+          <label class="text-sm font-semibold dark:text-gray-300 block mb-1">
+            <i class="fa-solid fa-phone text-yellow-500 mr-1"></i>
+            Téléphone
+          </label>
+          <input [(ngModel)]="formData.vendeurTelephone"
+            class="w-full p-3 bg-gray-100 dark:bg-[#1f1f1f] rounded-lg  focus:border-yellow-500 focus:ring-2 focus:ring-yellow-500/20 outline-none transition dark:text-white"
+            placeholder="Numéro de téléphone">
+        </div>
+      </div>
+
+      <!-- LIGNE 5: Couleurs + Tailles -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label class="text-sm font-semibold dark:text-gray-300 block mb-1">
+            <i class="fa-solid fa-palette text-yellow-500 mr-1"></i>
+            Couleurs (séparées par des virgules)
+          </label>
+          <input [(ngModel)]="formData.couleurs"
+            class="w-full p-3 bg-gray-100 dark:bg-[#1f1f1f] rounded-lg  focus:border-yellow-500 focus:ring-2 focus:ring-yellow-500/20 outline-none transition dark:text-white"
+            placeholder="#000000, #FFFFFF, #FF0000">
+          <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+            Codes hexadécimaux séparés par des virgules
+          </p>
+        </div>
+
+        <div>
+          <label class="text-sm font-semibold dark:text-gray-300 block mb-1">
+            <i class="fa-solid fa-ruler text-yellow-500 mr-1"></i>
+            Tailles (séparées par des virgules)
+          </label>
+          <input [(ngModel)]="formData.tailles"
+            class="w-full p-3 bg-gray-100 dark:bg-[#1f1f1f] rounded-lg  focus:border-yellow-500 focus:ring-2 focus:ring-yellow-500/20 outline-none transition dark:text-white"
+            placeholder="S, M, L, XL ou 38, 39, 40">
+          <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+            Séparées par des virgules
+          </p>
+        </div>
+      </div>
+
+      <!-- DESCRIPTION -->
+      <div>
+        <label class="text-sm font-semibold dark:text-gray-300 block mb-1">
+          <i class="fa-solid fa-align-left text-yellow-500 mr-1"></i>
+          Description
+        </label>
+        <textarea [(ngModel)]="formData.description"
+          class="w-full p-3 bg-gray-100 dark:bg-[#1f1f1f] rounded-lg  focus:border-yellow-500 focus:ring-2 focus:ring-yellow-500/20 outline-none transition dark:text-white"
+          rows="4"
+          placeholder="Description détaillée du produit..."></textarea>
+      </div>
+
+      <!-- IMAGES - SECTION INFO -->
+      <div class="bg-yellow-50 dark:bg-yellow-900/20 rounded-lg p-4">
+        <div class="flex items-start gap-3">
+          <i class="fa-solid fa-info-circle text-yellow-500 text-xl mt-1"></i>
+          <div>
+            <p class="text-sm font-semibold text-yellow-700 dark:text-yellow-300">
+              Images du produit
+            </p>
+            <p class="text-sm text-yellow-600 dark:text-yellow-400">
+              Les images ne peuvent pas être modifiées via ce formulaire.
+              Pour changer les images, veuillez supprimer et recréer l'article.
+            </p>
+          </div>
+        </div>
       </div>
 
     </div>
 
     <!-- ACTIONS -->
-    <div class="flex justify-end gap-3 mt-6">
+    <div class="flex justify-end gap-3 mt-6 pt-4 border-t dark:border-gray-700">
 
       <button (click)="closeModal()"
-        class="px-4 py-2 bg-gray-400 rounded">
+        class="px-6 py-3 bg-gray-300 dark:bg-gray-700 hover:bg-gray-400 dark:hover:bg-gray-600 rounded-lg font-semibold transition dark:text-white">
         Annuler
       </button>
 
       <button (click)="updateArticle()"
-        class="px-4 py-2 bg-green-500 text-white rounded">
+        class="px-6 py-3 bg-green-500 hover:bg-green-600 text-white rounded-lg font-semibold transition disabled:opacity-50 disabled:cursor-not-allowed"
+        [disabled]="loadingUpdate">
 
-        <span *ngIf="!loadingUpdate">Modifier</span>
-        <span *ngIf="loadingUpdate">Chargement...</span>
+        <span *ngIf="!loadingUpdate">
+          <i class="fa-solid fa-check mr-2"></i>
+          Enregistrer
+        </span>
+        <span *ngIf="loadingUpdate">
+          <i class="fa-solid fa-spinner animate-spin mr-2"></i>
+          Enregistrement...
+        </span>
 
       </button>
 
