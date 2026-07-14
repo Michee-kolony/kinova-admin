@@ -12,10 +12,14 @@ import { ArticleService } from '../../services/article.service';
 })
 export class DashboardComponent implements OnInit {
 
+  user: any;
+  token: string | null = null;
+
   today: Date = new Date();
   totalAdmin = 0;
   totalClient = 0;
   totalArticle = 0;
+  totalemesArticles = 0;
 
   constructor(
     public themeService: ThemeService,
@@ -116,6 +120,18 @@ export class DashboardComponent implements OnInit {
   this.loadAdmins();
   this.loadClients();
   this.loadArticles();
+  this.loadmesArticles();
+
+   this.token = localStorage.getItem('auth_token');
+
+    // Récupérer les informations de l'utilisateur
+    const userData = localStorage.getItem('user_data');
+
+    if (userData) {
+      this.user = JSON.parse(userData);
+      console.log(this.user);
+    }
+
 }
 
 
@@ -135,6 +151,19 @@ loadClients() {
 loadArticles() {
   this.article.getArticles().subscribe(article => {
     this.totalArticle = article.length;
+  });
+}
+
+
+
+loadmesArticles() {
+  this.article.getArticles().subscribe((articles: any[]) => {
+
+    this.totalArticle = articles.length;
+
+    this.totalemesArticles = articles.filter(article =>
+      article.vendeurId === this.user.adminId
+    ).length;
   });
 }
 
