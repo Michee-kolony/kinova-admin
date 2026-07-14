@@ -1,0 +1,205 @@
+<div class="min-h-screen bg-gray-100 dark:bg-[#171515] p-8 rounded-lg">
+
+  <!-- Loading -->
+  <div *ngIf="loading" class="flex justify-center py-20">
+    <div class="w-14 h-14 border-4 border-yellow-500 border-t-transparent rounded-full animate-spin"></div>
+  </div>
+
+  <!-- Message d'erreur -->
+  <div *ngIf="errorMessage" class="max-w-6xl mx-auto bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-4 flex items-center justify-between">
+    <span>{{ errorMessage }}</span>
+    <button (click)="errorMessage = null" class="text-red-700 font-bold hover:text-red-900">
+      <i class="fas fa-times"></i>
+    </button>
+  </div>
+
+  <!-- Produit -->
+  <div *ngIf="!loading && product" class="max-w-6xl mx-auto rounded-2xl shadow-xl overflow-hidden">
+
+    <div class="grid md:grid-cols-2 gap-0">
+
+      <!-- Section Image avec Galerie -->
+      <div class="p-8">
+        <!-- Image principale -->
+        <div class="flex items-center justify-center min-h-[400px]  rounded-xl mb-4">
+          <img
+            [src]="selectedImage || getFirstImage()"
+            [alt]="product.nom || 'Produit'"
+            class="rounded-xl max-h-[500px] w-full object-contain"
+            (error)="selectedImage = 'assets/placeholder-image.jpg'">
+        </div>
+
+        <!-- Miniatures -->
+        <div *ngIf="getImages().length > 1" class="grid grid-cols-4 gap-3 mt-4">
+          <div 
+            *ngFor="let img of getImages(); let i = index"
+            (click)="selectedImage = img"
+            class="cursor-pointer rounded-lg overflow-hidden border-2 transition-all hover:border-yellow-400"
+            [class.border-yellow-500]="selectedImage === img">
+            <img
+              [src]="img"
+              [alt]="'Image ' + (i+1)"
+              class="w-full h-20 object-cover hover:scale-105 transition-transform"
+              >
+          </div>
+        </div>
+
+        <!-- Indicateur si une seule image -->
+        <div *ngIf="getImages().length === 1" class="text-center text-gray-400 text-sm mt-2">
+          <i class="fas fa-image mr-1"></i> 1 image
+        </div>
+      </div>
+
+      <!-- Informations -->
+      <div class="p-10">
+
+        <div class="flex flex-wrap items-center gap-2 mb-5">
+          <span class="inline-block bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-sm">
+            {{ product.categorie || 'Non catégorisé' }}
+          </span>
+          <span class="inline-block bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm">
+            {{ product.genre || 'Mixte' }}
+          </span>
+          <span *ngIf="product.stock === 0" class="inline-block bg-red-100 text-red-700 px-3 py-1 rounded-full text-sm">
+            Rupture de stock
+          </span>
+        </div>
+
+        <h1 class="text-4xl font-bold  mb-2">
+          {{ product.nom || 'Nom du produit' }}
+        </h1>
+
+        <p class="text-gray-500 mt-4 leading-8">
+          {{ product.description || 'Aucune description disponible.' }}
+        </p>
+
+        <div class="mt-8">
+          <div class="flex items-center gap-4 flex-wrap">
+            <span class="text-3xl font-bold text-yellow-600">
+              {{ getPrixFinal() | currency:'EUR':'symbol':'1.2-2' }}
+            </span>
+            
+            <span *ngIf="product.reduction && product.reduction > 0" class="text-lg text-gray-400 line-through">
+              {{ product.prix | currency:'EUR':'symbol':'1.2-2' }}
+            </span>
+
+            <span *ngIf="product.reduction && product.reduction > 0" class="bg-red-500 text-white px-3 py-1 rounded-full">
+              -{{ product.reduction }}%
+            </span>
+          </div>
+        </div>
+
+        <!-- Vendeur -->
+        <div class="mt-6  rounded-xl p-4">
+          <p class="text-sm">Vendeur</p>
+          <p class="font-semibold">{{ product.vendeurNom || 'Vendeur inconnu' }}</p>
+          <p class="text-sm" *ngIf="product.vendeurTelephone">
+            {{ product.vendeurTelephone }}
+          </p>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4 mt-6">
+          <div class="bg-gray-100 rounded-xl p-5">
+            <p class="text-gray-500 text-sm">Stock</p>
+            <p class="text-2xl font-bold" [class.text-red-500]="product.stock <= 5">
+              {{ product.stock ?? 0 }}
+            </p>
+            <p *ngIf="product.stock <= 5 && product.stock > 0" class="text-xs text-red-500">
+              Stock faible
+            </p>
+          </div>
+
+          <div class="bg-gray-100 rounded-xl p-5">
+            <p class="text-gray-500 text-sm">Vues</p>
+            <p class="text-2xl font-bold">
+              {{ product.vues || 0 }}
+            </p>
+          </div>
+        </div>
+
+        <!-- Caractéristiques -->
+        <div *ngIf="product.couleurs?.length || product.tailles?.length" class="mt-6">
+          <div *ngIf="product.couleurs?.length" class="mb-3">
+            <p class="text-sm text-gray-500 mb-2">Couleurs disponibles :</p>
+            <div class="flex gap-2 flex-wrap">
+              <span *ngFor="let couleur of product.couleurs" 
+                    class="w-8 h-8 rounded-full border-2 border-gray-300 inline-block"
+                    [style.background-color]="couleur"
+                    [title]="couleur"></span>
+            </div>
+          </div>
+          
+          <div *ngIf="product.tailles?.length">
+            <p class="text-sm text-gray-500 mb-2">Tailles :</p>
+            <div class="flex gap-2 flex-wrap">
+              <span *ngFor="let taille of product.tailles" 
+                    class="px-3 py-1  rounded-lg text-sm">
+                {{ taille }}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="mt-10 flex gap-4 flex-wrap">
+
+          <button
+            (click)="openDeleteModal()"
+            class="px-6 py-3 bg-red-600 hover:bg-red-700 text-white rounded-lg font-semibold transition-colors">
+            <i class="fas fa-trash mr-2"></i> Supprimer
+          </button>
+
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Modal de suppression -->
+<div *ngIf="showDeleteModal" class=" fixed inset-0 bg-black/60 flex items-center justify-center z-50" (click)="!deleting && closeDeleteModal()">
+  <div class="rounded-2xl w-[420px] shadow-2xl p-8 max-w-[95%] mx-4 bg-gray-100 dark:bg-[#171515]" (click)="$event.stopPropagation()">
+    
+    <div class="flex justify-center">
+      <div class="w-20 h-20 rounded-full bg-red-100 flex items-center justify-center">
+        <i class="fas fa-trash text-red-600 text-3xl"></i>
+      </div>
+    </div>
+
+    <h2 class="text-2xl font-bold text-center mt-6">
+      Confirmer la suppression
+    </h2>
+
+    <p class="text-center text-gray-500 mt-3">
+      Voulez-vous vraiment supprimer
+      <strong class="text-gray-800">{{ product?.nom }}</strong> ?
+      <br>
+      <span class="text-red-500 font-semibold">Cette action est irréversible.</span>
+    </p>
+
+    <div *ngIf="errorMessage" class="mt-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg text-sm">
+      {{ errorMessage }}
+    </div>
+
+    <div class="flex justify-center gap-4 mt-8">
+      <button
+        (click)="closeDeleteModal()"
+        [disabled]="deleting"
+        class="px-6 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+        Annuler
+      </button>
+
+     <!-- BOUTON CONFIRMER LA SUPPRESSION - CELUI QUI MANQUE -->
+      <button
+        (click)="confirmDelete()"
+        [disabled]="deleting"
+        class="px-6 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2">
+        <span *ngIf="deleting" class="animate-spin inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full"></span>
+        {{ deleting ? 'Suppression...' : 'Oui, supprimer' }}
+      </button>
+    
+    </div>
+
+  </div>
+</div>

@@ -12,6 +12,8 @@ import { authGuard } from './guards/auth.guard';
 import { CategorieComponent } from './composants/categorie/categorie.component';
 import { ReclamationsComponent } from './composants/reclamations/reclamations.component';
 import { DetailarticleComponent } from './composants/detailarticle/detailarticle.component';
+import { ProduitsComponent } from './composants/produits/produits.component';
+import { ProduitDetailsComponent } from './composants/produit-details/produit-details.component';
 
 const routes: Routes = [
   {path:'', redirectTo: 'login', pathMatch: 'full'},
@@ -27,7 +29,10 @@ const routes: Routes = [
       {path:'settings', component: SettingsComponent},
       {path:'categorie', component: CategorieComponent},
       {path:'reclamations', component: ReclamationsComponent},
-      {path:'details/:id', component: DetailarticleComponent}  
+      {path:'details/:id', component: DetailarticleComponent},
+      {path:'produits', component: ProduitsComponent},
+      {path:'produit-details/:id', component: ProduitDetailsComponent}
+
       ]
   }
 ];

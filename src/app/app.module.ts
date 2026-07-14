@@ -17,6 +17,8 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { CategorieComponent } from './composants/categorie/categorie.component';
 import { ReclamationsComponent } from './composants/reclamations/reclamations.component';
 import { DetailarticleComponent } from './composants/detailarticle/detailarticle.component';
+import { ProduitsComponent } from './composants/produits/produits.component';
+import { ProduitDetailsComponent } from './composants/produit-details/produit-details.component';
 
 @NgModule({
   declarations: [
@@ -31,7 +33,9 @@ import { DetailarticleComponent } from './composants/detailarticle/detailarticle
     SettingsComponent,
     CategorieComponent,
     ReclamationsComponent,
-    DetailarticleComponent
+    DetailarticleComponent,
+    ProduitsComponent,
+    ProduitDetailsComponent
   ],
   imports: [
     BrowserModule,

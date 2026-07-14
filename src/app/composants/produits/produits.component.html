@@ -1,0 +1,243 @@
+<!-- produits.component.html -->
+<div class="min-h-screen bg-gray-50 dark:bg-[#171515] transition-colors duration-200">
+  
+  <!-- Header Admin -->
+  <div class="sticky top-0 z-40 bg-gray-50 dark:bg-[#171515] shadow-md transition-colors duration-200 border-b border-gray-200 dark:border-gray-700">
+    <div class="max-w-7xl mx-auto px-4 py-4">
+      <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        
+        <!-- Titre et statistiques -->
+        <div>
+          <div class="flex items-center gap-3">
+            <h1 class="text-2xl font-bold text-gray-900 dark:text-white">
+              Gestion de tous les articles
+            </h1>
+          </div>
+          <p class="text-gray-600 dark:text-gray-400 mt-1">
+            <i class="fas fa-boxes mr-1"></i>
+            {{ filteredArticles.length }} article(s) sur {{ articles.length }} au total
+          </p>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Barre de recherche et filtres -->
+  <div class="max-w-7xl mx-auto px-4 py-6">
+    <div class="bg-gray-50 dark:bg-[#171515] rounded-2xl shadow-lg p-6">
+      <!-- Recherche et Tri -->
+      <div class="flex flex-col md:flex-row gap-4 mb-6">
+        <div class="flex-1">
+          <div class="relative">
+            <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+            <input
+              type="text"
+              [(ngModel)]="searchTerm"
+              (ngModelChange)="onSearchChange($event)"
+              placeholder="Rechercher un produit par nom, description, catégorie ou vendeur..."
+              class="w-full h-12 pl-11 pr-12 rounded-xl bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white placeholder:text-gray-400 focus:outline-none  transition-all duration-300"
+            />
+            <button
+              *ngIf="searchTerm"
+              (click)="clearSearch()"
+              class="absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-600 hover:bg-red-500 hover:text-white transition-all flex items-center justify-center"
+            >
+              <i class="fas fa-times text-sm"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <i class="fas fa-sort text-yellow-500"></i>
+          <select
+            [(ngModel)]="sortOrder"
+            (ngModelChange)="onSortChange($event)"
+            class="px-4 py-2 rounded-xl bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white outline-none focus:ring-2 focus:ring-yellow-400 transition-all duration-200 text-sm"
+          >
+            <option value="recent">Plus récents</option>
+            <option value="price-asc">Prix croissant</option>
+            <option value="price-desc">Prix décroissant</option>
+          </select>
+        </div>
+      </div>
+     
+    </div>
+  </div>
+
+  <!-- Message d'erreur -->
+  <div *ngIf="errorMessage" class="max-w-7xl mx-auto px-4 py-4">
+    <div class="bg-red-100 dark:bg-red-900/20 border border-red-400 dark:border-red-700 text-red-700 dark:text-red-300 px-4 py-3 rounded-lg">
+      <i class="fas fa-exclamation-circle mr-2"></i>
+      {{ errorMessage }}
+    </div>
+  </div>
+
+  <!-- Grille des produits -->
+  <div class="max-w-7xl mx-auto px-4 pb-12">
+    
+   
+     <!-- Chargement -->
+  <div *ngIf="isLoading" class="loading-spinner">
+    Chargement des articles <i class="fas fa-spinner fa-spin text-yellow-500"></i>
+  </div>
+
+
+    <!-- Aucun résultat -->
+    <div *ngIf="!isLoading && filteredArticles.length === 0" class="text-center py-12">
+      <div class="text-6xl mb-4">
+        <i class="fas fa-box-open" style="color: #ffbf00;"></i>
+      </div>
+      <h3 class="text-xl font-semibold text-gray-800 dark:text-white">Aucun produit trouvé</h3>
+      <p class="text-gray-500 dark:text-gray-400">
+        {{ searchTerm || selectedCategory !== 'all' ? 'Aucun produit ne correspond à vos critères' : 'Aucun produit disponible pour le moment' }}
+      </p>
+      <button 
+        *ngIf="searchTerm || selectedCategory !== 'all'" 
+        (click)="resetFilters()"
+        class="mt-4 px-6 py-2 bg-yellow-400 text-black rounded-lg hover:bg-yellow-500 transition-colors"
+      >
+        <i class="fas fa-undo mr-2"></i>
+        Réinitialiser les filtres
+      </button>
+    </div>
+
+    <!-- Grille administrateur -->
+    <div *ngIf="!isLoading && filteredArticles.length > 0" 
+         class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6">
+      
+      <div *ngFor="let article of filteredArticles" 
+           class="group bg-gray-50 dark:bg-[#1e1e1e] rounded-xl shadow-lg hover:shadow-2xl 
+                  transition-all duration-300 overflow-hidden hover:-translate-y-2 border-2 border-transparent">
+        
+        <!-- Image et badges -->
+        <div class="relative overflow-hidden aspect-square bg-gray-100 dark:bg-gray-700">
+          <img
+            [src]="getImageUrl(article.images)"
+            [alt]="article.nom"
+            class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+          />
+          
+          <!-- Badge réduction -->
+          <div *ngIf="article.reduction > 0" 
+               class="absolute top-2 right-2 px-3 py-1 rounded-full text-sm font-bold text-white shadow-lg"
+               [class]="getReductionColor(article.reduction)">
+            -{{ article.reduction }}%
+          </div>
+
+          <!-- Badge stock -->
+          <div class="absolute bottom-2 left-2">
+            <span class="bg-black/50 backdrop-blur-sm text-white px-3 py-1 rounded-full text-xs"
+                  [class]="article.stock < 5 ? 'bg-red-500/70' : 'bg-green-500/70'">
+              <i class="fas fa-boxes mr-1"></i>
+              {{ article.stock }} en stock
+            </span>
+          </div>
+
+          <!-- Badge genre -->
+          <div class="absolute bottom-2 right-2">
+            <span class="bg-black/50 backdrop-blur-sm text-white px-2 py-1 rounded-lg text-xs">
+              {{ article.genre || 'Mixte' }}
+            </span>
+          </div>
+        </div>
+
+        <!-- Informations produit -->
+        <div class="p-4">
+          <!-- Catégorie -->
+          <div class="mb-2">
+            <span [class]="getCategoryClass(article.categorie)" 
+                  class="px-2 py-1 rounded-full text-xs font-medium">
+              {{ article.categorie }}
+            </span>
+          </div>
+
+          <!-- Nom et ID -->
+          <div class="flex justify-between items-start mb-1">
+            <h3 class="text-lg font-semibold text-gray-800 dark:text-white line-clamp-2 flex-1">
+              {{ article.nom }}
+            </h3>
+            <span class="text-xs text-gray-400 dark:text-gray-500 ml-2 whitespace-nowrap">
+              #{{ article.id?.slice(-6) || article._id?.slice(-6) }}
+            </span>
+          </div>
+
+          <!-- Description -->
+          <p class="text-sm text-gray-600 dark:text-gray-400 mb-3 line-clamp-2">
+            {{ article.description }}
+          </p>
+
+          <!-- Prix -->
+          <div class="flex items-center gap-2 mb-3">
+            <span class="text-2xl font-bold text-yellow-600 dark:text-yellow-400">
+              {{ article.prixFinal || article.prix }} €
+            </span>
+            <span *ngIf="article.reduction > 0" 
+                  class="text-sm text-gray-400 line-through">
+              {{ article.prix }} €
+            </span>
+          </div>
+
+          <!-- Informations vendeur -->
+          <div class="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-3 mb-3">
+            <div class="flex items-center gap-2 text-sm">
+              <i class="fas fa-user-circle text-yellow-500"></i>
+              <span class="font-medium text-gray-700 dark:text-gray-300">{{ article.vendeurNom || 'Vendeur' }}</span>
+            </div>
+            <div class="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400 mt-1">
+              <i class="fas fa-phone"></i>
+              <span>{{ article.vendeurTelephone || 'Non renseigné' }}</span>
+            </div>
+          </div>
+
+          <!-- Couleurs et tailles -->
+          <div class="flex flex-wrap items-center gap-2 mb-3">
+            <div *ngIf="article.couleurs && article.couleurs.length > 0" class="flex gap-1">
+              <div *ngFor="let couleur of article.couleurs.slice(0, 3)"
+                   class="w-5 h-5 rounded-full border-2 border-gray-300 dark:border-gray-600"
+                   [style.background-color]="couleur"
+                   [title]="couleur">
+              </div>
+              <span *ngIf="article.couleurs.length > 3" 
+                    class="text-xs text-gray-500 dark:text-gray-400 ml-1">
+                +{{ article.couleurs.length - 3 }}
+              </span>
+            </div>
+            <span *ngIf="article.tailles && article.tailles.length > 0" 
+                  class="text-xs text-gray-500 dark:text-gray-400">
+              {{ article.tailles.join(', ') }}
+            </span>
+            <span *ngIf="!article.tailles || article.tailles.length === 0" 
+                  class="text-xs text-gray-400 dark:text-gray-500">
+              Taille unique
+            </span>
+          </div>
+
+          <!-- Date de création -->
+          <div class="text-xs text-gray-400 dark:text-gray-500 mb-3">
+            <i class="fas fa-calendar-alt mr-1"></i>
+            Créé le {{ article.createdAt | date:'dd/MM/yyyy à HH:mm' }}
+          </div>
+
+       
+          <!-- Actions administrateur -->
+<div class="grid grid-cols-2 gap-3 mt-4">
+  
+  <!-- Voir -->
+  <button
+     [routerLink]="['/admin/produit-details', article._id]"
+    class="group flex items-center justify-center gap-2 rounded-xl bg-[#ffbf00] px-4 py-3 text-white font-semibold shadow-md transition-all duration-300 hover:shadow-xl hover:-translate-y-1 active:scale-95">
+
+    <i class="fas fa-eye text-sm group-hover:scale-110 transition-transform"></i>
+  </button>
+
+
+</div>
+
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
