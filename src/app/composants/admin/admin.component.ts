@@ -3,6 +3,7 @@ import { Component, HostListener, Inject, PLATFORM_ID } from '@angular/core';
 import { ThemeService } from '../../services/theme.service';
 import { isPlatformBrowser } from '@angular/common';
 import { Router } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-admin',
@@ -21,7 +22,8 @@ export class AdminComponent {
   constructor(
     public themeService: ThemeService,
     @Inject(PLATFORM_ID) platformId: Object,
-    private router : Router
+    private router : Router,
+    private http: HttpClient
   ) {
     this.isBrowser = isPlatformBrowser(platformId);
     
@@ -77,6 +79,32 @@ private generateInitial(name: string): string {
   }
   
   return initial;
+}
+
+sendNotification(){
+
+  const url = "https://backend-kinova.onrender.com/notification/test";
+
+  this.http.get(url).subscribe({
+
+    next: (response:any)=>{
+
+      console.log("Notification envoyée :", response);
+
+      alert("Notification envoyée avec succès 🔔");
+
+    },
+
+    error:(error)=>{
+
+      console.error("Erreur envoi notification :", error);
+
+      alert("Erreur lors de l'envoi de la notification");
+
+    }
+
+  });
+
 }
 
   toggleTheme() {

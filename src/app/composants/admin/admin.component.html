@@ -197,12 +197,23 @@
       </div>
 
       <div class="topbar-right">
+
         <button (click)="logout()" class="icon-btn" title="Déconnexion">
           <i class="fa-solid fa-power-off"></i>
           <span class="notification-dot"></span>
         </button>
+
+         <button 
+              class="text-yellow-500" 
+              title="Envoyer une notification rapide"
+             (click)="sendNotification()">
+           <i class="fa-solid fa-bell"></i>
+         </button>
+
+
         
-        <button class="icon-btn" (click)="toggleTheme()">
+        
+        <button title="Changer de mode" class="icon-btn" (click)="toggleTheme()">
           <svg *ngIf="!themeService.isDark()" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
           </svg>
