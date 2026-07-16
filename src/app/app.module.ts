@@ -19,6 +19,7 @@ import { ReclamationsComponent } from './composants/reclamations/reclamations.co
 import { DetailarticleComponent } from './composants/detailarticle/detailarticle.component';
 import { ProduitsComponent } from './composants/produits/produits.component';
 import { ProduitDetailsComponent } from './composants/produit-details/produit-details.component';
+import { ClientDetailsComponent } from './composants/client-details/client-details.component';
 
 @NgModule({
   declarations: [
@@ -35,7 +36,8 @@ import { ProduitDetailsComponent } from './composants/produit-details/produit-de
     ReclamationsComponent,
     DetailarticleComponent,
     ProduitsComponent,
-    ProduitDetailsComponent
+    ProduitDetailsComponent,
+    ClientDetailsComponent
   ],
   imports: [
     BrowserModule,

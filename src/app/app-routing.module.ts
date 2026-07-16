@@ -14,6 +14,7 @@ import { ReclamationsComponent } from './composants/reclamations/reclamations.co
 import { DetailarticleComponent } from './composants/detailarticle/detailarticle.component';
 import { ProduitsComponent } from './composants/produits/produits.component';
 import { ProduitDetailsComponent } from './composants/produit-details/produit-details.component';
+import { ClientDetailsComponent } from './composants/client-details/client-details.component';
 
 const routes: Routes = [
   {path:'', redirectTo: 'login', pathMatch: 'full'},
@@ -31,7 +32,8 @@ const routes: Routes = [
       {path:'reclamations', component: ReclamationsComponent},
       {path:'details/:id', component: DetailarticleComponent},
       {path:'produits', component: ProduitsComponent},
-      {path:'produit-details/:id', component: ProduitDetailsComponent}
+      {path:'produit-details/:id', component: ProduitDetailsComponent},
+      {path:'client-details/:id', component: ClientDetailsComponent}
 
       ]
   }

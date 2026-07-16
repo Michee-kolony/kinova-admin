@@ -122,7 +122,7 @@
 
     <!-- Grille des clients -->
     <div class="clients-grid" *ngIf="filteredClients.length > 0">
-      <div *ngFor="let client of paginatedClients" class="client-card">
+      <div *ngFor="let client of paginatedClients"  class="client-card">
         <div class="client-card-inner">
           <!-- Avatar et statut -->
           <div class="client-avatar-section">
@@ -155,7 +155,7 @@
       
           <!-- Actions -->
           <div class="client-actions">
-            <button class="action-btn view" title="Voir le profil">
+            <button [routerLink]="['/admin/client-details/', client._id]" class="action-btn view" title="Voir le profil">
               <i class="fas fa-eye"></i>
               Profil
             </button>
