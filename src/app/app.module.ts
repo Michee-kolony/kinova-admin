@@ -23,6 +23,7 @@ import { ClientDetailsComponent } from './composants/client-details/client-detai
 import { KinovaComponent } from './client/kinova/kinova.component';
 import { HomeComponent } from './client/home/home.component';
 import { NavbarComponent } from './client/navbar/navbar.component';
+import { FooterComponent } from './client/footer/footer.component';
 
 @NgModule({
   declarations: [
@@ -43,7 +44,8 @@ import { NavbarComponent } from './client/navbar/navbar.component';
     ClientDetailsComponent,
     KinovaComponent,
     HomeComponent,
-    NavbarComponent
+    NavbarComponent,
+    FooterComponent
   ],
   imports: [
     BrowserModule,
