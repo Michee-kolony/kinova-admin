@@ -1,0 +1,42 @@
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes spin-slow-reverse {
+  from { transform: rotate(360deg); }
+  to { transform: rotate(0deg); }
+}
+
+.animate-spin-slow {
+  animation: spin-slow 20s linear infinite;
+}
+
+.animate-spin-slow-reverse {
+  animation: spin-slow-reverse 25s linear infinite;
+}
+
+/* Personnalisation des contrôles Bootstrap */
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+  filter: none;
+}
+
+.carousel-control-prev,
+.carousel-control-next {
+  opacity: 1;
+  width: auto;
+}
+
+.carousel-control-prev:hover,
+.carousel-control-next:hover {
+  opacity: 1;
+}
+
+/* Ajustements responsive */
+@media (max-width: 640px) {
+  .carousel-control-prev,
+  .carousel-control-next {
+    display: none;
+  }
+}

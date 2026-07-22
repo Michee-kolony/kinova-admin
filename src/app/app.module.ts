@@ -20,6 +20,9 @@ import { DetailarticleComponent } from './composants/detailarticle/detailarticle
 import { ProduitsComponent } from './composants/produits/produits.component';
 import { ProduitDetailsComponent } from './composants/produit-details/produit-details.component';
 import { ClientDetailsComponent } from './composants/client-details/client-details.component';
+import { KinovaComponent } from './client/kinova/kinova.component';
+import { HomeComponent } from './client/home/home.component';
+import { NavbarComponent } from './client/navbar/navbar.component';
 
 @NgModule({
   declarations: [
@@ -37,7 +40,10 @@ import { ClientDetailsComponent } from './composants/client-details/client-detai
     DetailarticleComponent,
     ProduitsComponent,
     ProduitDetailsComponent,
-    ClientDetailsComponent
+    ClientDetailsComponent,
+    KinovaComponent,
+    HomeComponent,
+    NavbarComponent
   ],
   imports: [
     BrowserModule,

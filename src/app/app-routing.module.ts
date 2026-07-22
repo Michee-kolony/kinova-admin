@@ -15,9 +15,11 @@ import { DetailarticleComponent } from './composants/detailarticle/detailarticle
 import { ProduitsComponent } from './composants/produits/produits.component';
 import { ProduitDetailsComponent } from './composants/produit-details/produit-details.component';
 import { ClientDetailsComponent } from './composants/client-details/client-details.component';
+import { KinovaComponent } from './client/kinova/kinova.component';
+import { HomeComponent } from './client/home/home.component';
 
 const routes: Routes = [
-  {path:'', redirectTo: 'login', pathMatch: 'full'},
+  {path:'', redirectTo: 'kinova', pathMatch: 'full'},
   {path:'login', component: LoginComponent},
   {path:'admin', component: AdminComponent, canActivateChild: [authGuard],
     children:[
@@ -36,6 +38,12 @@ const routes: Routes = [
       {path:'client-details/:id', component: ClientDetailsComponent}
 
       ]
+  },
+  {path:'kinova', component: KinovaComponent,
+    children:[
+      {path:'', redirectTo:'home', pathMatch:'full'},
+      {path:'home', component: HomeComponent}
+    ]
   }
 ];
 
