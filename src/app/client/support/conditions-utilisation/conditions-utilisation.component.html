@@ -1,0 +1,330 @@
+<div class="space-y-6">
+  
+  <!-- En-tête avec titre -->
+  <div>
+    <h2 class="text-2xl sm:text-3xl font-bold text-white flex items-center gap-3">
+      <span></span> Conditions d'utilisation
+    </h2>
+    <p class="text-gray-400 text-sm mt-1">Sélectionnez votre profil pour consulter les conditions</p>
+  </div>
+  
+  <!-- Onglets Client / Vendeur -->
+  <div class="flex rounded-xl bg-gray-800/50 p-1">
+    <button 
+      (click)="activeTab = 'client'"
+      [class]="activeTab === 'client' 
+        ? 'flex-1 py-2.5 px-4 rounded-lg bg-gradient-to-r from-yellow-500 to-yellow-600 text-white font-semibold shadow-lg shadow-yellow-500/25 transition-all duration-300' 
+        : 'flex-1 py-2.5 px-4 rounded-lg text-gray-400 font-medium hover:text-white transition-all duration-300'">
+      <div class="flex items-center justify-center gap-2 text-xs sm:text-sm">
+        <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+        </svg>
+        <span>Client</span>
+      </div>
+    </button>
+    
+    <button 
+      (click)="activeTab = 'vendeur'"
+      [class]="activeTab === 'vendeur' 
+        ? 'flex-1 py-2.5 px-4 rounded-lg bg-gradient-to-r from-yellow-500 to-yellow-600 text-white font-semibold shadow-lg shadow-yellow-500/25 transition-all duration-300' 
+        : 'flex-1 py-2.5 px-4 rounded-lg text-gray-400 font-medium hover:text-white transition-all duration-300'">
+      <div class="flex items-center justify-center gap-2 text-xs sm:text-sm">
+        <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+        </svg>
+        <span>Vendeur</span>
+      </div>
+    </button>
+  </div>
+
+  <!-- Contenu Client -->
+  <div *ngIf="activeTab === 'client'" class="animate-fadeIn">
+    <div class="bg-gray-800/30 backdrop-blur-sm rounded-2xl  p-4 sm:p-5">
+      
+      <div class="flex items-center gap-3 mb-4 pb-3 border-b border-gray-700">
+        <div class="w-9 h-9 rounded-full bg-yellow-500/20 flex items-center justify-center flex-shrink-0">
+          <svg class="w-4 h-4 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </div>
+        <div>
+          <h3 class="text-white font-semibold text-sm">Conditions Client</h3>
+          <p class="text-gray-400 text-xs">Protection et droits des acheteurs</p>
+        </div>
+      </div>
+
+      <div class="space-y-4 text-gray-300">
+        <p class="text-xs text-gray-400">
+          <span class="font-semibold text-yellow-400">Dernière mise à jour :</span> 23 juillet 2026
+        </p>
+
+        <div class="space-y-4">
+          <!-- 1 -->
+          <div class="bg-gray-800/20 rounded-xl p-3 hover:bg-gray-800/40 transition-all duration-300">
+            <h4 class="text-sm font-semibold text-white mb-1.5 flex items-center gap-2">
+              <span class="text-yellow-400">1.</span> Création du compte
+            </h4>
+            <ul class="list-disc pl-5 space-y-0.5 text-xs sm:text-sm text-gray-400">
+              <li>Informations exactes et à jour</li>
+              <li>Responsable de la confidentialité du mot de passe</li>
+              <li>Responsable des activités du compte</li>
+            </ul>
+          </div>
+
+          <!-- 2 -->
+          <div class="bg-gray-800/20 rounded-xl p-3 hover:bg-gray-800/40 transition-all duration-300">
+            <h4 class="text-sm font-semibold text-white mb-1.5 flex items-center gap-2">
+              <span class="text-yellow-400">2.</span> Utilisation de Kinova
+            </h4>
+            <ul class="list-disc pl-5 space-y-0.5 text-xs sm:text-sm text-gray-400">
+              <li>Respect des lois en vigueur</li>
+              <li>Ne pas usurper d'identité</li>
+              <li>Pas de contenus frauduleux ou illégaux</li>
+            </ul>
+          </div>
+
+          <!-- 3 -->
+          <div class="bg-gray-800/20 rounded-xl p-3 hover:bg-gray-800/40 transition-all duration-300">
+            <h4 class="text-sm font-semibold text-white mb-1.5 flex items-center gap-2">
+              <span class="text-yellow-400">3.</span> Commandes
+            </h4>
+            <ul class="list-disc pl-5 space-y-0.5 text-xs sm:text-sm text-gray-400">
+              <li>Commandes définitives après validation</li>
+              <li>Vérification des informations avant validation</li>
+              <li>Délais de livraison indicatifs</li>
+            </ul>
+          </div>
+
+          <!-- 4 -->
+          <div class="bg-gray-800/20 rounded-xl p-3 hover:bg-gray-800/40 transition-all duration-300">
+            <h4 class="text-sm font-semibold text-white mb-1.5 flex items-center gap-2">
+              <span class="text-yellow-400">4.</span> Paiements
+            </h4>
+            <ul class="list-disc pl-5 space-y-0.5 text-xs sm:text-sm text-gray-400">
+              <li>Paiements via moyens sécurisés</li>
+              <li>Garantie d'autorisation du moyen de paiement</li>
+              <li>Fraude = suspension du compte</li>
+            </ul>
+          </div>
+
+          <!-- 5 -->
+          <div class="bg-gray-800/20 rounded-xl p-3 hover:bg-gray-800/40 transition-all duration-300">
+            <h4 class="text-sm font-semibold text-white mb-1.5 flex items-center gap-2">
+              <span class="text-yellow-400">5.</span> Livraison
+            </h4>
+            <ul class="list-disc pl-5 space-y-0.5 text-xs sm:text-sm text-gray-400">
+              <li>Délais variables selon localisation</li>
+              <li>Retards indépendants possibles</li>
+              <li>Information en cas de retard important</li>
+            </ul>
+          </div>
+
+          <!-- 6 -->
+          <div class="bg-gray-800/20 rounded-xl p-3 hover:bg-gray-800/40 transition-all duration-300">
+            <h4 class="text-sm font-semibold text-white mb-1.5 flex items-center gap-2">
+              <span class="text-yellow-400">6.</span> Annulation et remboursement
+            </h4>
+            <ul class="list-disc pl-5 space-y-0.5 text-xs sm:text-sm text-gray-400">
+              <li>Soumis à la politique de retour</li>
+              <li>Produits utilisés non remboursés</li>
+            </ul>
+          </div>
+
+          <!-- 7 -->
+          <div class="bg-gray-800/20 rounded-xl p-3 hover:bg-gray-800/40 transition-all duration-300">
+            <h4 class="text-sm font-semibold text-white mb-1.5 flex items-center gap-2">
+              <span class="text-yellow-400">7.</span> Données personnelles
+            </h4>
+            <ul class="list-disc pl-5 space-y-0.5 text-xs sm:text-sm text-gray-400">
+              <li>Utilisées pour le fonctionnement du compte</li>
+              <li>Traitement des commandes et service client</li>
+              <li>Mesures de sécurité pour protéger les informations</li>
+            </ul>
+          </div>
+
+          <!-- 8 -->
+          <div class="bg-gray-800/20 rounded-xl p-3 hover:bg-gray-800/40 transition-all duration-300">
+            <h4 class="text-sm font-semibold text-white mb-1.5 flex items-center gap-2">
+              <span class="text-yellow-400">8.</span> Notifications
+            </h4>
+            <ul class="list-disc pl-5 space-y-0.5 text-xs sm:text-sm text-gray-400">
+              <li>Notifications relatives aux commandes</li>
+              <li>Offres promotionnelles sur acceptation</li>
+            </ul>
+          </div>
+
+          <!-- 9 -->
+          <div class="bg-gray-800/20 rounded-xl p-3 hover:bg-gray-800/40 transition-all duration-300">
+            <h4 class="text-sm font-semibold text-white mb-1.5 flex items-center gap-2">
+              <span class="text-yellow-400">9.</span> Suspension du compte
+            </h4>
+            <ul class="list-disc pl-5 space-y-0.5 text-xs sm:text-sm text-gray-400">
+              <li>Suspension en cas de fraude</li>
+              <li>Activités illégales ou abusives interdites</li>
+            </ul>
+          </div>
+
+          <!-- 10 -->
+          <div class="bg-gray-800/20 rounded-xl p-3 hover:bg-gray-800/40 transition-all duration-300">
+            <h4 class="text-sm font-semibold text-white mb-1.5 flex items-center gap-2">
+              <span class="text-yellow-400">10.</span> Modification des conditions
+            </h4>
+            <ul class="list-disc pl-5 space-y-0.5 text-xs sm:text-sm text-gray-400">
+              <li>Modification possible à tout moment</li>
+              <li>Effet dès la publication</li>
+            </ul>
+          </div>
+
+          <!-- 11 -->
+          <div class="bg-yellow-500/10 border border-yellow-500/20 rounded-xl p-3">
+            <h4 class="text-sm font-semibold text-white mb-1.5 flex items-center gap-2">
+              <span class="text-yellow-400">11.</span> Acceptation
+            </h4>
+            <p class="text-xs sm:text-sm text-gray-400">
+              En créant un compte, vous acceptez les Conditions Générales de Kinova.
+            </p>
+          </div>
+
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Contenu Vendeur -->
+  <div *ngIf="activeTab === 'vendeur'" class="animate-fadeIn">
+    <div class="bg-gray-800/30 backdrop-blur-sm rounded-2xl  p-4 sm:p-5">
+      
+      <div class="flex items-center gap-3 mb-4 pb-3 border-b border-gray-700">
+        <div class="w-9 h-9 rounded-full bg-yellow-500/20 flex items-center justify-center flex-shrink-0">
+          <svg class="w-4 h-4 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+          </svg>
+        </div>
+        <div>
+          <h3 class="text-white font-semibold text-sm">Conditions Vendeur</h3>
+          <p class="text-gray-400 text-xs">Règles d'utilisation de la plateforme</p>
+        </div>
+      </div>
+
+      <div class="space-y-4 text-gray-300">
+        <p class="text-xs text-gray-400">
+          <span class="font-semibold text-yellow-400">Dernière mise à jour :</span> 23 juillet 2026
+        </p>
+
+        <div class="space-y-4">
+          <!-- 1 -->
+          <div class="bg-gray-800/20 rounded-xl p-3 hover:bg-gray-800/40 transition-all duration-300">
+            <h4 class="text-sm font-semibold text-white mb-1.5 flex items-center gap-2">
+              <span class="text-yellow-400">1.</span> Création de la boutique
+            </h4>
+            <ul class="list-disc pl-5 space-y-0.5 text-xs sm:text-sm text-gray-400">
+              <li>Informations exactes et complètes</li>
+              <li>Nom de boutique unique et non usurpé</li>
+              <li>Responsable des informations publiées</li>
+            </ul>
+          </div>
+
+          <!-- 2 -->
+          <div class="bg-gray-800/20 rounded-xl p-3 hover:bg-gray-800/40 transition-all duration-300">
+            <h4 class="text-sm font-semibold text-white mb-1.5 flex items-center gap-2">
+              <span class="text-yellow-400">2.</span> Photo de profil obligatoire
+            </h4>
+            <ul class="list-disc pl-5 space-y-0.5 text-xs sm:text-sm text-gray-400">
+              <li>Photo claire et représentative</li>
+              <li>Inspire confiance aux clients</li>
+              <li>Images offensantes ou trompeuses interdites</li>
+            </ul>
+          </div>
+
+          <!-- 3 -->
+          <div class="bg-gray-800/20 rounded-xl p-3 hover:bg-gray-800/40 transition-all duration-300">
+            <h4 class="text-sm font-semibold text-white mb-1.5 flex items-center gap-2">
+              <span class="text-yellow-400">3.</span> Produits
+            </h4>
+            <ul class="list-disc pl-5 space-y-0.5 text-xs sm:text-sm text-gray-400">
+              <li>Correspondre à leur description</li>
+              <li>Photos authentiques</li>
+              <li>Produits interdits par la loi exclus</li>
+            </ul>
+          </div>
+
+          <!-- 4 -->
+          <div class="bg-gray-800/20 rounded-xl p-3 hover:bg-gray-800/40 transition-all duration-300">
+            <h4 class="text-sm font-semibold text-white mb-1.5 flex items-center gap-2">
+              <span class="text-yellow-400">4.</span> Traitement des commandes
+            </h4>
+            <ul class="list-disc pl-5 space-y-0.5 text-xs sm:text-sm text-gray-400">
+              <li>Traitement rapide des commandes</li>
+              <li>Maintenir un bon niveau de service</li>
+              <li>Communiquer les retards importants</li>
+            </ul>
+          </div>
+
+          <!-- 5 -->
+          <div class="bg-gray-800/20 rounded-xl p-3 hover:bg-gray-800/40 transition-all duration-300">
+            <h4 class="text-sm font-semibold text-white mb-1.5 flex items-center gap-2">
+              <span class="text-yellow-400">5.</span> Commissions
+            </h4>
+            <ul class="list-disc pl-5 space-y-0.5 text-xs sm:text-sm text-gray-400">
+              <li>Commission appliquée sur chaque vente</li>
+              <li>Montant communiqué avant la mise en vente</li>
+              <li>Paiements selon modalités prévues</li>
+            </ul>
+          </div>
+
+          <!-- 6 -->
+          <div class="bg-gray-800/20 rounded-xl p-3 hover:bg-gray-800/40 transition-all duration-300">
+            <h4 class="text-sm font-semibold text-white mb-1.5 flex items-center gap-2">
+              <span class="text-yellow-400">6.</span> Comportement du vendeur
+            </h4>
+            <ul class="list-disc pl-5 space-y-0.5 text-xs sm:text-sm text-gray-400">
+              <li>Respect professionnel des clients</li>
+              <li>Réponses dans des délais raisonnables</li>
+              <li>Utilisation frauduleuse interdite</li>
+            </ul>
+          </div>
+
+          <!-- 7 -->
+          <div class="bg-gray-800/20 rounded-xl p-3 hover:bg-gray-800/40 transition-all duration-300">
+            <h4 class="text-sm font-semibold text-white mb-1.5 flex items-center gap-2">
+              <span class="text-yellow-400">7.</span> Suspension du compte
+            </h4>
+            <ul class="list-disc pl-5 space-y-0.5 text-xs sm:text-sm text-gray-400">
+              <li>Suspension en cas de fraude</li>
+              <li>Produits interdits = fermeture immédiate</li>
+              <li>Informations mensongères = suppression</li>
+            </ul>
+          </div>
+
+          <!-- 8 -->
+          <div class="bg-gray-800/20 rounded-xl p-3 hover:bg-gray-800/40 transition-all duration-300">
+            <h4 class="text-sm font-semibold text-white mb-1.5 flex items-center gap-2">
+              <span class="text-yellow-400">8.</span> Modification des conditions
+            </h4>
+            <ul class="list-disc pl-5 space-y-0.5 text-xs sm:text-sm text-gray-400">
+              <li>Mise à jour possible à tout moment</li>
+              <li>Vendeurs informés des modifications</li>
+            </ul>
+          </div>
+
+          <!-- 9 -->
+          <div class="bg-yellow-500/10 border border-yellow-500/20 rounded-xl p-3">
+            <h4 class="text-sm font-semibold text-white mb-1.5 flex items-center gap-2">
+              <span class="text-yellow-400">9.</span> Acceptation
+            </h4>
+            <p class="text-xs sm:text-sm text-gray-400">
+              En ouvrant une boutique, vous acceptez les Conditions Vendeur de Kinova.
+            </p>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="text-center text-gray-500 text-xs">
+    <p>Dernière mise à jour : Janvier 2026</p>
+  </div>
+</div>

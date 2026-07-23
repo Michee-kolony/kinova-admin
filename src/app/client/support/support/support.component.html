@@ -1,0 +1,90 @@
+<div class="min-h-screen bg-black">
+  <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+    
+    <!-- En-tête -->
+    <div class="mb-8 sm:mb-10">
+      <div class="flex items-center gap-3 mb-2">
+        <div>
+          <h1 class="text-2xl sm:text-3xl font-bold text-white">Centre d'aide</h1>
+          <p class="text-gray-400 text-sm">Retrouvez toutes les informations importantes</p>
+        </div>
+      </div>
+      <div class="h-px bg-gradient-to-r from-yellow-500/50 via-gray-800 to-transparent mt-4"></div>
+    </div>
+
+    <!-- Layout principal avec sidebar -->
+    <div class="flex flex-col lg:flex-row gap-6 lg:gap-8">
+      
+      <!-- Sidebar gauche -->
+      <div class="lg:w-72 xl:w-80 flex-shrink-0">
+        <div class="bg-gray-900/50 backdrop-blur-sm rounded-2xl p-4 sm:p-5 sticky top-4">
+          
+          <!-- Catégories -->
+          <div class="mb-4">
+            <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">
+              Menu de support
+            </h3>
+            
+            <nav class="space-y-1.5">
+              <button 
+                *ngFor="let tab of tabs" 
+                (click)="activeTab = tab.id"
+                [class]="activeTab === tab.id 
+                  ? 'bg-gradient-to-r from-yellow-500/20 to-amber-500/20 border-yellow-500/50 text-white shadow-lg shadow-yellow-500/10' 
+                  : 'border-transparent text-gray-400 hover:bg-gray-800/50 hover:text-white'"
+                class="w-full flex items-center gap-3 px-4 py-3 rounded-xl border transition-all duration-300 text-sm font-medium">
+                <span class="flex-1 text-left">{{ tab.label }}</span>
+                <svg *ngIf="activeTab === tab.id" class="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                </svg>
+              </button>
+            </nav>
+          </div>
+
+
+        </div>
+      </div>
+
+      <!-- Contenu principal - Droite -->
+      <div class="flex-1 min-w-0">
+        <div class="bg-gray-900/30 backdrop-blur-sm rounded-2xl p-6 sm:p-8 lg:p-10">
+          
+          <!-- Conditions d'utilisation -->
+          <div *ngIf="activeTab === 'conditions'" class="animate-fadeIn">
+            <app-conditions-utilisation></app-conditions-utilisation>
+          </div>
+
+          <!-- Politique de confidentialité -->
+          <div *ngIf="activeTab === 'confidentialite'" class="animate-fadeIn">
+            <app-politique-confidentialite></app-politique-confidentialite>
+          </div>
+
+          <!-- CGU -->
+          <div *ngIf="activeTab === 'cgu'" class="animate-fadeIn">
+            <app-cgu></app-cgu>
+          </div>
+
+          <!-- Cookies -->
+          <div *ngIf="activeTab === 'cookies'" class="animate-fadeIn">
+            <app-cookies></app-cookies>
+          </div>
+
+          <!-- FAQ -->
+          <div *ngIf="activeTab === 'faq'" class="animate-fadeIn">
+            <app-faq></app-faq>
+          </div>
+
+          <!-- Contact -->
+          <div *ngIf="activeTab === 'contact'" class="animate-fadeIn">
+            <app-contact></app-contact>
+          </div>
+
+          <!-- Supprimer mon compte -->
+          <div *ngIf="activeTab === 'deletecount'" class="animate-fadeIn">
+            <app-deletecount></app-deletecount>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

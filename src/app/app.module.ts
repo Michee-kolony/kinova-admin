@@ -24,6 +24,14 @@ import { KinovaComponent } from './client/kinova/kinova.component';
 import { HomeComponent } from './client/home/home.component';
 import { NavbarComponent } from './client/navbar/navbar.component';
 import { FooterComponent } from './client/footer/footer.component';
+import { SupportComponent } from './client/support/support/support.component';
+import { ConditionsUtilisationComponent } from './client/support/conditions-utilisation/conditions-utilisation.component';
+import { PolitiqueConfidentialiteComponent } from './client/support/politique-confidentialite/politique-confidentialite.component';
+import { CguComponent } from './client/support/cgu/cgu.component';
+import { CookiesComponent } from './client/support/cookies/cookies.component';
+import { FaqComponent } from './client/support/faq/faq.component';
+import { ContactComponent } from './client/support/contact/contact.component';
+import { DeletecountComponent } from './client/support/deletecount/deletecount.component';
 
 @NgModule({
   declarations: [
@@ -45,7 +53,15 @@ import { FooterComponent } from './client/footer/footer.component';
     KinovaComponent,
     HomeComponent,
     NavbarComponent,
-    FooterComponent
+    FooterComponent,
+    SupportComponent,
+    ConditionsUtilisationComponent,
+    PolitiqueConfidentialiteComponent,
+    CguComponent,
+    CookiesComponent,
+    FaqComponent,
+    ContactComponent,
+    DeletecountComponent
   ],
   imports: [
     BrowserModule,
