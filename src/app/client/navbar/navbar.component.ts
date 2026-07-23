@@ -5,7 +5,6 @@ import { AppRoutingModule } from "../../app-routing.module";
   selector: 'app-navbar',
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.css',
-  imports: [AppRoutingModule],
 })
 export class NavbarComponent {
   isMenuOpen = false;
