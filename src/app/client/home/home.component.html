@@ -353,3 +353,94 @@
         </p>
     </div>
 </section>
+
+<section class="relative py-16 md:py-24 bg-gradient-to-b from-yellow-50 via-amber-50 to-white overflow-hidden">
+    <!-- Texture de fond animée -->
+    <div class="absolute inset-0 opacity-20">
+        <div class="absolute top-0 left-0 w-full h-full bg-[radial-gradient(ellipse_at_top_left,_var(--tw-gradient-stops))] from-yellow-400 via-transparent to-transparent"></div>
+        <div class="absolute bottom-0 right-0 w-full h-full bg-[radial-gradient(ellipse_at_bottom_right,_var(--tw-gradient-stops))] from-amber-300 via-transparent to-transparent"></div>
+        <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-yellow-300 rounded-full mix-blend-multiply filter blur-3xl animate-pulse"></div>
+        <div class="absolute top-20 right-20 w-64 h-64 bg-amber-400 rounded-full mix-blend-multiply filter blur-2xl animate-pulse delay-700"></div>
+        <div class="absolute bottom-20 left-20 w-56 h-56 bg-yellow-200 rounded-full mix-blend-multiply filter blur-2xl animate-pulse delay-500"></div>
+    </div>
+
+    <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- En-tête -->
+        <div class="text-center mb-12">
+            <h2 class="text-4xl md:text-5xl font-extrabold text-gray-800 mb-4 tracking-tight">
+                Notre Champ d'<span class="text-yellow-600">Action</span>
+            </h2>
+            <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                Kinova rayonne à travers la <span class="font-semibold text-yellow-700">République Démocratique du Congo</span> et s'étend progressivement vers l'international.
+            </p>
+            <div class="w-24 h-1 bg-gradient-to-r from-yellow-500 to-amber-500 mx-auto mt-4 rounded-full"></div>
+        </div>
+
+        <!-- Contenu principal : ancrage national & expansion internationale -->
+        <div class="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
+            <!-- Carte Nationale -->
+            <div class="bg-white/80 backdrop-blur-sm rounded-2xl p-8 shadow-xl border border-yellow-100 hover:shadow-2xl transition-all duration-300">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="w-12 h-12 bg-yellow-500 rounded-full flex items-center justify-center flex-shrink-0">
+                        <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M10 2a8 8 0 100 16 8 8 0 000-16zm0 14a6 6 0 110-12 6 6 0 010 12z"/>
+                            <path d="M10 4a1 1 0 100 2 1 1 0 000-2z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800">Ancrage National</h3>
+                </div>
+                <p class="text-gray-600 leading-relaxed">
+                    Kinova déploie ses activités dans <span class="font-semibold text-yellow-700">11 provinces</span> de la RDC, de Kinshasa à Lubumbashi, en passant par Goma, Kisangani et Kananga. Nous connectons les commerçants et les consommateurs à travers tout le territoire.
+                </p>
+                <div class="mt-4 flex flex-wrap gap-2">
+                    <span class="px-3 py-1 bg-yellow-100 text-yellow-800 text-xs font-medium rounded-full">Kinshasa</span>
+                    <span class="px-3 py-1 bg-yellow-100 text-yellow-800 text-xs font-medium rounded-full">Lubumbashi</span>
+                    <span class="px-3 py-1 bg-yellow-100 text-yellow-800 text-xs font-medium rounded-full">Goma</span>
+                    <span class="px-3 py-1 bg-yellow-100 text-yellow-800 text-xs font-medium rounded-full">Kisangani</span>
+                    <span class="px-3 py-1 bg-yellow-100 text-yellow-800 text-xs font-medium rounded-full">Kananga</span>
+                    <span class="px-3 py-1 bg-yellow-100 text-yellow-800 text-xs font-medium rounded-full">+ 6 autres</span>
+                </div>
+            </div>
+
+            <!-- Carte Internationale -->
+            <div class="bg-white/80 backdrop-blur-sm rounded-2xl p-8 shadow-xl border border-amber-100 hover:shadow-2xl transition-all duration-300">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="w-12 h-12 bg-amber-500 rounded-full flex items-center justify-center flex-shrink-0">
+                        <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M3 12h14v2H3v-2zm0-4h14v2H3V8zm0-4h14v2H3V4z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800">Expansion Internationale</h3>
+                </div>
+                <p class="text-gray-600 leading-relaxed">
+                    Fort de son succès en RDC, Kinova étend son empreinte vers <span class="font-semibold text-amber-700">l'international</span>, avec des premiers partenariats en Afrique centrale et des ambitions de rayonner sur tout le continent.
+                </p>
+                <div class="mt-4 flex flex-wrap gap-2">
+                    <span class="px-3 py-1 bg-amber-100 text-amber-800 text-xs font-medium rounded-full">Afrique centrale</span>
+                    <span class="px-3 py-1 bg-amber-100 text-amber-800 text-xs font-medium rounded-full">Partenariats</span>
+                    <span class="px-3 py-1 bg-amber-100 text-amber-800 text-xs font-medium rounded-full">Rayonnement continental</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Statistiques -->
+        <div class="relative z-10 mt-16 grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto">
+            <div class="text-center bg-white/60 backdrop-blur-sm rounded-xl p-4 border border-yellow-100">
+                <div class="text-2xl font-bold text-yellow-600">26</div>
+                <div class="text-sm text-gray-600">Provinces couvertes</div>
+            </div>
+            <div class="text-center bg-white/60 backdrop-blur-sm rounded-xl p-4 border border-yellow-100">
+                <div class="text-2xl font-bold text-yellow-600">50+</div>
+                <div class="text-sm text-gray-600">Villes desservies</div>
+            </div>
+            <div class="text-center bg-white/60 backdrop-blur-sm rounded-xl p-4 border border-yellow-100">
+                <div class="text-2xl font-bold text-yellow-600">5</div>
+                <div class="text-sm text-gray-600">Pays partenaires</div>
+            </div>
+            <div class="text-center bg-white/60 backdrop-blur-sm rounded-xl p-4 border border-yellow-100">
+                <div class="text-2xl font-bold text-yellow-600">100k+</div>
+                <div class="text-sm text-gray-600">Clients actifs</div>
+            </div>
+        </div>
+    </div>
+</section>
