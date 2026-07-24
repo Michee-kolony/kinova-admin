@@ -8,8 +8,8 @@ import { HttpClient } from '@angular/common/http';
   styleUrl: './articles.component.css'
 })
 export class ArticlesComponent implements OnInit {
-  private articleUrl = "https://backend-kinova.onrender.com/article/";
-  private categorieUrl = "https://backend-kinova.onrender.com/categorie/";
+  private articleUrl = "https://kinova-backend.tech/article/";
+  private categorieUrl = "https://kinova-backend.tech/categorie/";
 
   categories: any[] = [];
   articles: any[] = [];
