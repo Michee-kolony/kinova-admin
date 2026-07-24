@@ -11,7 +11,7 @@ import { Subscription } from 'rxjs';
 })
 export class LoginComponent implements OnDestroy {
 
-  private url = "https://backend-kinova.onrender.com/auth/login";
+  private url = "https://kinova-backend.tech/auth/login";
 
   loginData = {
     email: 'admin@gmail.com',

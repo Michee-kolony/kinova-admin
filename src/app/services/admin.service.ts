@@ -7,8 +7,8 @@ import { Observable } from 'rxjs';
 })
 export class AdminService {
 
-  private urlgetadmin = "https://backend-kinova.onrender.com/auth";
-  private urlcreateadmin = "https://backend-kinova.onrender.com/auth/register";
+  private urlgetadmin = "https://kinova-backend.tech/auth";
+  private urlcreateadmin = "https://kinova-backend.tech/auth/register";
 
   constructor(private http: HttpClient) { }
 

@@ -16,7 +16,7 @@ export class ClientsComponent implements OnInit {
   Math = Math;
   
   // URL de l'API
-  private apiUrl = 'https://backend-kinova.onrender.com/client';
+  private apiUrl = 'https://kinova-backend.tech/client';
 
   // Données réelles provenant du backend
   allClients: any[] = [];
