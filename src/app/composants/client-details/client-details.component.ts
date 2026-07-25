@@ -10,7 +10,7 @@ import { HttpClient } from '@angular/common/http';
 })
 export class ClientDetailsComponent implements OnInit {
 
-  private urlClient = 'https://backend-kinova.onrender.com/client';
+  private urlClient = 'https://kinova-backend.tech/client';
 
   client: any;
   loading = true;

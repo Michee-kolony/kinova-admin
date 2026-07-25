@@ -9,49 +9,68 @@
       <p class="text-gray-600 dark:text-gray-400 mt-1">Liste de tous les vendeurs inscrits sur la plateforme</p>
     </div>
     <div class="flex items-center gap-3">
+      <!-- Indicateur de chargement -->
+      <div *ngIf="isLoading" class="loading-spinner">
+        <i class="fas fa-spinner fa-spin" style="color: #ffbf00;"></i>
+        <span class="ml-2 text-gray-600 dark:text-gray-400">Chargement...</span>
+      </div>
+      <!-- Bouton Rafraîchir -->
+      <button (click)="loadVendeurs()" class="refresh-btn" [disabled]="isLoading">
+        <i class="fas fa-sync-alt" [class.fa-spin]="isLoading"></i>
+      </button>
     </div>
   </div>
 
+  <!-- Message d'erreur -->
+  <div *ngIf="errorMessage" class="error-message">
+    <i class="fas fa-exclamation-circle mr-2"></i>
+    {{ errorMessage }}
+    <button (click)="loadVendeurs()" class="retry-btn">
+      <i class="fas fa-redo mr-1"></i> Réessayer
+    </button>
+  </div>
+
   <!-- Statistiques rapides -->
-  <div class="stats-mini-grid">
+  <div class="stats-mini-grid" *ngIf="!isLoading && !errorMessage">
     <div class="stat-mini-card">
       <div class="stat-mini-icon" style="background: #ffbf00;">
         <i class="fas fa-store" style="color: #1a1a1a;"></i>
       </div>
       <div>
         <p class="stat-mini-label">Total vendeurs</p>
-        <p class="stat-mini-value">342</p>
+        <p class="stat-mini-value">{{ totalVendeurs }}</p>
       </div>
     </div>
     <div class="stat-mini-card">
-      <div class="stat-mini-icon" style="background: #ffbf00;">
-        <i class="fas fa-check-circle" style="color: #1a1a1a;"></i>
+      <div class="stat-mini-icon" style="background: #4CAF50;">
+        <i class="fas fa-check-circle" style="color: white;"></i>
       </div>
       <div>
-        <p class="stat-mini-label">Vendeurs actifs</p>
-        <p class="stat-mini-value">287</p>
+        <p class="stat-mini-label">Vendeurs vérifiés</p>
+        <p class="stat-mini-value">{{ vendeursVerifies }}</p>
       </div>
     </div>
     <div class="stat-mini-card">
-      <div class="stat-mini-icon" style="background: #ffbf00;">
-        <i class="fas fa-star" style="color: #1a1a1a;"></i>
+      <div class="stat-mini-icon" style="background: #FF9800;">
+        <i class="fas fa-clock" style="color: white;"></i>
       </div>
       <div>
-        <p class="stat-mini-label">Top vendeurs</p>
-        <p class="stat-mini-value">45</p>
+        <p class="stat-mini-label">En attente de vérification</p>
+        <p class="stat-mini-value">{{ vendeursNonVerifies }}</p>
       </div>
     </div>
   </div>
 
   <!-- Barre de recherche -->
-  <div class="search-container">
+  <div class="search-container" *ngIf="!isLoading">
     <div class="relative flex-1">
       <input 
         type="text" 
         [(ngModel)]="searchTerm"
         (input)="filterVendeurs()"
-        placeholder="Rechercher un vendeur par nom, email ou boutique..." 
-        class="search-input">
+        placeholder="Rechercher un vendeur par nom, email, boutique ou catégorie..." 
+        class="search-input"
+        [disabled]="isLoading">
       <i class="fas fa-search search-icon"></i>
       <button *ngIf="searchTerm" (click)="clearSearch()" class="clear-search">
         <i class="fas fa-times-circle"></i>
@@ -60,32 +79,48 @@
   </div>
 
   <!-- Résultats de recherche -->
-  <div class="search-results" *ngIf="searchTerm">
+  <div class="search-results" *ngIf="searchTerm && !isLoading">
     <span class="text-sm text-gray-500 dark:text-gray-400">
       <i class="fas fa-search mr-2"></i>
       {{ filteredVendeurs.length }} résultat(s) trouvé(s) pour "{{ searchTerm }}"
     </span>
   </div>
 
+  <!-- Message si aucun vendeur -->
+  <div *ngIf="!isLoading && !errorMessage && filteredVendeurs.length === 0" class="empty-state">
+    <i class="fas fa-store fa-3x" style="color: #ffbf00;"></i>
+    <h3 class="text-xl font-semibold mt-4">Aucun vendeur trouvé</h3>
+    <p class="text-gray-500 dark:text-gray-400">Aucun vendeur ne correspond à votre recherche</p>
+  </div>
+
   <!-- Liste des vendeurs - Cartes horizontales -->
-  <div class="vendeurs-list">
+  <div class="vendeurs-list" *ngIf="!isLoading && !errorMessage && filteredVendeurs.length > 0">
     <div *ngFor="let vendeur of paginatedVendeurs" class="vendeur-card-horizontal">
       <div class="vendeur-card-content">
         <!-- Photo / Avatar -->
         <div class="vendeur-avatar">
           <img [src]="vendeur.avatar" [alt]="vendeur.name">
-          <span class="status-badge" [class.active]="vendeur.status === 'active'">
-            {{ vendeur.status === 'active' ? 'Actif' : 'Inactif' }}
+          <!-- Badge de vérification -->
+          <span class="status-badge" [class.verified]="vendeur.isVerified">
+            <i [class]="vendeur.isVerified ? 'fas fa-check-circle' : 'fas fa-clock'"></i>
+            {{ vendeur.isVerified ? 'Vérifié' : 'Non vérifié' }}
           </span>
         </div>
 
         <!-- Informations -->
         <div class="vendeur-info">
           <div class="vendeur-header-info">
-            <h3 class="vendeur-name">{{ vendeur.name }}</h3>
+            <h3 class="vendeur-name">
+              {{ vendeur.name }}
+              <i *ngIf="vendeur.isVerified" class="fas fa-check-circle verified-icon" title="Vendeur vérifié"></i>
+            </h3>
             <span class="vendeur-shop">
               <i class="fas fa-store" style="color: #ffbf00;"></i>
               {{ vendeur.shopName }}
+            </span>
+            <span *ngIf="vendeur.shopCategory" class="vendeur-category">
+              <i class="fas fa-tag" style="color: #ffbf00;"></i>
+              {{ vendeur.shopCategory }}
             </span>
           </div>
           
@@ -102,14 +137,18 @@
               <i class="fas fa-map-marker-alt" style="color: #ffbf00;"></i>
               <span>{{ vendeur.location }}</span>
             </div>
+            <div class="detail-item" *ngIf="vendeur.paymentMethod">
+              <i class="fas fa-credit-card" style="color: #ffbf00;"></i>
+              <span>{{ vendeur.paymentMethod }}</span>
+            </div>
           </div>
         </div>
 
-        <!-- Bouton Voir détails -->
-        <div class="vendeur-action">
-          <button class="btn-details" (click)="voirDetails(vendeur)">
+        <!-- Action - Seulement le bouton Voir détails -->
+        <div class="vendeur-actions">
+          <button class="btn-details" (click)="voirDetails(vendeur)" title="Voir les détails">
             <i class="fas fa-eye"></i>
-            Voir détails
+            <span class="btn-label">Voir détails</span>
           </button>
         </div>
       </div>
@@ -117,7 +156,7 @@
   </div>
 
   <!-- Pagination -->
-  <div class="pagination-container" *ngIf="filteredVendeurs.length > itemsPerPage">
+  <div class="pagination-container" *ngIf="!isLoading && !errorMessage && filteredVendeurs.length > itemsPerPage">
     <div class="flex items-center gap-2">
       <span class="text-sm text-gray-600 dark:text-gray-400">
         Affichage {{ (currentPage - 1) * itemsPerPage + 1 }} - 
