@@ -9,7 +9,7 @@ import { Subscription, interval } from 'rxjs';
 })
 export class CategorieComponent implements OnInit, OnDestroy {
 
-  private url = "https://backend-kinova.onrender.com/categorie/";
+  private url = "https://kinova-backend.tech/categorie/";
   private sub!: Subscription;
   private refreshSub!: Subscription;
 

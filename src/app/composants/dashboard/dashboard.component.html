@@ -22,17 +22,18 @@
       </div>
     </div>
 
-    <!-- Vendeurs inscrits -->
+    <!-- Vendeurs inscrits - DYNAMIQUE -->
     <div class="stat-card">
       <div class="stat-icon bg-purple-500">
         <i class="fas fa-store"></i>
       </div>
       <div class="stat-info">
         <h3>Vendeurs inscrits</h3>
-        <p class="stat-number">342</p>
-        <span class="stat-change positive">
+        <p class="stat-number">{{totalVendeurs}}</p>
+        <!-- Optionnel: Ajouter une tendance si vous avez des données -->
+        <!-- <span class="stat-change positive">
           <i class="fas fa-arrow-up mr-1"></i>+8.3%
-        </span>
+        </span> -->
       </div>
     </div>
 
@@ -58,13 +59,13 @@
       </div>
     </div>
 
-    <!-- Réclamations -->
+    <!-- Total Administrateurs -->
     <div class="stat-card">
       <div class="stat-icon bg-yellow-500">
-        <i class="fas fa-exclamation-triangle"></i>
+        <i class="fas fa-user-shield"></i>
       </div>
       <div class="stat-info">
-        <h3>Total Adminisatrateurs</h3>
+        <h3>Total Administrateurs</h3>
         <p class="stat-number">{{totalAdmin}}</p>
       </div>
     </div>
@@ -83,34 +84,33 @@
       </div>
     </div>
 
- <!-- Articles livrés -->
-<div class="stat-card">
-  <div class="stat-icon" style="background: #ffbf00;">
-    <i class="fas fa-truck" style="color: #1a1a1a;"></i>
-  </div>
-  <div class="stat-info">
-    <h3>Articles livrés</h3>
-    <p class="stat-number">1,563</p>
-    <span class="stat-change positive">
-      <i class="fas fa-arrow-up mr-1"></i>+22.1%
-    </span>
-  </div>
-</div>
+    <!-- Articles livrés -->
+    <div class="stat-card">
+      <div class="stat-icon" style="background: #ffbf00;">
+        <i class="fas fa-truck" style="color: #1a1a1a;"></i>
+      </div>
+      <div class="stat-info">
+        <h3>Articles livrés</h3>
+        <p class="stat-number">1,563</p>
+        <span class="stat-change positive">
+          <i class="fas fa-arrow-up mr-1"></i>+22.1%
+        </span>
+      </div>
+    </div>
 
-<!-- Articles en attente -->
-<div class="stat-card">
-  <div class="stat-icon" style="background: #ffbf00;">
-    <i class="fas fa-clock" style="color: #1a1a1a;"></i>
-  </div>
-  <div class="stat-info">
-    <h3>Articles en attente</h3>
-    <p class="stat-number">1,563</p>
-    <span class="stat-change positive">
-      <i class="fas fa-arrow-up mr-1"></i>+22.1%
-    </span>
-  </div>
-</div>
-
+    <!-- Articles en attente -->
+    <div class="stat-card">
+      <div class="stat-icon" style="background: #ffbf00;">
+        <i class="fas fa-clock" style="color: #1a1a1a;"></i>
+      </div>
+      <div class="stat-info">
+        <h3>Articles en attente</h3>
+        <p class="stat-number">1,563</p>
+        <span class="stat-change positive">
+          <i class="fas fa-arrow-up mr-1"></i>+22.1%
+        </span>
+      </div>
+    </div>
   </div>
 
   <!-- Colonne en bas - Commandes récentes -->

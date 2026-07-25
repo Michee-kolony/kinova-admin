@@ -4,6 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { AdminService } from '../../services/admin.service';
 import { ClientService } from '../../services/client.service';
 import { ArticleService } from '../../services/article.service';
+import { VendeurService } from '../../services/vendeur.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -20,16 +21,15 @@ export class DashboardComponent implements OnInit {
   totalClient = 0;
   totalArticle = 0;
   totalemesArticles = 0;
+  totalVendeurs = 0; // Ajout de la variable pour les vendeurs
 
   constructor(
     public themeService: ThemeService,
     private admin: AdminService,
     private client: ClientService,
-    private article : ArticleService
-    ) {}
-
-
-
+    private article: ArticleService,
+    private vendeur: VendeurService
+  ) {}
 
   // Données des commandes récentes
   recentOrders = [
@@ -115,14 +115,14 @@ export class DashboardComponent implements OnInit {
     }
   ];
 
+  ngOnInit(): void {
+    this.loadAdmins();
+    this.loadClients();
+    this.loadArticles();
+    this.loadmesArticles();
+    this.loadVendeurs(); // Appel de la méthode pour charger les vendeurs
 
- ngOnInit(): void {
-  this.loadAdmins();
-  this.loadClients();
-  this.loadArticles();
-  this.loadmesArticles();
-
-   this.token = localStorage.getItem('auth_token');
+    this.token = localStorage.getItem('auth_token');
 
     // Récupérer les informations de l'utilisateur
     const userData = localStorage.getItem('user_data');
@@ -131,43 +131,46 @@ export class DashboardComponent implements OnInit {
       this.user = JSON.parse(userData);
       console.log(this.user);
     }
-
-}
-
-
+  }
 
   loadAdmins() {
-  this.admin.getAdmins().subscribe(admin => {
-    this.totalAdmin = admin.length;
-  });
-}
+    this.admin.getAdmins().subscribe(admin => {
+      this.totalAdmin = admin.length;
+    });
+  }
 
-loadClients() {
-  this.client.getClients().subscribe(client => {
-    this.totalClient = client.length;
-  });
-}
+  loadClients() {
+    this.client.getClients().subscribe(client => {
+      this.totalClient = client.length;
+    });
+  }
 
-loadArticles() {
-  this.article.getArticles().subscribe(article => {
-    this.totalArticle = article.length;
-  });
-}
+  loadArticles() {
+    this.article.getArticles().subscribe(article => {
+      this.totalArticle = article.length;
+    });
+  }
 
+  loadmesArticles() {
+    this.article.getArticles().subscribe((articles: any[]) => {
+      this.totalArticle = articles.length;
+      this.totalemesArticles = articles.filter(article =>
+        article.vendeurId === this.user.adminId
+      ).length;
+    });
+  }
 
-
-loadmesArticles() {
-  this.article.getArticles().subscribe((articles: any[]) => {
-
-    this.totalArticle = articles.length;
-
-    this.totalemesArticles = articles.filter(article =>
-      article.vendeurId === this.user.adminId
-    ).length;
-  });
-}
-
-  
-
-
+  // Nouvelle méthode pour charger les vendeurs
+  loadVendeurs() {
+    this.vendeur.getVendeurs().subscribe({
+      next: (vendeurs) => {
+        this.totalVendeurs = vendeurs.length;
+        console.log('Total vendeurs:', this.totalVendeurs);
+      },
+      error: (error) => {
+        console.error('Erreur lors du chargement des vendeurs:', error);
+        this.totalVendeurs = 0;
+      }
+    });
+  }
 }
