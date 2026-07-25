@@ -1,0 +1,295 @@
+<div class="details-container">
+  <!-- Toast Notification -->
+  <div *ngIf="showToast" 
+       class="fixed top-4 right-4 z-50 max-w-md w-full transform transition-all duration-500 ease-in-out"
+       [class]="showToast ? 'translate-x-0 opacity-100' : 'translate-x-full opacity-0'">
+    <div class="rounded-lg shadow-lg p-4 flex items-start space-x-3"
+         [class.bg-green-900]="toastType === 'success'"
+         [class.bg-red-900]="toastType === 'error'"
+         [class.bg-yellow-900]="toastType === 'warning'"
+         [class.bg-blue-900]="toastType === 'info'"
+         [class.border]="true"
+         [class.border-green-700]="toastType === 'success'"
+         [class.border-red-700]="toastType === 'error'"
+         [class.border-yellow-700]="toastType === 'warning'"
+         [class.border-blue-700]="toastType === 'info'">
+      
+      <!-- Icone -->
+      <div class="flex-shrink-0 mt-0.5">
+        <i *ngIf="toastType === 'success'" class="fas fa-check-circle text-green-500 text-xl"></i>
+        <i *ngIf="toastType === 'error'" class="fas fa-exclamation-circle text-red-500 text-xl"></i>
+        <i *ngIf="toastType === 'warning'" class="fas fa-exclamation-triangle text-yellow-500 text-xl"></i>
+        <i *ngIf="toastType === 'info'" class="fas fa-info-circle text-blue-500 text-xl"></i>
+      </div>
+      
+      <!-- Message -->
+      <div class="flex-1">
+        <p class="text-sm text-white">{{ toastMessage }}</p>
+      </div>
+      
+      <!-- Bouton fermer -->
+      <button (click)="hideToast()" class="flex-shrink-0 text-gray-400 hover:text-white transition-colors">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- En-tete -->
+  <div class="details-header">
+    <button class="btn-back" (click)="goBack()">
+      <i class="fas fa-arrow-left"></i>
+      Retour
+    </button>
+    <h1 class="page-title">
+      <i class="fas fa-store" style="color: #ffbf00;"></i>
+      Details du vendeur
+    </h1>
+    <div class="header-actions">
+      <button class="btn-refresh" (click)="loadVendeurDetails()" [disabled]="isLoading">
+        <i class="fas fa-sync-alt" [class.fa-spin]="isLoading"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Message d'erreur -->
+  <div *ngIf="errorMessage" class="error-message">
+    <i class="fas fa-exclamation-circle mr-2"></i>
+    {{ errorMessage }}
+    <button (click)="loadVendeurDetails()" class="retry-btn">
+      <i class="fas fa-redo mr-1"></i> Reessayer
+    </button>
+  </div>
+
+  <!-- Chargement -->
+  <div *ngIf="isLoading" class="loading-container">
+    <i class="fas fa-spinner fa-spin loading-spinner"></i>
+    <p>Chargement des details du vendeur...</p>
+  </div>
+
+  <!-- Details du vendeur -->
+  <div *ngIf="!isLoading && !errorMessage && vendeur" class="vendeur-details-card">
+    <!-- Profil -->
+    <div class="vendeur-profile">
+      <div class="profile-avatar-container">
+        <img 
+          [src]="'https://ui-avatars.com/api/?name=' + (vendeur.storeName || vendeur.email) + '&background=ffbf00&color=1a1a1a&size=120'" 
+          [alt]="vendeur.storeName || vendeur.email" 
+          class="profile-avatar">
+        <span class="status-badge" [class.verified]="vendeur.isVerified">
+          <i [class]="vendeur.isVerified ? 'fas fa-check-circle' : 'fas fa-clock'"></i>
+          {{ vendeur.isVerified ? 'Verifie' : 'Non verifie' }}
+        </span>
+      </div>
+      <div class="profile-info">
+        <h2>{{ vendeur.storeName || 'Vendeur sans nom' }}</h2>
+        <p class="profile-email">{{ vendeur.email }}</p>
+        <div class="profile-status">
+          <span class="status-label">Statut du compte:</span>
+          <span class="status-value" [class.pending]="vendeur.status === 'pending'">
+            {{ vendeur.status || 'Non defini' }}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Informations detaillees -->
+    <div class="info-grid">
+      <div class="info-item">
+        <label>Nom de la boutique</label>
+        <p>{{ vendeur.storeName || 'Non renseigne' }}</p>
+      </div>
+      <div class="info-item">
+        <label>Categorie</label>
+        <p>{{ vendeur.storeCategory || 'Non renseignee' }}</p>
+      </div>
+      <div class="info-item">
+        <label>Email</label>
+        <p>{{ vendeur.email || 'Non renseigne' }}</p>
+      </div>
+      <div class="info-item">
+        <label>Telephone</label>
+        <p>{{ vendeur.phoneNumber || vendeur.mobileMoneyNumber || 'Non renseigne' }}</p>
+      </div>
+      <div class="info-item">
+        <label>Adresse</label>
+        <p>{{ vendeur.address || 'Non renseignee' }}</p>
+      </div>
+      <div class="info-item">
+        <label>Methode de paiement</label>
+        <p>{{ vendeur.paymentMethod || 'Non renseignee' }}</p>
+      </div>
+      <div class="info-item">
+        <label>Numero Mobile Money</label>
+        <p>{{ vendeur.mobileMoneyNumber || 'Non renseigne' }}</p>
+      </div>
+      <div class="info-item">
+        <label>Date d'inscription</label>
+        <p>{{ formatDate(vendeur.createdAt) }}</p>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="vendeur-actions">
+      <button 
+        *ngIf="!vendeur.isVerified" 
+        class="btn-verify" 
+        (click)="openVerifyModal()"
+        [disabled]="isVerifying">
+        <i class="fas fa-check-circle"></i>
+        {{ isVerifying ? 'Verification en cours...' : 'Verifier le vendeur' }}
+      </button>
+      <button 
+        class="btn-delete" 
+        (click)="openDeleteModal()"
+        [disabled]="isDeleting">
+        <i class="fas fa-trash"></i>
+        {{ isDeleting ? 'Suppression en cours...' : 'Supprimer le vendeur' }}
+      </button>
+    </div>
+  </div>
+
+  <!-- Section des articles -->
+  <div *ngIf="!isLoading && !errorMessage && vendeur" class="articles-section">
+    <div class="articles-header">
+      <h3>
+        <i class="fas fa-box" style="color: #ffbf00;"></i>
+        Articles publies par ce vendeur
+        <span class="articles-count">({{ vendeurArticles.length }})</span>
+      </h3>
+      <button class="btn-refresh-articles" (click)="loadVendeurArticles()" [disabled]="isLoadingArticles">
+        <i class="fas fa-sync-alt" [class.fa-spin]="isLoadingArticles"></i>
+      </button>
+    </div>
+
+    <div *ngIf="isLoadingArticles" class="loading-articles">
+      <i class="fas fa-spinner fa-spin"></i>
+      <span>Chargement des articles...</span>
+    </div>
+
+    <div *ngIf="!isLoadingArticles && vendeurArticles.length > 0" class="articles-grid">
+      <div *ngFor="let article of vendeurArticles" class="article-card" (click)="voirArticle(article)">
+        <div class="article-image">
+          <img 
+            [src]="article.images && article.images.length > 0 ? article.images[0] : 'https://via.placeholder.com/200x200/ffbf00/1a1a1a?text=No+Image'" 
+            [alt]="article.nom">
+          <div *ngIf="article.reduction > 0" class="discount-badge">
+            -{{ article.reduction }}%
+          </div>
+        </div>
+        <div class="article-info">
+          <h4 class="article-name">{{ article.nom }}</h4>
+          <p class="article-category">
+            <i class="fas fa-tag"></i>
+            {{ article.categorie }}
+          </p>
+          <div class="article-prices">
+            <span class="article-price">{{ article.prix }} €</span>
+            <span *ngIf="article.reduction > 0" class="article-price-reduced">
+              {{ getPrixFinal(article) }} €
+            </span>
+          </div>
+          <div class="article-stock">
+            <i class="fas fa-boxes"></i>
+            Stock: {{ article.stock || 0 }}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="!isLoadingArticles && vendeurArticles.length === 0" class="no-articles">
+      <i class="fas fa-box-open fa-3x" style="color: #ffbf00;"></i>
+      <h4>Aucun article publie</h4>
+      <p>Ce vendeur n'a pas encore publie d'articles sur la plateforme.</p>
+    </div>
+  </div>
+
+  <!-- MODAL DE CONFIRMATION DE VERIFICATION -->
+  <div *ngIf="showVerifyModal" class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+    <div class="flex items-center justify-center min-h-screen px-4">
+      <!-- Overlay -->
+      <div class="fixed inset-0 transition-opacity bg-black bg-opacity-75" aria-hidden="true" (click)="closeModal()"></div>
+
+      <!-- Modal -->
+      <div class="relative inline-block w-full max-w-md overflow-hidden text-left align-middle transition-all transform bg-gray-900 rounded-lg shadow-xl">
+        <div class="p-6">
+          <div class="flex items-start space-x-4">
+            <!-- Icone -->
+            <div class="flex items-center justify-center flex-shrink-0 w-10 h-10 bg-yellow-900 rounded-full">
+              <i class="fas fa-check-circle text-yellow-500 text-lg"></i>
+            </div>
+            <!-- Contenu -->
+            <div class="flex-1">
+              <h3 class="text-lg font-medium text-white" id="modal-title">
+                {{ modalTitle }}
+              </h3>
+              <div class="mt-2">
+                <p class="text-sm text-gray-300">
+                  {{ modalMessage }}
+                </p>
+                <p class="mt-2 text-xs text-yellow-500">
+                  <i class="fas fa-info-circle mr-1"></i>
+                  Cette action mettra a jour le statut du vendeur dans la base de donnees.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="px-6 py-3 bg-gray-800 flex flex-row-reverse space-x-3 space-x-reverse">
+          <button type="button" class="px-4 py-2 text-sm font-medium text-white bg-yellow-600 rounded-md hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 transition-colors" (click)="confirmVerify()">
+            <i class="fas fa-check mr-2"></i>
+            Oui, verifier
+          </button>
+          <button type="button" class="px-4 py-2 text-sm font-medium text-gray-300 bg-gray-700 rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-colors" (click)="closeModal()">
+            <i class="fas fa-times mr-2"></i>
+            Annuler
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL DE CONFIRMATION DE SUPPRESSION -->
+  <div *ngIf="showDeleteModal" class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+    <div class="flex items-center justify-center min-h-screen px-4">
+      <!-- Overlay -->
+      <div class="fixed inset-0 transition-opacity bg-black bg-opacity-75" aria-hidden="true" (click)="closeModal()"></div>
+
+      <!-- Modal -->
+      <div class="relative inline-block w-full max-w-md overflow-hidden text-left align-middle transition-all transform bg-gray-900 rounded-lg shadow-xl">
+        <div class="p-6">
+          <div class="flex items-start space-x-4">
+            <!-- Icone -->
+            <div class="flex items-center justify-center flex-shrink-0 w-10 h-10 bg-red-900 rounded-full">
+              <i class="fas fa-exclamation-triangle text-red-500 text-lg"></i>
+            </div>
+            <!-- Contenu -->
+            <div class="flex-1">
+              <h3 class="text-lg font-medium text-white" id="modal-title">
+                {{ modalTitle }}
+              </h3>
+              <div class="mt-2">
+                <p class="text-sm text-gray-300">
+                  {{ modalMessage }}
+                </p>
+                <p class="mt-2 text-xs text-red-500">
+                  <i class="fas fa-exclamation-circle mr-1"></i>
+                  Cette action est irreversible. Toutes les donnees du vendeur seront supprimees.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="px-6 py-3 bg-gray-800 flex flex-row-reverse space-x-3 space-x-reverse">
+          <button type="button" class="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors" (click)="confirmDelete()">
+            <i class="fas fa-trash mr-2"></i>
+            Oui, supprimer
+          </button>
+          <button type="button" class="px-4 py-2 text-sm font-medium text-gray-300 bg-gray-700 rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-colors" (click)="closeModal()">
+            <i class="fas fa-times mr-2"></i>
+            Annuler
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

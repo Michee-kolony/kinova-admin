@@ -18,6 +18,7 @@ import { ClientDetailsComponent } from './composants/client-details/client-detai
 import { KinovaComponent } from './client/kinova/kinova.component';
 import { HomeComponent } from './client/home/home.component';
 import { SupportComponent } from './client/support/support/support.component';
+import { DetailsVendeurComponent } from './composants/details-vendeur/details-vendeur.component';
 
 const routes: Routes = [
   {path:'', redirectTo: 'kinova', pathMatch: 'full'},
@@ -36,7 +37,8 @@ const routes: Routes = [
       {path:'details/:id', component: DetailarticleComponent},
       {path:'produits', component: ProduitsComponent},
       {path:'produit-details/:id', component: ProduitDetailsComponent},
-      {path:'client-details/:id', component: ClientDetailsComponent}
+      {path:'client-details/:id', component: ClientDetailsComponent},
+      {path:'vendeur-details/:id', component: DetailsVendeurComponent}
 
       ]
   },

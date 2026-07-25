@@ -36,8 +36,24 @@ export class VendeurService {
     return this.http.delete<any>(`${this.urlVendeur}/${id}`);
   }
 
-  // Méthode pour vérifier un vendeur
+  // Méthode pour vérifier un vendeur - Version 1
   verifyVendeur(id: string): Observable<any> {
+    // Essayer avec PATCH
     return this.http.patch<any>(`${this.urlVendeur}/${id}/verify`, {});
+  }
+
+  // Méthode pour vérifier un vendeur - Version 2 (si l'API utilise PUT)
+  verifyVendeurPut(id: string): Observable<any> {
+    return this.http.put<any>(`${this.urlVendeur}/${id}/verify`, { isVerified: true });
+  }
+
+  // Méthode pour vérifier un vendeur - Version 3 (si l'API utilise POST)
+  verifyVendeurPost(id: string): Observable<any> {
+    return this.http.post<any>(`${this.urlVendeur}/${id}/verify`, {});
+  }
+
+  // Méthode pour vérifier un vendeur - Version 4 (mise à jour directe)
+  verifyVendeurUpdate(id: string): Observable<any> {
+    return this.http.patch<any>(`${this.urlVendeur}/${id}`, { isVerified: true });
   }
 }

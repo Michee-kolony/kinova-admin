@@ -32,6 +32,7 @@ import { CookiesComponent } from './client/support/cookies/cookies.component';
 import { FaqComponent } from './client/support/faq/faq.component';
 import { ContactComponent } from './client/support/contact/contact.component';
 import { DeletecountComponent } from './client/support/deletecount/deletecount.component';
+import { DetailsVendeurComponent } from './composants/details-vendeur/details-vendeur.component';
 
 @NgModule({
   declarations: [
@@ -61,7 +62,8 @@ import { DeletecountComponent } from './client/support/deletecount/deletecount.c
     CookiesComponent,
     FaqComponent,
     ContactComponent,
-    DeletecountComponent
+    DeletecountComponent,
+    DetailsVendeurComponent
   ],
   imports: [
     BrowserModule,

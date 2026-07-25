@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { ThemeService } from '../../services/theme.service';
 import { VendeurService } from '../../services/vendeur.service';
 
@@ -28,7 +29,8 @@ export class VendeursComponent implements OnInit {
 
   constructor(
     public themeService: ThemeService,
-    private vendeurService: VendeurService
+    private vendeurService: VendeurService,
+    private router: Router // Ajout du Router pour la navigation
   ) {}
 
   ngOnInit() {
@@ -71,7 +73,8 @@ export class VendeursComponent implements OnInit {
     const avatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=ffbf00&color=1a1a1a&size=80`;
     
     return {
-      id: vendeur._id || vendeur.id,
+      _id: vendeur._id, // Conserver l'ID original de MongoDB
+      id: vendeur._id || vendeur.id, // Compatibilité
       name: name,
       email: vendeur.email || 'Email non renseigné',
       phone: vendeur.phoneNumber || vendeur.mobileMoneyNumber || 'Non renseigné',
@@ -100,6 +103,7 @@ export class VendeursComponent implements OnInit {
     // Données de fallback en cas d'erreur API
     this.allVendeurs = [
       {
+        _id: '1',
         id: '1',
         name: 'Marie Martin',
         email: 'marie.martin@email.com',
@@ -114,6 +118,7 @@ export class VendeursComponent implements OnInit {
         createdAt: new Date().toISOString()
       },
       {
+        _id: '2',
         id: '2',
         name: 'Pierre Durand',
         email: 'pierre.durand@email.com',
@@ -128,6 +133,7 @@ export class VendeursComponent implements OnInit {
         createdAt: new Date().toISOString()
       },
       {
+        _id: '3',
         id: '3',
         name: 'Julie Petit',
         email: 'julie.petit@email.com',
@@ -142,6 +148,7 @@ export class VendeursComponent implements OnInit {
         createdAt: new Date().toISOString()
       },
       {
+        _id: '4',
         id: '4',
         name: 'Paul Robert',
         email: 'paul.robert@email.com',
@@ -156,6 +163,7 @@ export class VendeursComponent implements OnInit {
         createdAt: new Date().toISOString()
       },
       {
+        _id: '5',
         id: '5',
         name: 'Claire Simon',
         email: 'claire.simon@email.com',
@@ -202,24 +210,27 @@ export class VendeursComponent implements OnInit {
     this.filterVendeurs();
   }
 
+  // NOUVELLE MÉTHODE : Navigation vers la page de détails
+  navigateToDetails(vendeur: any) {
+    console.log('Navigation vers les détails du vendeur:', vendeur);
+    console.log('ID du vendeur:', vendeur._id || vendeur.id);
+    
+    // Utiliser _id ou id pour la navigation
+    const vendeurId = vendeur._id || vendeur.id;
+    
+    if (vendeurId) {
+      this.router.navigate(['/admin/vendeur-details', vendeurId]);
+    } else {
+      console.error('ID du vendeur non trouvé:', vendeur);
+      alert('Erreur: ID du vendeur non trouvé');
+    }
+  }
+
+  // Méthode conservée pour compatibilité
   voirDetails(vendeur: any) {
     console.log('Voir détails du vendeur:', vendeur);
-    const details = `
-      ===== DÉTAILS DU VENDEUR =====
-      
-      Nom: ${vendeur.name}
-      Boutique: ${vendeur.shopName}
-      Catégorie: ${vendeur.shopCategory || 'Non spécifiée'}
-      Email: ${vendeur.email}
-      Téléphone: ${vendeur.phone}
-      Adresse: ${vendeur.location}
-      Méthode de paiement: ${vendeur.paymentMethod}
-      Statut: ${vendeur.isVerified ? '✅ Vérifié' : '❌ Non vérifié'}
-      Statut du compte: ${vendeur.status || 'Non défini'}
-      Date d'inscription: ${new Date(vendeur.createdAt).toLocaleDateString()}
-      ID: ${vendeur.id}
-    `;
-    alert(details);
+    // Rediriger vers la page de détails
+    this.navigateToDetails(vendeur);
   }
 
   // Méthode pour vérifier un vendeur
