@@ -9,7 +9,7 @@ import { HttpClient } from '@angular/common/http';
 })
 export class DetailarticleComponent implements OnInit {
 
-  private articleUrl = "https://backend-kinova.onrender.com/article/";
+  private articleUrl = "https://kinova-backend.tech/article/";
 
   article: any = null;
   imagePrincipale = '';
