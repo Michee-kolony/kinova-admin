@@ -1,76 +1,53 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-reclamations',
   templateUrl: './reclamations.component.html',
   styleUrl: './reclamations.component.css'
 })
-export class ReclamationsComponent {
+export class ReclamationsComponent implements OnInit {
 
-  reclamations = [
-    {
-      id: 1,
-      nom: 'Jean Dupont',
-      email: 'jean@gmail.com',
-      sujet: 'Problème de commande',
-      message: `Bonjour,
+  private urlMessages = "https://kinova-backend.tech/messages";
 
-Je n'ai toujours pas reçu ma commande passée il y a une semaine.
+  reclamations: any[] = [];
+  selectedMessage: any = null;
+  
+  // Variables pour la modale
+  showModal: boolean = false;
+  messageToDelete: any = null;
+  isDeleting: boolean = false;
 
-Merci de vérifier.
+  constructor(private http: HttpClient) {}
 
-Cordialement.`,
-      date: 'Aujourd\'hui - 09:30'
-    },
-    {
-      id: 2,
-      nom: 'Sarah Mukendi',
-      email: 'sarah@gmail.com',
-      sujet: 'Paiement refusé',
-      message: `Bonsoir,
+  ngOnInit() {
+    this.chargerMessages();
+  }
 
-Mon paiement est refusé malgré plusieurs tentatives.
-
-Merci pour votre aide.`,
-      date: 'Hier - 16:40'
-    },
-    {
-      id: 3,
-      nom: 'Patrick Ilunga',
-      email: 'patrick@gmail.com',
-      sujet: 'Suggestion',
-      message: `Bonjour,
-
-Votre plateforme est très belle.
-
-J'aimerais voir une version mobile avec plus de fonctionnalités.
-
-Merci.`,
-      date: '03 Juillet'
-    },
-    {
-      id: 4,
-      nom: 'Grâce Mbala',
-      email: 'grace@gmail.com',
-      sujet: 'Compte bloqué',
-      message: `Bonjour,
-
-Je ne peux plus accéder à mon compte depuis ce matin.
-
-Pouvez-vous m'aider ?
-
-Merci.`,
-      date: '02 Juillet'
-    }
-  ];
-
-  selectedMessage = this.reclamations[0];
+  chargerMessages() {
+    this.http.get(this.urlMessages).subscribe({
+      next: (data: any) => {
+        // Trier les messages par date décroissante (du plus récent au plus ancien)
+        this.reclamations = data.sort((a: any, b: any) => {
+          return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+        });
+        
+        if (this.reclamations.length > 0) {
+          this.selectedMessage = this.reclamations[0];
+        }
+      },
+      error: (error) => {
+        console.error('Erreur lors du chargement des messages:', error);
+      }
+    });
+  }
 
   ouvrirMessage(message: any) {
     this.selectedMessage = message;
   }
 
   getInitiales(nom: string): string {
+    if (!nom) return '';
     return nom
       .split(' ')
       .map(m => m.charAt(0))
@@ -78,4 +55,69 @@ Merci.`,
       .toUpperCase();
   }
 
+  // Ouvrir la modale de confirmation
+  ouvrirModalSuppression(message: any) {
+    this.messageToDelete = message;
+    this.showModal = true;
+    this.isDeleting = false;
+  }
+
+  // Fermer la modale
+  fermerModal() {
+    this.showModal = false;
+    this.messageToDelete = null;
+    this.isDeleting = false;
+  }
+
+  // Confirmer la suppression
+  confirmerSuppression() {
+    if (!this.messageToDelete) return;
+    
+    this.isDeleting = true;
+    const id = this.messageToDelete._id;
+
+    this.http.delete(`${this.urlMessages}/${id}`).subscribe({
+      next: () => {
+        // Filtrer le message supprimé
+        this.reclamations = this.reclamations.filter(m => m._id !== id);
+        
+        // Re-trier la liste après suppression
+        this.reclamations.sort((a: any, b: any) => {
+          return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+        });
+        
+        // Sélectionner le premier message ou null si liste vide
+        if (this.reclamations.length > 0) {
+          this.selectedMessage = this.reclamations[0];
+        } else {
+          this.selectedMessage = null;
+        }
+        
+        // Fermer la modale
+        this.fermerModal();
+      },
+      error: (error) => {
+        console.error('Erreur lors de la suppression:', error);
+        this.isDeleting = false;
+        alert('Une erreur est survenue lors de la suppression. Veuillez réessayer.');
+      }
+    });
+  }
+
+  formaterDate(date: string): string {
+    if (!date) return '';
+    const dateObj = new Date(date);
+    const now = new Date();
+    const diff = now.getTime() - dateObj.getTime();
+    const diffDays = Math.floor(diff / (1000 * 60 * 60 * 24));
+    
+    if (diffDays === 0) {
+      return `Aujourd'hui - ${dateObj.getHours().toString().padStart(2, '0')}:${dateObj.getMinutes().toString().padStart(2, '0')}`;
+    } else if (diffDays === 1) {
+      return `Hier - ${dateObj.getHours().toString().padStart(2, '0')}:${dateObj.getMinutes().toString().padStart(2, '0')}`;
+    } else {
+      const options: Intl.DateTimeFormatOptions = { day: '2-digit', month: 'short' };
+      return dateObj.toLocaleDateString('fr-FR', options);
+    }
+  }
 }
