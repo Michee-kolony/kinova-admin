@@ -43,6 +43,7 @@ import {
 } from '@angular/common/http';
 
 import { adminAuthInterceptor } from './interceptors/admin-auth.interceptor';
+import { DecouvrirComponent } from './client/decouvrir/decouvrir.component';
 
 @NgModule({
   declarations: [
@@ -75,7 +76,8 @@ import { adminAuthInterceptor } from './interceptors/admin-auth.interceptor';
     CookiesComponent,
     FaqComponent,
     ContactComponent,
-    DeletecountComponent
+    DeletecountComponent,
+    DecouvrirComponent
   ],
 
   imports: [
