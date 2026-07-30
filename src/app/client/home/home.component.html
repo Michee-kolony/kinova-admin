@@ -587,22 +587,13 @@
         </button>
         <div class="overflow-hidden transition-all duration-500 ease-in-out"
              [style.maxHeight]="faq.isOpen ? faq.maxHeight : '0'">
-          <div class="px-5 sm:px-6 pb-5 sm:pb-6 text-gray-300 text-sm sm:text-base leading-relaxed">
+          <div class="px-5 sm:px-6 pb-5 sm:pb-6 text-gray-300 py-5 text-sm sm:text-base leading-relaxed">
             <p>{{ faq.answer }}</p>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Pied de la FAQ -->
-    <div class="text-center mt-10">
-      <p class="text-gray-400 text-sm">
-        Vous n'avez pas trouvé votre réponse ? 
-        <a href="#" class="text-yellow-400 hover:text-yellow-300 font-semibold transition-colors">
-          Contactez notre support
-          <i class="fas fa-arrow-right ml-1"></i>
-        </a>
-      </p>
-    </div>
+
   </div>
 </section>
