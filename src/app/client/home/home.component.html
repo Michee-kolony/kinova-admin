@@ -203,13 +203,29 @@
 
 <!-- Section Présentation - Version épurée e-commerce -->
 <section class="bg-black py-16 sm:py-24 relative overflow-hidden">
-  <div class="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-yellow-500/50 to-transparent"></div>
+  <!-- Vague gauche -->
+  <div class="absolute left-0 top-0 h-full w-12 sm:w-16 md:w-20 lg:w-24 pointer-events-none z-0">
+    <svg class="w-full h-full" viewBox="0 0 80 800" preserveAspectRatio="none" style="transform: scaleX(1.2); transform-origin: left;">
+      <path d="M40,0 C10,100 70,200 40,300 C10,400 70,500 40,600 C10,700 70,800 40,800 L0,800 L0,0 Z" fill="#1a1a1a" opacity="0.6" />
+      <path d="M50,0 C20,120 80,240 50,360 C20,480 80,600 50,720 C20,760 80,790 50,800 L0,800 L0,0 Z" fill="#222222" opacity="0.4" />
+    </svg>
+  </div>
   
-  <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+  <!-- Vague droite -->
+  <div class="absolute right-0 top-0 h-full w-12 sm:w-16 md:w-20 lg:w-24 pointer-events-none z-0">
+    <svg class="w-full h-full" viewBox="0 0 80 800" preserveAspectRatio="none" style="transform: scaleX(-1.2); transform-origin: right;">
+      <path d="M40,0 C10,100 70,200 40,300 C10,400 70,500 40,600 C10,700 70,800 40,800 L0,800 L0,0 Z" fill="#1a1a1a" opacity="0.6" />
+      <path d="M50,0 C20,120 80,240 50,360 C20,480 80,600 50,720 C20,760 80,790 50,800 L0,800 L0,0 Z" fill="#222222" opacity="0.4" />
+    </svg>
+  </div>
+
+  <div class="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-yellow-500/50 to-transparent z-10"></div>
+  
+  <div class="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-20 items-center">
       
       <!-- Colonne gauche - Textes -->
-      <div class="space-y-6 ">
+      <div class="space-y-6">
         <div class="inline-block bg-yellow-500/10 text-yellow-400 px-4 py-1.5 rounded-full text-sm font-semibold">
          E-COMMERCE
         </div>
@@ -356,6 +372,86 @@
     </div>
 </section>
 
+
+<section class="bg-black/90 py-16">
+
+  <div class="relative w-full border border-dark max-w-7xl mx-auto my-6 bg-black rounded-3xl overflow-hidden shadow-2xl">
+  <!-- Vagues SVG en haut de la section -->
+  <div class="relative w-full h-24 md:h-28 lg:h-32 overflow-visible pointer-events-none -mb-2">
+    <svg class="absolute bottom-0 w-full h-full" viewBox="0 0 1440 120" preserveAspectRatio="none" style="transform: scaleY(1.2); transform-origin: bottom;">
+      <path d="M0,30 C240,90 480,0 720,45 C960,90 1200,10 1440,40 L1440,0 L0,0 Z" fill="#1a1a1a" opacity="0.95" />
+      <path d="M0,55 C200,100 400,20 600,60 C800,100 1000,30 1200,70 C1300,85 1400,40 1440,55 L1440,0 L0,0 Z" fill="#222222" opacity="0.7" />
+      <path d="M0,80 C180,110 360,40 540,75 C720,110 900,50 1080,85 C1200,100 1320,65 1440,80 L1440,0 L0,0 Z" fill="#2a2a2a" opacity="0.4" />
+    </svg>
+  </div>
+
+  <!-- Contenu principal en grille -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 px-4 sm:px-6 md:px-8 pb-8 pt-2 relative z-10">
+    
+    <!-- Colonne gauche : superposition dashboard sur photo -->
+    <div class="relative rounded-2xl overflow-hidden min-h-[300px] md:min-h-[340px] flex items-center justify-center bg-black/20">
+      <!-- Photo de la fille en transparence -->
+      <img 
+        src="images/Capture d’écran 2026-07-30 222201-Photoroom.png"
+        alt="Agente centre d'appels avec écouteurs"
+        class="absolute inset-0 w-full h-full object-cover mix-blend-overlay"
+        loading="lazy"
+      />
+      
+    </div>
+
+    <!-- Colonne droite : présentation assistance Kinova -->
+    <div class="flex flex-col justify-center py-2 md:py-4 px-1 sm:px-2">
+      <h2 class="text-3xl sm:text-4xl md:text-5xl font-bold leading-tight">
+        <span class="text-transparent bg-clip-text bg-gradient-to-r from-yellow-200 via-yellow-400 to-yellow-300">Kinova</span>
+        <br>
+        <span class="text-gray-200">assistance</span>
+      </h2>
+      
+      <p class="text-gray-300 text-sm sm:text-base md:text-lg mt-3 max-w-md">
+        <span class="text-yellow-400 font-medium">
+          <i class="fas fa-users mr-1.5"></i>Notre équipe
+        </span> est prête à répondre à tous vos problèmes ou besoins. Support réactif, humain et technique — 24/7.
+      </p>
+      
+      <p class="text-gray-400 text-xs sm:text-sm italic mt-1 mb-4">
+        <i class="fas fa-quote-left text-yellow-400/60 mr-1.5 text-xs"></i>Une question ? Un souci ? On est là.
+      </p>
+    
+      <!-- Boutons vers la page support et WhatsApp -->
+<div class="flex flex-wrap items-center gap-3 mt-2">
+  <!-- Bouton Support -->
+  <a [routerLink]="['/kinova/support']" class="inline-flex items-center text-decoration-none gap-2 bg-yellow-400 hover:bg-yellow-300 text-black font-semibold px-6 sm:px-8 py-3 rounded-full transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-yellow-500/30 w-fit text-sm sm:text-base">
+    <i class="fas fa-headset mr-1"></i>
+    <span>Accéder au support</span>
+    <i class="fas fa-arrow-right text-sm"></i>
+  </a>
+  
+  <!-- Bouton WhatsApp -->
+  <a href="#" class="inline-flex items-center gap-2 text-decoration-none bg-green-500 hover:bg-green-400 text-white font-semibold px-5 sm:px-7 py-3 rounded-full transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-green-500/30 w-fit text-sm sm:text-base">
+    <i class="fab fa-whatsapp text-base sm:text-lg"></i>
+    <span>WhatsApp</span>
+  </a>
+</div>
+      
+      <!-- Équipe disponible avec icônes -->
+      <div class="flex items-center gap-3 mt-4 text-[0.6rem] sm:text-xs text-gray-500">
+        <span class="flex items-center gap-1.5">
+          <i class="fas fa-circle text-emerald-400 text-[0.5rem]"></i>
+          6 agents disponibles
+        </span>
+        <span class="text-gray-600">|</span>
+        <span>
+          <i class="fas fa-phone-alt mr-1"></i>priorité Kinova
+        </span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+</section>
+
 <section class="relative py-16 md:py-24 bg-gradient-to-b from-yellow-50 via-amber-50 to-white overflow-hidden">
     <!-- Texture de fond animée -->
     <div class="absolute inset-0 opacity-20">
@@ -445,4 +541,68 @@
             </div>
         </div>
     </div>
+</section>
+
+<section class="relative bg-black min-h-screen py-16 sm:py-24 overflow-hidden">
+  <!-- Vagues SVG en bas -->
+  <div class="absolute bottom-0 left-0 right-0 w-full h-32 md:h-40 lg:h-48 pointer-events-none z-0">
+    <svg class="w-full h-full" viewBox="0 0 1440 200" preserveAspectRatio="none" style="transform: scaleY(-1);">
+      <path d="M0,60 C240,140 480,20 720,80 C960,140 1200,30 1440,80 L1440,200 L0,200 Z" fill="#1a1a1a" opacity="0.8" />
+      <path d="M0,100 C200,160 400,40 600,100 C800,160 1000,60 1200,120 C1300,150 1380,80 1440,110 L1440,200 L0,200 Z" fill="#222222" opacity="0.5" />
+      <path d="M0,140 C180,180 360,80 540,140 C720,200 900,100 1080,160 C1200,190 1320,130 1440,150 L1440,200 L0,200 Z" fill="#2a2a2a" opacity="0.3" />
+    </svg>
+  </div>
+
+  <div class="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10 max-w-4xl">
+    <!-- Titre de la section -->
+    <div class="text-center mb-12">
+      <div class="inline-block bg-yellow-500/10 text-yellow-400 px-4 py-1.5 rounded-full text-sm font-semibold mb-4">
+        FAQ
+      </div>
+      <h2 class="text-3xl sm:text-4xl md:text-5xl font-bold text-white leading-tight">
+        Questions fréquentes sur 
+        <span class="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-amber-500">Kinova</span>
+      </h2>
+      <p class="text-gray-400 mt-3 text-sm sm:text-base max-w-2xl mx-auto">
+        Trouvez rapidement des réponses à vos questions les plus courantes sur notre plateforme e-commerce.
+      </p>
+    </div>
+
+    <!-- Liste des FAQ -->
+    <div class="space-y-3">
+      <div *ngFor="let faq of faqs; let i = index" 
+           class="bg-[#343333] rounded-2xl transition-all duration-300 overflow-hidden">
+        <button 
+          (click)="toggleFaq(i)"
+          class="w-full text-left px-5 sm:px-6 py-4 sm:py-5 flex items-center justify-between gap-4 hover:bg-white/5 transition-colors duration-200"
+          [attr.aria-expanded]="faq.isOpen"
+        >
+          <span class="text-white font-semibold text-sm sm:text-base">{{ faq.question }}</span>
+          <span class="flex-shrink-0 w-8 h-8 rounded-full bg-yellow-500/10 flex items-center justify-center text-yellow-400 transition-transform duration-300"
+                [style.transform]="faq.isOpen ? 'rotate(180deg)' : 'rotate(0deg)'">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path>
+            </svg>
+          </span>
+        </button>
+        <div class="overflow-hidden transition-all duration-500 ease-in-out"
+             [style.maxHeight]="faq.isOpen ? faq.maxHeight : '0'">
+          <div class="px-5 sm:px-6 pb-5 sm:pb-6 text-gray-300 text-sm sm:text-base leading-relaxed">
+            <p>{{ faq.answer }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pied de la FAQ -->
+    <div class="text-center mt-10">
+      <p class="text-gray-400 text-sm">
+        Vous n'avez pas trouvé votre réponse ? 
+        <a href="#" class="text-yellow-400 hover:text-yellow-300 font-semibold transition-colors">
+          Contactez notre support
+          <i class="fas fa-arrow-right ml-1"></i>
+        </a>
+      </p>
+    </div>
+  </div>
 </section>

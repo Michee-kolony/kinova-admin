@@ -13,7 +13,6 @@ export class SupportComponent {
     { id: 'confidentialite', label: 'Politique de confidentialité'},
     { id: 'cgu', label: 'CGU'},
     { id: 'cookies', label: 'Cookies'},
-    { id: 'faq', label: 'FAQ'},
     { id: 'contact', label: 'Contact'},
     { id: 'deletecount', label: 'Supprimer mon compte'}
   ];
