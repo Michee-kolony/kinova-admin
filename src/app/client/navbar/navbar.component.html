@@ -48,13 +48,13 @@
   <div *ngIf="isMenuOpen" 
        class="md:hidden bg-black border-t border-gray-800 animate-slideDown">
     <div class="px-2 pt-2 pb-3 space-y-1">
-      <a routerLink="/" class="block text-gray-300 text-decoration-none hover:text-white hover:bg-gray-800 px-3 py-2 rounded-md text-base font-medium transition-colors duration-200">
+      <a routerLink="/"  (click)="toggleMenu()" class="block text-gray-300 text-decoration-none hover:text-white hover:bg-gray-800 px-3 py-2 rounded-md text-base font-medium transition-colors duration-200">
         Accueil
       </a>
-       <a routerLink="/kinova/decouvrir" class="block text-gray-300 text-decoration-none hover:text-white hover:bg-gray-800 px-3 py-2 rounded-md text-base font-medium transition-colors duration-200">
+       <a routerLink="/kinova/decouvrir"  (click)="toggleMenu()" class="block text-gray-300 text-decoration-none hover:text-white hover:bg-gray-800 px-3 py-2 rounded-md text-base font-medium transition-colors duration-200">
         Découvrir Kinova
       </a>
-      <a routerLink="/kinova/support" class="block text-gray-300 text-decoration-none hover:text-white hover:bg-gray-800 px-3 py-2 rounded-md text-base font-medium transition-colors duration-200">
+      <a routerLink="/kinova/support"  (click)="toggleMenu()" class="block text-gray-300 text-decoration-none hover:text-white hover:bg-gray-800 px-3 py-2 rounded-md text-base font-medium transition-colors duration-200">
         Support
       </a>
     </div>

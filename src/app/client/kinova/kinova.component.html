@@ -1,3 +1,36 @@
 <app-navbar></app-navbar>
+
 <router-outlet></router-outlet>
+
 <app-footer></app-footer>
+
+<!-- Bouton Retour en haut -->
+<button
+  *ngIf="showScrollButton"
+  (click)="scrollToTop()"
+  class="
+    fixed
+    bottom-6
+    right-6
+    z-[9999]
+    w-14
+    h-14
+    rounded-full
+    bg-black
+    text-white
+    flex
+    items-center
+    justify-center
+    shadow-xl
+    transition-all
+    duration-300
+    hover:-translate-y-1
+    hover:scale-110
+    hover:bg-gray-900
+    active:scale-95
+    border
+    border-yellow-500
+  "
+>
+  <i class="fa-solid fa-chevron-up text-xl"></i>
+</button>
