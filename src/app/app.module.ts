@@ -44,6 +44,7 @@ import {
 
 import { adminAuthInterceptor } from './interceptors/admin-auth.interceptor';
 import { DecouvrirComponent } from './client/decouvrir/decouvrir.component';
+import { ChartComponent } from './composants/chart/chart.component';
 
 @NgModule({
   declarations: [
@@ -77,7 +78,8 @@ import { DecouvrirComponent } from './client/decouvrir/decouvrir.component';
     FaqComponent,
     ContactComponent,
     DeletecountComponent,
-    DecouvrirComponent
+    DecouvrirComponent,
+    ChartComponent
   ],
 
   imports: [

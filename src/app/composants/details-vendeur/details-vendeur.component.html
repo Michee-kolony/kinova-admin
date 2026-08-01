@@ -183,9 +183,9 @@
             {{ article.categorie }}
           </p>
           <div class="article-prices">
-            <span class="article-price">{{ article.prix }} €</span>
+            <span class="article-price">{{ article.prix }} $</span>
             <span *ngIf="article.reduction > 0" class="article-price-reduced">
-              {{ getPrixFinal(article) }} €
+              {{ getPrixFinal(article) }} $
             </span>
           </div>
           <div class="article-stock">
