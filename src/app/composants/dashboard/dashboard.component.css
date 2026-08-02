@@ -192,7 +192,7 @@
 .order-product-price {
   font-size: 13px;
   font-weight: 600;
-  color: #3B82F6;
+  color: #e0d12d;
 }
 
 .order-status {
@@ -252,9 +252,8 @@
 }
 
 .order-btn:hover {
-  background: var(--primary-color);
+  background:  #EAB308;
   color: white;
-  border-color: var(--primary-color);
 }
 
 .order-btn i {
