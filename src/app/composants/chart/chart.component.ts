@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, ElementRef, ViewChild, OnDestroy } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ElementRef, ViewChild, OnDestroy, HostListener } from '@angular/core';
 import { Chart, ChartConfiguration } from 'chart.js/auto';
 
 @Component({
@@ -10,7 +10,8 @@ export class ChartComponent implements OnInit, AfterViewInit, OnDestroy {
   
   @ViewChild('salesChart') chartCanvas!: ElementRef<HTMLCanvasElement>;
   private chart!: Chart;
-  
+  private resizeTimer: any;
+
   ventesMensuelles = {
     labels: ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Aoû', 'Sep', 'Oct', 'Nov', 'Déc'],
     datasets: [
@@ -19,13 +20,13 @@ export class ChartComponent implements OnInit, AfterViewInit, OnDestroy {
         data: [12000, 15000, 18000, 22000, 20000, 25000, 28000, 30000, 27000, 32000, 35000, 38000],
         backgroundColor: 'rgba(234, 179, 8, 0.12)',
         borderColor: '#eab308',
-        borderWidth: 3,
+        borderWidth: 2.5,
         tension: 0.4,
         pointBackgroundColor: '#eab308',
-        pointBorderColor: '#000000',
+        pointBorderColor: '#1d1d1d',
         pointBorderWidth: 2,
-        pointRadius: 5,
-        pointHoverRadius: 7,
+        pointRadius: 4,
+        pointHoverRadius: 6,
         pointHoverBackgroundColor: '#fbbf24',
         fill: true
       },
@@ -37,10 +38,10 @@ export class ChartComponent implements OnInit, AfterViewInit, OnDestroy {
         borderWidth: 2,
         tension: 0.4,
         pointBackgroundColor: 'rgba(234, 179, 8, 0.5)',
-        pointBorderColor: '#000000',
+        pointBorderColor: '#1d1d1d',
         pointBorderWidth: 2,
-        pointRadius: 4,
-        pointHoverRadius: 6,
+        pointRadius: 3,
+        pointHoverRadius: 5,
         pointHoverBackgroundColor: '#fbbf24',
         fill: true,
         borderDash: [6, 4]
@@ -48,10 +49,11 @@ export class ChartComponent implements OnInit, AfterViewInit, OnDestroy {
     ]
   };
 
-  chartConfig: ChartConfiguration = {
-    type: 'line',
-    data: this.ventesMensuelles,
-    options: {
+  getChartOptions(): ChartConfiguration['options'] {
+    const isMobile = window.innerWidth < 640;
+    const isTablet = window.innerWidth < 768;
+
+    return {
       responsive: true,
       maintainAspectRatio: false,
       plugins: {
@@ -64,8 +66,14 @@ export class ChartComponent implements OnInit, AfterViewInit, OnDestroy {
           bodyColor: '#ffffff',
           borderColor: 'rgba(234, 179, 8, 0.3)',
           borderWidth: 1,
-          padding: 14,
+          padding: isMobile ? 10 : 14,
           cornerRadius: 8,
+          titleFont: {
+            size: isMobile ? 11 : 13
+          },
+          bodyFont: {
+            size: isMobile ? 10 : 12
+          },
           callbacks: {
             label: function(context) {
               let label = context.dataset.label || '';
@@ -74,11 +82,11 @@ export class ChartComponent implements OnInit, AfterViewInit, OnDestroy {
               }
               if (context.parsed.y !== null) {
                 const value = typeof context.parsed.y === 'number' ? context.parsed.y : 0;
-                label += new Intl.NumberFormat('fr-FR', { 
-                  style: 'currency', 
-                  currency: 'EUR',
-                  maximumFractionDigits: 0
-                }).format(value);
+                if (value >= 1000) {
+                  label += (value / 1000).toFixed(1) + 'k $';
+                } else {
+                  label += value + ' $';
+                }
               }
               return label;
             },
@@ -92,25 +100,26 @@ export class ChartComponent implements OnInit, AfterViewInit, OnDestroy {
         y: {
           beginAtZero: true,
           grid: {
-            color: 'rgba(234, 179, 8, 0.08)',
-            tickColor: 'rgba(234, 179, 8, 0.08)'
+            color: 'rgba(234, 179, 8, 0.06)',
+            tickColor: 'rgba(234, 179, 8, 0.06)'
           },
           border: {
             dash: [4, 4],
-            color: 'rgba(234, 179, 8, 0.2)'
+            color: 'rgba(234, 179, 8, 0.15)'
           },
           ticks: {
-            color: 'rgba(234, 179, 8, 0.5)',
+            color: 'rgba(234, 179, 8, 0.4)',
             font: {
-              size: 11,
+              size: isMobile ? 9 : isTablet ? 10 : 11,
               family: "'Inter', sans-serif"
             },
+            maxTicksLimit: isMobile ? 5 : 8,
             callback: function(value) {
               const numValue = typeof value === 'number' ? value : 0;
               if (numValue >= 1000) {
-                return (numValue / 1000) + 'k $';
+                return (numValue / 1000) + '$';
               }
-              return numValue + '$';
+              return numValue;
             }
           }
         },
@@ -119,23 +128,35 @@ export class ChartComponent implements OnInit, AfterViewInit, OnDestroy {
             display: false
           },
           border: {
-            color: 'rgba(234, 179, 8, 0.2)'
+            color: 'rgba(234, 179, 8, 0.15)'
           },
           ticks: {
-            color: 'rgba(234, 179, 8, 0.5)',
+            color: 'rgba(234, 179, 8, 0.4)',
             font: {
-              size: 11,
+              size: isMobile ? 9 : isTablet ? 10 : 11,
               family: "'Inter', sans-serif"
-            }
+            },
+            maxRotation: isMobile ? 45 : 0,
+            autoSkip: true,
+            maxTicksLimit: isMobile ? 6 : 12
           }
         }
       },
       interaction: {
         intersect: false,
         mode: 'index'
+      },
+      elements: {
+        point: {
+          radius: isMobile ? 3 : 4,
+          hoverRadius: isMobile ? 5 : 6
+        },
+        line: {
+          borderWidth: isMobile ? 2 : 2.5
+        }
       }
-    }
-  };
+    };
+  }
 
   constructor() {}
 
@@ -145,10 +166,27 @@ export class ChartComponent implements OnInit, AfterViewInit, OnDestroy {
     this.initChart();
   }
 
+  @HostListener('window:resize')
+  onResize(): void {
+    clearTimeout(this.resizeTimer);
+    this.resizeTimer = setTimeout(() => {
+      if (this.chart) {
+        // Mise à jour des options sans réaffectation directe
+        const newOptions = this.getChartOptions();
+        Object.assign(this.chart.options, newOptions);
+        this.chart.update();
+      }
+    }, 250);
+  }
+
   initChart(): void {
     const canvas = this.chartCanvas.nativeElement;
     if (canvas) {
-      this.chart = new Chart(canvas, this.chartConfig);
+      this.chart = new Chart(canvas, {
+        type: 'line',
+        data: this.ventesMensuelles,
+        options: this.getChartOptions()
+      });
     }
   }
 
@@ -159,7 +197,7 @@ export class ChartComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  addDataset(label: string, data: any[], color: string): void {
+  addDataset(label: string, data: any[]): void {
     if (this.chart) {
       this.chart.data.datasets.push({
         label: label,
@@ -169,7 +207,7 @@ export class ChartComponent implements OnInit, AfterViewInit, OnDestroy {
         borderWidth: 2.5,
         tension: 0.4,
         pointBackgroundColor: '#eab308',
-        pointBorderColor: '#000000',
+        pointBorderColor: '#1d1d1d',
         pointBorderWidth: 2,
         pointRadius: 4,
         pointHoverRadius: 6,
@@ -183,5 +221,6 @@ export class ChartComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.chart) {
       this.chart.destroy();
     }
+    clearTimeout(this.resizeTimer);
   }
 }
