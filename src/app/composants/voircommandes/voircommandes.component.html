@@ -1,0 +1,265 @@
+<!-- voircommandes.component.html -->
+<div class="max-w-7xl mx-auto p-4 md:p-6 min-h-screen bg-gray-100 dark:bg-black transition-all duration-300">
+  
+  <!-- En-tête -->
+  <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 p-4 md:p-5 bg-gray-100 dark:bg-[#2a2a2a] rounded-xl  mb-6 transition-all duration-300">
+    <div class="flex items-center gap-3 md:gap-4 w-full sm:w-auto">
+      <button 
+        (click)="goBack()" 
+        class="flex items-center gap-2 px-3 py-2 md:px-4 md:py-2 bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-yellow-400 border border-gray-300 dark:border-yellow-400 rounded-lg hover:bg-yellow-400 hover:text-gray-900 dark:hover:bg-yellow-400 dark:hover:text-black transition-all duration-300 text-sm">
+        <i class="fas fa-arrow-left"></i>
+        <span class="hidden sm:inline">Retour</span>
+      </button>
+      <h1 class="text-xl md:text-2xl font-bold text-gray-900 dark:text-white">Détails de la commande</h1>
+    </div>
+    <div class="w-full sm:w-auto">
+      <span class="inline-block text-sm md:text-lg font-semibold text-yellow-500 dark:text-yellow-400 px-3 py-1.5 md:px-4 md:py-2 rounded-lg border border-yellow-200 dark:border-yellow-400 bg-yellow-500/10">
+        #{{ commande?.numeroCommande || 'N/A' }}
+      </span>
+    </div>
+  </div>
+
+  <!-- État de chargement -->
+  <div *ngIf="loading" class="flex justify-center items-center min-h-[400px]">
+    <div class="text-center">
+      <i class="fas fa-spinner fa-spin text-5xl text-yellow-400"></i>
+      <p class="mt-4 text-gray-900 dark:text-white">Chargement des détails de la commande...</p>
+    </div>
+  </div>
+
+  <!-- Erreur -->
+  <div *ngIf="error" class="flex justify-center items-center min-h-[400px]">
+    <div class="text-center bg-gray-100 dark:bg-gray-900 p-8 md:p-10 rounded-xl border border-red-500 max-w-md">
+      <i class="fas fa-exclamation-circle text-5xl text-red-500 mb-4"></i>
+      <h3 class="text-gray-900 dark:text-white mb-2">Erreur</h3>
+      <p class="text-gray-500 dark:text-gray-400 mb-5">{{ error }}</p>
+      <button 
+        (click)="loadCommande()" 
+        class="px-6 py-2.5 bg-yellow-400 text-gray-900 rounded-lg font-semibold hover:scale-105 transition-all duration-300">
+        Réessayer
+      </button>
+    </div>
+  </div>
+
+  <!-- Détails de la commande -->
+  <div *ngIf="!loading && !error && commande" class="flex flex-col gap-4 md:gap-6">
+    
+    <!-- Section 1: Informations générales -->
+    <div class="bg-gray-100 dark:bg-[#2a2a2a] rounded-xl p-4 md:p-6  transition-all duration-300">
+      <div class="flex items-center gap-3 mb-4 md:mb-5 pb-3 border-b-2 border-gray-200 dark:border-gray-800">
+        <i class="fas fa-info-circle text-yellow-400 text-xl"></i>
+        <h2 class="text-gray-900 dark:text-white text-lg font-semibold m-0">Informations générales</h2>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div class="flex flex-col gap-1">
+          <span class="text-gray-500 dark:text-gray-400 text-xs uppercase tracking-wider">Numéro de commande</span>
+          <span class="text-gray-900 dark:text-white text-sm font-medium">{{ commande.numeroCommande }}</span>
+        </div>
+        <div class="flex flex-col gap-1">
+          <span class="text-gray-500 dark:text-gray-400 text-xs uppercase tracking-wider">Client</span>
+          <span class="text-gray-900 dark:text-white text-sm font-medium">{{ commande.emailUtilisateur }}</span>
+        </div>
+        <div class="flex flex-col gap-1">
+          <span class="text-gray-500 dark:text-gray-400 text-xs uppercase tracking-wider">Statut de la commande</span>
+          <span class="inline-block px-3 py-1 rounded-full text-xs font-semibold w-fit" [class]="getStatus(commande.statutCommande).class">
+            {{ getStatus(commande.statutCommande).label }}
+          </span>
+        </div>
+        <div class="flex flex-col gap-1">
+          <span class="text-gray-500 dark:text-gray-400 text-xs uppercase tracking-wider">Date de création</span>
+          <span class="text-gray-900 dark:text-white text-sm font-medium">{{ formatDate(commande.createdAt) }}</span>
+        </div>
+        <div class="flex flex-col gap-1">
+          <span class="text-gray-500 dark:text-gray-400 text-xs uppercase tracking-wider">Il y a</span>
+          <span class="text-yellow-500 dark:text-yellow-400 text-sm font-medium">{{ getTimeAgo(commande.createdAt) }}</span>
+        </div>
+        <div class="flex flex-col gap-1">
+          <span class="text-gray-500 dark:text-gray-400 text-xs uppercase tracking-wider">Dernière mise à jour</span>
+          <span class="text-gray-900 dark:text-white text-sm font-medium">{{ formatDate(commande.updatedAt) }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 2: Adresse de livraison -->
+    <div class="bg-gray-100 dark:bg-[#2a2a2a] rounded-xl p-4 md:p-6  transition-all duration-300">
+      <div class="flex items-center gap-3 mb-4 md:mb-5 pb-3 border-b-2 border-gray-200 dark:border-gray-800">
+        <i class="fas fa-map-marker-alt text-yellow-400 text-xl"></i>
+        <h2 class="text-gray-900 dark:text-white text-lg font-semibold m-0">Adresse de livraison</h2>
+      </div>
+      <div class="bg-gray-50 dark:bg-black p-4 rounded-lg ">
+        <p class="text-gray-900 dark:text-white m-0 text-sm">{{ commande.adresseLivraison || 'Adresse non spécifiée' }}</p>
+      </div>
+    </div>
+
+    <!-- Section 3: Paiement -->
+    <div class="bg-gray-100 dark:bg-[#2a2a2a] rounded-xl p-4 md:p-6  transition-all duration-300">
+      <div class="flex items-center gap-3 mb-4 md:mb-5 pb-3 border-b-2 border-gray-200 dark:border-gray-800">
+        <i class="fas fa-credit-card text-yellow-400 text-xl"></i>
+        <h2 class="text-gray-900 dark:text-white text-lg font-semibold m-0">Informations de paiement</h2>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div class="flex flex-col gap-1">
+          <span class="text-gray-500 dark:text-gray-400 text-xs uppercase tracking-wider">Mode de paiement</span>
+          <span class="text-gray-900 dark:text-white text-sm font-medium">{{ commande.modePaiement || 'N/A' }}</span>
+        </div>
+        <div class="flex flex-col gap-1">
+          <span class="text-gray-500 dark:text-gray-400 text-xs uppercase tracking-wider">Opérateur</span>
+          <span class="text-gray-900 dark:text-white text-sm font-medium">{{ commande.operateurPaiement || 'N/A' }}</span>
+        </div>
+        <div class="flex flex-col gap-1">
+          <span class="text-gray-500 dark:text-gray-400 text-xs uppercase tracking-wider">Téléphone</span>
+          <span class="text-gray-900 dark:text-white text-sm font-medium">{{ commande.telephonePaiement || 'N/A' }}</span>
+        </div>
+        <div class="flex flex-col gap-1">
+          <span class="text-gray-500 dark:text-gray-400 text-xs uppercase tracking-wider">Statut du paiement</span>
+          <span class="inline-block px-3 py-1 rounded-full text-xs font-semibold w-fit" [class]="getPaiementStatus(commande.statutPaiement).class">
+            {{ getPaiementStatus(commande.statutPaiement).label }}
+          </span>
+        </div>
+        <div class="flex flex-col gap-1">
+          <span class="text-gray-500 dark:text-gray-400 text-xs uppercase tracking-wider">Montant total</span>
+          <span class="text-yellow-500 dark:text-yellow-400 text-lg font-bold">{{ formatPrice(commande.montantAPayer, commande.devise) }}</span>
+        </div>
+        <div class="flex flex-col gap-1">
+          <span class="text-gray-500 dark:text-gray-400 text-xs uppercase tracking-wider">Devise</span>
+          <span class="text-gray-900 dark:text-white text-sm font-medium">{{ commande.devise || 'CDF' }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 4: Articles -->
+    <div class="bg-gray-100 dark:bg-[#2a2a2a] rounded-xl p-4 md:p-6  transition-all duration-300">
+      <div class="flex items-center gap-3 mb-4 md:mb-5 pb-3 border-b-2 border-gray-200 dark:border-gray-800">
+        <i class="fas fa-shopping-bag text-yellow-400 text-xl"></i>
+        <h2 class="text-gray-900 dark:text-white text-lg font-semibold m-0">Articles commandés ({{ commande.articles?.length || 0 }})</h2>
+      </div>
+
+      <div class="flex flex-col gap-4 md:gap-5">
+        <div *ngFor="let article of commande.articles; let i = index" class="bg-gray-50 dark:bg-black rounded-xl p-4 md:p-5  hover:border-yellow-400 transition-all duration-300">
+          <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-4 pb-3 border-b border-gray-200 dark:border-gray-800">
+            <span class="text-gray-500 dark:text-gray-400 text-sm font-semibold">Article #{{ i + 1 }}</span>
+            <span class="inline-block px-3 py-1 rounded-full text-xs font-semibold" [class]="getLivraisonStatus(article.statutLivraison).class">
+              {{ getLivraisonStatus(article.statutLivraison).label }}
+            </span>
+          </div>
+          
+          <div class="flex flex-col md:flex-row gap-4">
+            <div *ngIf="article.images && article.images.length > 0" class="relative flex-shrink-0">
+              <img [src]="article.images[0]" [alt]="article.nom" class="w-24 h-24 md:w-32 md:h-32 object-cover rounded-lg ">
+              <div *ngIf="article.images.length > 1" class="absolute -bottom-2 -right-2 bg-yellow-400 text-gray-900 rounded-full w-7 h-7 flex items-center justify-center text-xs font-bold">
+                +{{ article.images.length - 1 }}
+              </div>
+            </div>
+            
+            <div class="flex-1">
+              <h3 class="text-gray-900 dark:text-white text-lg font-semibold m-0 mb-2">{{ article.nom }}</h3>
+              <p class="text-gray-500 dark:text-gray-400 text-sm m-0 mb-4">{{ article.description || 'Aucune description' }}</p>
+              
+              <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 mb-4">
+                <div class="flex flex-col gap-0.5">
+                  <span class="text-gray-500 dark:text-gray-400 text-xs uppercase tracking-wider">Catégorie</span>
+                  <span class="text-gray-900 dark:text-white text-sm">{{ article.categorie || 'N/A' }}</span>
+                </div>
+                <div class="flex flex-col gap-0.5">
+                  <span class="text-gray-500 dark:text-gray-400 text-xs uppercase tracking-wider">Genre</span>
+                  <span class="text-gray-900 dark:text-white text-sm">{{ article.genre || 'N/A' }}</span>
+                </div>
+                <div *ngIf="article.couleurChoisie" class="flex flex-col gap-0.5">
+                  <span class="text-gray-500 dark:text-gray-400 text-xs uppercase tracking-wider">Couleur</span>
+                  <span class="text-gray-900 dark:text-white text-sm flex items-center gap-1">
+                    <span class="inline-block w-4 h-4 rounded border border-gray-300 dark:border-gray-700" [style.background]="article.couleurChoisie"></span>
+                    {{ article.couleurChoisie }}
+                  </span>
+                </div>
+                <div *ngIf="article.tailleChoisie" class="flex flex-col gap-0.5">
+                  <span class="text-gray-500 dark:text-gray-400 text-xs uppercase tracking-wider">Taille</span>
+                  <span class="text-gray-900 dark:text-white text-sm">{{ article.tailleChoisie }}</span>
+                </div>
+                <div class="flex flex-col gap-0.5">
+                  <span class="text-gray-500 dark:text-gray-400 text-xs uppercase tracking-wider">Quantité</span>
+                  <span class="text-gray-900 dark:text-white text-sm">{{ article.quantite || 1 }}</span>
+                </div>
+                <div class="flex flex-col gap-0.5">
+                  <span class="text-gray-500 dark:text-gray-400 text-xs uppercase tracking-wider">Prix unitaire</span>
+                  <span class="text-yellow-500 dark:text-yellow-400 text-sm font-medium">{{ formatPrice(article.prix, commande.devise) }}</span>
+                </div>
+                <div *ngIf="article.reduction > 0" class="flex flex-col gap-0.5">
+                  <span class="text-gray-500 dark:text-gray-400 text-xs uppercase tracking-wider">Réduction</span>
+                  <span class="text-green-600 dark:text-green-400 text-sm font-medium">-{{ article.reduction }}%</span>
+                </div>
+                <div class="flex flex-col gap-0.5">
+                  <span class="text-gray-500 dark:text-gray-400 text-xs uppercase tracking-wider">Prix final</span>
+                  <span class="text-yellow-500 dark:text-yellow-400 text-sm font-bold">{{ formatPrice(article.prixFinal, commande.devise) }}</span>
+                </div>
+              </div>
+
+              <!-- Section Vendeur -->
+              <div class="mt-4 pt-4 border-t border-gray-200 dark:border-gray-800">
+                <h4 class="text-yellow-500 dark:text-yellow-400 text-sm font-semibold m-0 mb-3 flex items-center gap-2">
+                  <i class="fas fa-store"></i>
+                  Vendeur
+                </h4>
+                <div class="bg-gray-50 dark:bg-gray-900 p-4 rounded-lg ">
+                  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+                    <div class="flex flex-col gap-0.5">
+                      <span class="text-gray-500 dark:text-gray-400 text-xs uppercase tracking-wider">Nom</span>
+                      <span class="text-gray-900 dark:text-white text-sm font-medium">{{ article.vendeurNom || 'N/A' }}</span>
+                    </div>
+                    <div class="flex flex-col gap-0.5">
+                      <span class="text-gray-500 dark:text-gray-400 text-xs uppercase tracking-wider">Téléphone</span>
+                      <span class="text-gray-900 dark:text-white text-sm font-medium">{{ article.vendeurTelephone || 'N/A' }}</span>
+                    </div>
+                    <div class="flex flex-col gap-0.5">
+                      <span class="text-gray-500 dark:text-gray-400 text-xs uppercase tracking-wider">ID Vendeur</span>
+                      <span class="text-gray-900 dark:text-white text-sm font-medium">{{ article.vendeurId || 'N/A' }}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 5: Résumé financier -->
+    <div class="bg-gray-100 dark:bg-[#2a2a2a] rounded-xl p-4 md:p-6 border-2 border-yellow-400 dark:border-yellow-400 transition-all duration-300">
+      <div class="flex items-center gap-3 mb-4 md:mb-5 pb-3 border-b-2 border-gray-200 dark:border-gray-800">
+        <i class="fas fa-calculator text-yellow-400 text-xl"></i>
+        <h2 class="text-gray-900 dark:text-white text-lg font-semibold m-0">Résumé financier</h2>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+        <div class="flex flex-col gap-1 p-3 bg-gray-50 dark:bg-black rounded-lg">
+          <span class="text-gray-500 dark:text-gray-400 text-xs uppercase tracking-wider">Montant total</span>
+          <span class="text-gray-900 dark:text-white text-base font-medium">{{ formatPrice(commande.montantTotal, commande.devise) }}</span>
+        </div>
+        <div *ngIf="commande.montantReduction > 0" class="flex flex-col gap-1 p-3 bg-gray-50 dark:bg-black rounded-lg">
+          <span class="text-gray-500 dark:text-gray-400 text-xs uppercase tracking-wider">Réduction</span>
+          <span class="text-green-600 dark:text-green-400 text-base font-medium">-{{ formatPrice(commande.montantReduction, commande.devise) }}</span>
+        </div>
+        <div *ngIf="commande.montantLivraison > 0" class="flex flex-col gap-1 p-3 bg-gray-50 dark:bg-black rounded-lg">
+          <span class="text-gray-500 dark:text-gray-400 text-xs uppercase tracking-wider">Frais de livraison</span>
+          <span class="text-gray-900 dark:text-white text-base font-medium">{{ formatPrice(commande.montantLivraison, commande.devise) }}</span>
+        </div>
+        <div class="flex flex-col gap-1 p-3 bg-yellow-500/10 dark:bg-yellow-500/10 rounded-lg border-2 border-yellow-400 dark:border-yellow-400">
+          <span class="text-gray-500 dark:text-gray-400 text-xs uppercase tracking-wider">Total à payer</span>
+          <span class="text-yellow-500 dark:text-yellow-400 text-xl font-bold">{{ formatPrice(commande.montantAPayer, commande.devise) }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 6: Métadonnées -->
+    <div *ngIf="commande.metadata" class="bg-gray-100 dark:bg-[#2a2a2a] rounded-xl p-4 md:p-6  transition-all duration-300">
+      <div class="flex items-center gap-3 mb-4 md:mb-5 pb-3 border-b-2 border-gray-200 dark:border-gray-800">
+        <i class="fas fa-code text-yellow-400 text-xl"></i>
+        <h2 class="text-gray-900 dark:text-white text-lg font-semibold m-0">Métadonnées</h2>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+        <div *ngFor="let item of commande.metadata | keyvalue" class="flex flex-col gap-0.5 p-2 bg-gray-50 dark:bg-black rounded-lg">
+          <span class="text-gray-500 dark:text-gray-400 text-xs uppercase tracking-wider">{{ item.key }}</span>
+          <span class="text-gray-900 dark:text-white text-sm font-medium">{{ item.value }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

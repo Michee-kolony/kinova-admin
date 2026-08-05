@@ -1,3 +1,4 @@
+<!-- commandes.component.html -->
 <div class="commandes-container">
   <!-- En-tête -->
   <div class="commandes-header">
@@ -7,19 +8,44 @@
       </h1>
       <p class="text-gray-600 dark:text-gray-400 mt-1">Gérez toutes les commandes de votre plateforme</p>
     </div>
-    <div class="flex items-center gap-3">
+    <div class="flex items-center gap-3 flex-wrap">
       <div class="relative">
         <input 
           type="text" 
           placeholder="Rechercher une commande..." 
+          (input)="onSearch($event)"
           class="pl-10 pr-4 py-2 border border-gray-300 bg-transparent dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent w-64">
         <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
       </div>
-      <button class="px-4 py-2 text-white rounded-lg transition-colors text-sm font-medium flex items-center gap-2" style="background: #ffbf00; color: #1a1a1a;">
-        <i class="fas fa-file-export"></i>
-        Exporter
-      </button>
+      <div class="flex items-center gap-2">
+        <button 
+          class="px-4 py-2 rounded-lg transition-colors text-sm font-medium flex items-center gap-2" 
+          style="background: #ffbf00; color: #1a1a1a;"
+          (click)="refreshManually()">
+          <i class="fas fa-sync-alt"></i>
+          Actualiser
+        </button>
+        <button 
+          class="px-4 py-2 rounded-lg transition-colors text-sm font-medium flex items-center gap-2"
+          [class]="autoRefreshEnabled ? 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300' : 'bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-300'"
+          (click)="toggleAutoRefresh()">
+          <i class="fas" [class.fa-toggle-on]="autoRefreshEnabled" [class.fa-toggle-off]="!autoRefreshEnabled"></i>
+          {{ autoRefreshEnabled ? 'Auto' : 'Manuel' }}
+        </button>
+      </div>
     </div>
+  </div>
+
+  <!-- Dernière mise à jour -->
+  <div class="last-update-info pb-5">
+    <span class="text-sm text-gray-500 dark:text-gray-400">
+      <i class="fas fa-clock mr-1"></i>
+      Dernière mise à jour : {{ lastUpdate | date:'HH:mm:ss' }}
+      <span class="ml-2" *ngIf="autoRefreshEnabled">
+        <span class="inline-block w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+        Actualisation automatique activée (30s)
+      </span>
+    </span>
   </div>
 
   <!-- Liste des commandes -->
@@ -31,18 +57,33 @@
       </h2>
       <div class="flex items-center gap-2">
         <span class="text-sm text-gray-500 dark:text-gray-400">Trier par :</span>
-        <select class="px-3 py-1.5 border bg-trransparent border-gray-300 dark:border-gray-600 rounded-lg   text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400">
-          <option>Plus récentes</option>
-          <option>Plus anciennes</option>
-          <option>Prix croissant</option>
-          <option>Prix décroissant</option>
+        <select 
+          (change)="onSortChange($event)"
+          class="px-3 py-1.5 border bg-transparent border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400">
+          <option value="recent">Plus récentes</option>
+          <option value="oldest">Plus anciennes</option>
+          <option value="price-asc">Prix croissant</option>
+          <option value="price-desc">Prix décroissant</option>
         </select>
       </div>
     </div>
 
-    <!-- Tableau -->
-    <div class="overflow-x-auto">
-      <table class="orders-table">
+    <!-- État de chargement -->
+    <div *ngIf="loading" class="loading-spinner">
+      Chargement des commandes <i class="fas fa-spinner fa-spin text-yellow-500"></i>
+    </div>
+
+    <!-- Message d'erreur -->
+    <div *ngIf="error" class="error-state">
+      <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+        <strong class="font-bold">Erreur !</strong>
+        <span class="block sm:inline">{{ error }}</span>
+      </div>
+    </div>
+
+    <!-- Tableau des commandes -->
+    <div *ngIf="!loading && !error" class="overflow-x-auto">
+      <table class="orders-table" *ngIf="filteredOrders.length > 0">
         <thead>
           <tr>
             <th>Client</th>
@@ -55,264 +96,49 @@
           </tr>
         </thead>
         <tbody>
-          <!-- Commande 1 -->
-          <tr>
+          <tr *ngFor="let order of filteredOrders">
             <td>
               <div class="flex items-center gap-3">
-                <img src="https://ui-avatars.com/api/?name=Jean+Dupont&background=ffbf00&color=1a1a1a&size=32" alt="Client" class="w-8 h-8 rounded-full">
-                <span class="font-medium text-gray-900 dark:text-white">Jean Dupont</span>
+                <img [src]="order.clientAvatar" alt="Client" class="w-8 h-8 rounded-full">
+                <span class="font-medium text-gray-900 dark:text-white">{{ order.client }}</span>
               </div>
             </td>
             <td>
               <div class="flex items-center gap-3">
-                <img src="https://picsum.photos/seed/1/40/40" alt="Produit" class="w-10 h-10 rounded-lg object-cover border border-gray-200 dark:border-gray-700">
-                <span class="text-gray-700 dark:text-gray-300">iPhone 15 Pro Max</span>
+                <img [src]="order.productImage" alt="Produit" class="w-10 h-10 rounded-lg object-cover border border-gray-200 dark:border-gray-700">
+                <div>
+                  <span class="text-gray-700 dark:text-gray-300">{{ order.product }}</span>
+                  <span *ngIf="order.totalArticles > 1" class="text-xs text-gray-500 ml-1">
+                    +{{ order.totalArticles - 1 }} autre(s)
+                  </span>
+                </div>
               </div>
             </td>
-            <td class="font-semibold" style="color: #ffbf00;">1 299,99 $</td>
+            <td class="font-semibold" style="color: #ffbf00;">{{ order.price }}</td>
             <td>
               <div class="flex items-center gap-2">
-                <img src="https://ui-avatars.com/api/?name=Marie+Martin&background=ffbf00&color=1a1a1a&size=24" alt="Vendeur" class="w-6 h-6 rounded-full">
-                <span class="text-gray-700 dark:text-gray-300">Marie Martin</span>
+                <img [src]="order.vendorAvatar" alt="Vendeur" class="w-6 h-6 rounded-full">
+                <span class="text-gray-700 dark:text-gray-300">{{ order.vendor }}</span>
               </div>
             </td>
             <td>
-              <span class="status-badge-delivered">Livrée</span>
+              <span [class]="order.statusClass">{{ order.status }}</span>
             </td>
-            <td class="text-gray-500 dark:text-gray-400 text-sm">15/01/2024</td>
             <td>
-              <button class="action-btn-view">
-                <i class="fas fa-eye"></i>
-                Voir
-              </button>
-            </td>
-          </tr>
-
-          <!-- Commande 2 -->
-          <tr>
-            <td>
-              <div class="flex items-center gap-3">
-                <img src="https://ui-avatars.com/api/?name=Sophie+Leroy&background=ffbf00&color=1a1a1a&size=32" alt="Client" class="w-8 h-8 rounded-full">
-                <span class="font-medium text-gray-900 dark:text-white">Sophie Leroy</span>
+              <div class="flex flex-col">
+                <!-- Affichage du temps écoulé (à l'instant, 2 min, 1h, etc.) -->
+                <span class="text-sm font-medium text-gray-800 dark:text-gray-200">
+                  {{ getTimeAgo(order.createdAt) }}
+                </span>
+                <!-- Affichage de la date complète en petit -->
+                <span class="text-xs text-gray-400 dark:text-gray-500">
+                  {{ order.date }}
+                </span>
               </div>
             </td>
             <td>
-              <div class="flex items-center gap-3">
-                <img src="https://picsum.photos/seed/2/40/40" alt="Produit" class="w-10 h-10 rounded-lg object-cover border border-gray-200 dark:border-gray-700">
-                <span class="text-gray-700 dark:text-gray-300">MacBook Pro 16"</span>
-              </div>
-            </td>
-            <td class="font-semibold" style="color: #ffbf00;">2 499,00 €</td>
-            <td>
-              <div class="flex items-center gap-2">
-                <img src="https://ui-avatars.com/api/?name=Pierre+Durand&background=ffbf00&color=1a1a1a&size=24" alt="Vendeur" class="w-6 h-6 rounded-full">
-                <span class="text-gray-700 dark:text-gray-300">Pierre Durand</span>
-              </div>
-            </td>
-            <td>
-              <span class="status-badge-processing">En traitement</span>
-            </td>
-            <td class="text-gray-500 dark:text-gray-400 text-sm">14/01/2024</td>
-            <td>
-              <button class="action-btn-view">
-                <i class="fas fa-eye"></i>
-                Voir
-              </button>
-            </td>
-          </tr>
-
-          <!-- Commande 3 -->
-          <tr>
-            <td>
-              <div class="flex items-center gap-3">
-                <img src="https://ui-avatars.com/api/?name=Lucas+Moreau&background=ffbf00&color=1a1a1a&size=32" alt="Client" class="w-8 h-8 rounded-full">
-                <span class="font-medium text-gray-900 dark:text-white">Lucas Moreau</span>
-              </div>
-            </td>
-            <td>
-              <div class="flex items-center gap-3">
-                <img src="https://picsum.photos/seed/3/40/40" alt="Produit" class="w-10 h-10 rounded-lg object-cover border border-gray-200 dark:border-gray-700">
-                <span class="text-gray-700 dark:text-gray-300">Samsung Galaxy S24 Ultra</span>
-              </div>
-            </td>
-            <td class="font-semibold" style="color: #ffbf00;">1 399,00 €</td>
-            <td>
-              <div class="flex items-center gap-2">
-                <img src="https://ui-avatars.com/api/?name=Julie+Petit&background=ffbf00&color=1a1a1a&size=24" alt="Vendeur" class="w-6 h-6 rounded-full">
-                <span class="text-gray-700 dark:text-gray-300">Julie Petit</span>
-              </div>
-            </td>
-            <td>
-              <span class="status-badge-pending">En attente</span>
-            </td>
-            <td class="text-gray-500 dark:text-gray-400 text-sm">13/01/2024</td>
-            <td>
-              <button class="action-btn-view">
-                <i class="fas fa-eye"></i>
-                Voir
-              </button>
-            </td>
-          </tr>
-
-          <!-- Commande 4 -->
-          <tr>
-            <td>
-              <div class="flex items-center gap-3">
-                <img src="https://ui-avatars.com/api/?name=Emma+Bernard&background=ffbf00&color=1a1a1a&size=32" alt="Client" class="w-8 h-8 rounded-full">
-                <span class="font-medium text-gray-900 dark:text-white">Emma Bernard</span>
-              </div>
-            </td>
-            <td>
-              <div class="flex items-center gap-3">
-                <img src="https://picsum.photos/seed/4/40/40" alt="Produit" class="w-10 h-10 rounded-lg object-cover border border-gray-200 dark:border-gray-700">
-                <span class="text-gray-700 dark:text-gray-300">AirPods Pro 2</span>
-              </div>
-            </td>
-            <td class="font-semibold" style="color: #ffbf00;">279,00 €</td>
-            <td>
-              <div class="flex items-center gap-2">
-                <img src="https://ui-avatars.com/api/?name=Paul+Robert&background=ffbf00&color=1a1a1a&size=24" alt="Vendeur" class="w-6 h-6 rounded-full">
-                <span class="text-gray-700 dark:text-gray-300">Paul Robert</span>
-              </div>
-            </td>
-            <td>
-              <span class="status-badge-shipped">Expédiée</span>
-            </td>
-            <td class="text-gray-500 dark:text-gray-400 text-sm">12/01/2024</td>
-            <td>
-              <button class="action-btn-view">
-                <i class="fas fa-eye"></i>
-                Voir
-              </button>
-            </td>
-          </tr>
-
-          <!-- Commande 5 -->
-          <tr>
-            <td>
-              <div class="flex items-center gap-3">
-                <img src="https://ui-avatars.com/api/?name=Thomas+David&background=ffbf00&color=1a1a1a&size=32" alt="Client" class="w-8 h-8 rounded-full">
-                <span class="font-medium text-gray-900 dark:text-white">Thomas David</span>
-              </div>
-            </td>
-            <td>
-              <div class="flex items-center gap-3">
-                <img src="https://picsum.photos/seed/5/40/40" alt="Produit" class="w-10 h-10 rounded-lg object-cover border border-gray-200 dark:border-gray-700">
-                <span class="text-gray-700 dark:text-gray-300">iPad Pro 12.9"</span>
-              </div>
-            </td>
-            <td class="font-semibold" style="color: #ffbf00;">1 199,00 €</td>
-            <td>
-              <div class="flex items-center gap-2">
-                <img src="https://ui-avatars.com/api/?name=Claire+Simon&background=ffbf00&color=1a1a1a&size=24" alt="Vendeur" class="w-6 h-6 rounded-full">
-                <span class="text-gray-700 dark:text-gray-300">Claire Simon</span>
-              </div>
-            </td>
-            <td>
-              <span class="status-badge-pending">En attente</span>
-            </td>
-            <td class="text-gray-500 dark:text-gray-400 text-sm">11/01/2024</td>
-            <td>
-              <button class="action-btn-view">
-                <i class="fas fa-eye"></i>
-                Voir
-              </button>
-            </td>
-          </tr>
-
-          <!-- Commande 6 -->
-          <tr>
-            <td>
-              <div class="flex items-center gap-3">
-                <img src="https://ui-avatars.com/api/?name=Laura+Michel&background=ffbf00&color=1a1a1a&size=32" alt="Client" class="w-8 h-8 rounded-full">
-                <span class="font-medium text-gray-900 dark:text-white">Laura Michel</span>
-              </div>
-            </td>
-            <td>
-              <div class="flex items-center gap-3">
-                <img src="https://picsum.photos/seed/6/40/40" alt="Produit" class="w-10 h-10 rounded-lg object-cover border border-gray-200 dark:border-gray-700">
-                <span class="text-gray-700 dark:text-gray-300">Apple Watch Series 9</span>
-              </div>
-            </td>
-            <td class="font-semibold" style="color: #ffbf00;">449,00 €</td>
-            <td>
-              <div class="flex items-center gap-2">
-                <img src="https://ui-avatars.com/api/?name=Marc+Laurent&background=ffbf00&color=1a1a1a&size=24" alt="Vendeur" class="w-6 h-6 rounded-full">
-                <span class="text-gray-700 dark:text-gray-300">Marc Laurent</span>
-              </div>
-            </td>
-            <td>
-              <span class="status-badge-delivered">Livrée</span>
-            </td>
-            <td class="text-gray-500 dark:text-gray-400 text-sm">10/01/2024</td>
-            <td>
-              <button class="action-btn-view">
-                <i class="fas fa-eye"></i>
-                Voir
-              </button>
-            </td>
-          </tr>
-
-          <!-- Commande 7 -->
-          <tr>
-            <td>
-              <div class="flex items-center gap-3">
-                <img src="https://ui-avatars.com/api/?name=Nicolas+Petit&background=ffbf00&color=1a1a1a&size=32" alt="Client" class="w-8 h-8 rounded-full">
-                <span class="font-medium text-gray-900 dark:text-white">Nicolas Petit</span>
-              </div>
-            </td>
-            <td>
-              <div class="flex items-center gap-3">
-                <img src="https://picsum.photos/seed/7/40/40" alt="Produit" class="w-10 h-10 rounded-lg object-cover border border-gray-200 dark:border-gray-700">
-                <span class="text-gray-700 dark:text-gray-300">Dell XPS 13"</span>
-              </div>
-            </td>
-            <td class="font-semibold" style="color: #ffbf00;">1 899,00 €</td>
-            <td>
-              <div class="flex items-center gap-2">
-                <img src="https://ui-avatars.com/api/?name=Anne+Thomas&background=ffbf00&color=1a1a1a&size=24" alt="Vendeur" class="w-6 h-6 rounded-full">
-                <span class="text-gray-700 dark:text-gray-300">Anne Thomas</span>
-              </div>
-            </td>
-            <td>
-              <span class="status-badge-processing">En traitement</span>
-            </td>
-            <td class="text-gray-500 dark:text-gray-400 text-sm">09/01/2024</td>
-            <td>
-              <button class="action-btn-view">
-                <i class="fas fa-eye"></i>
-                Voir
-              </button>
-            </td>
-          </tr>
-
-          <!-- Commande 8 -->
-          <tr>
-            <td>
-              <div class="flex items-center gap-3">
-                <img src="https://ui-avatars.com/api/?name=Camille+Roux&background=ffbf00&color=1a1a1a&size=32" alt="Client" class="w-8 h-8 rounded-full">
-                <span class="font-medium text-gray-900 dark:text-white">Camille Roux</span>
-              </div>
-            </td>
-            <td>
-              <div class="flex items-center gap-3">
-                <img src="https://picsum.photos/seed/8/40/40" alt="Produit" class="w-10 h-10 rounded-lg object-cover border border-gray-200 dark:border-gray-700">
-                <span class="text-gray-700 dark:text-gray-300">Sony WH-1000XM5</span>
-              </div>
-            </td>
-            <td class="font-semibold" style="color: #ffbf00;">399,00 €</td>
-            <td>
-              <div class="flex items-center gap-2">
-                <img src="https://ui-avatars.com/api/?name=David+Blanc&background=ffbf00&color=1a1a1a&size=24" alt="Vendeur" class="w-6 h-6 rounded-full">
-                <span class="text-gray-700 dark:text-gray-300">David Blanc</span>
-              </div>
-            </td>
-            <td>
-              <span class="status-badge-shipped">Expédiée</span>
-            </td>
-            <td class="text-gray-500 dark:text-gray-400 text-sm">08/01/2024</td>
-            <td>
-              <button class="action-btn-view">
+              <!-- ✅ CORRECTION : Utiliser order._id qui est maintenant défini -->
+              <button [routerLink]="['/admin/voircommandes', order._id]" class="action-btn-view">
                 <i class="fas fa-eye"></i>
                 Voir
               </button>
@@ -320,23 +146,49 @@
           </tr>
         </tbody>
       </table>
+
+      <!-- Message si aucune commande -->
+      <div *ngIf="filteredOrders.length === 0 && !loading" class="empty-state">
+        <div class="text-center py-12">
+          <i class="fas fa-shopping-cart text-4xl text-gray-300 mb-4"></i>
+          <p class="text-gray-500 dark:text-gray-400">Aucune commande trouvée</p>
+          <p class="text-sm text-gray-400 dark:text-gray-500 mt-1">
+            {{ searchTerm ? 'Essayez de modifier votre recherche' : 'Aucune commande disponible' }}
+          </p>
+        </div>
+      </div>
     </div>
 
     <!-- Pagination -->
-    <div class="pagination-container">
+    <div *ngIf="!loading && !error && filteredOrders.length > 0" class="pagination-container">
       <div class="flex items-center gap-2">
-        <span class="text-sm text-gray-600 dark:text-gray-400">Affichage 1-8 sur 1 563 commandes</span>
+        <span class="text-sm text-gray-600 dark:text-gray-400">{{ getDisplayedRange() }}</span>
       </div>
       <div class="flex items-center gap-2">
-        <button class="pagination-btn">
+        <button 
+          class="pagination-btn" 
+          (click)="changePage(currentPage - 1)"
+          [disabled]="currentPage === 1">
           <i class="fas fa-chevron-left"></i>
         </button>
-        <button class="pagination-btn active" style="background: #ffbf00; color: #1a1a1a;">1</button>
-        <button class="pagination-btn">2</button>
-        <button class="pagination-btn">3</button>
-        <button class="pagination-btn">...</button>
-        <button class="pagination-btn">15</button>
-        <button class="pagination-btn">
+        
+        <ng-container *ngFor="let page of getPageNumbers()">
+          <button 
+            *ngIf="page !== -1"
+            class="pagination-btn" 
+            [class.active]="page === currentPage"
+            [style.background]="page === currentPage ? '#ffbf00' : ''"
+            [style.color]="page === currentPage ? '#1a1a1a' : ''"
+            (click)="changePage(page)">
+            {{ page }}
+          </button>
+          <span *ngIf="page === -1" class="px-2 text-gray-400">...</span>
+        </ng-container>
+        
+        <button 
+          class="pagination-btn" 
+          (click)="changePage(currentPage + 1)"
+          [disabled]="currentPage === getTotalPages()">
           <i class="fas fa-chevron-right"></i>
         </button>
       </div>

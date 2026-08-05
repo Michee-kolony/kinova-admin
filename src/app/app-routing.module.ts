@@ -20,6 +20,7 @@ import { HomeComponent } from './client/home/home.component';
 import { SupportComponent } from './client/support/support/support.component';
 import { DetailsVendeurComponent } from './composants/details-vendeur/details-vendeur.component';
 import { DecouvrirComponent } from './client/decouvrir/decouvrir.component';
+import { VoircommandesComponent } from './composants/voircommandes/voircommandes.component';
 
 const routes: Routes = [
   {path:'', redirectTo: 'kinova', pathMatch: 'full'},
@@ -39,7 +40,8 @@ const routes: Routes = [
       {path:'produits', component: ProduitsComponent},
       {path:'produit-details/:id', component: ProduitDetailsComponent},
       {path:'client-details/:id', component: ClientDetailsComponent},
-      {path:'vendeur-details/:id', component: DetailsVendeurComponent}
+      {path:'vendeur-details/:id', component: DetailsVendeurComponent},
+      {path:'voircommandes/:id', component: VoircommandesComponent}
 
       ]
   },

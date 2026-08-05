@@ -1,3 +1,4 @@
+// chart.component.ts
 import { Component, OnInit, AfterViewInit, ElementRef, ViewChild, OnDestroy, HostListener } from '@angular/core';
 import { Chart, ChartConfiguration } from 'chart.js/auto';
 
@@ -52,6 +53,7 @@ export class ChartComponent implements OnInit, AfterViewInit, OnDestroy {
   getChartOptions(): ChartConfiguration['options'] {
     const isMobile = window.innerWidth < 640;
     const isTablet = window.innerWidth < 768;
+    const isDark = document.documentElement.classList.contains('dark');
 
     return {
       responsive: true,
@@ -61,9 +63,9 @@ export class ChartComponent implements OnInit, AfterViewInit, OnDestroy {
           display: false
         },
         tooltip: {
-          backgroundColor: 'rgba(0, 0, 0, 0.95)',
+          backgroundColor: isDark ? 'rgba(0, 0, 0, 0.95)' : 'rgba(255, 255, 255, 0.95)',
           titleColor: '#eab308',
-          bodyColor: '#ffffff',
+          bodyColor: isDark ? '#ffffff' : '#1a1a1a',
           borderColor: 'rgba(234, 179, 8, 0.3)',
           borderWidth: 1,
           padding: isMobile ? 10 : 14,
@@ -100,15 +102,15 @@ export class ChartComponent implements OnInit, AfterViewInit, OnDestroy {
         y: {
           beginAtZero: true,
           grid: {
-            color: 'rgba(234, 179, 8, 0.06)',
-            tickColor: 'rgba(234, 179, 8, 0.06)'
+            color: isDark ? 'rgba(234, 179, 8, 0.06)' : 'rgba(234, 179, 8, 0.1)',
+            tickColor: isDark ? 'rgba(234, 179, 8, 0.06)' : 'rgba(234, 179, 8, 0.1)'
           },
           border: {
             dash: [4, 4],
-            color: 'rgba(234, 179, 8, 0.15)'
+            color: isDark ? 'rgba(234, 179, 8, 0.15)' : 'rgba(234, 179, 8, 0.2)'
           },
           ticks: {
-            color: 'rgba(234, 179, 8, 0.4)',
+            color: isDark ? 'rgba(234, 179, 8, 0.4)' : 'rgba(234, 179, 8, 0.6)',
             font: {
               size: isMobile ? 9 : isTablet ? 10 : 11,
               family: "'Inter', sans-serif"
@@ -128,10 +130,10 @@ export class ChartComponent implements OnInit, AfterViewInit, OnDestroy {
             display: false
           },
           border: {
-            color: 'rgba(234, 179, 8, 0.15)'
+            color: isDark ? 'rgba(234, 179, 8, 0.15)' : 'rgba(234, 179, 8, 0.2)'
           },
           ticks: {
-            color: 'rgba(234, 179, 8, 0.4)',
+            color: isDark ? 'rgba(234, 179, 8, 0.4)' : 'rgba(234, 179, 8, 0.6)',
             font: {
               size: isMobile ? 9 : isTablet ? 10 : 11,
               family: "'Inter', sans-serif"
@@ -164,6 +166,24 @@ export class ChartComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngAfterViewInit(): void {
     this.initChart();
+    // Observer les changements de thème
+    this.observeThemeChanges();
+  }
+
+  // Observer les changements de thème pour mettre à jour le graphique
+  observeThemeChanges(): void {
+    const observer = new MutationObserver(() => {
+      if (this.chart) {
+        const newOptions = this.getChartOptions();
+        Object.assign(this.chart.options, newOptions);
+        this.chart.update();
+      }
+    });
+
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['class']
+    });
   }
 
   @HostListener('window:resize')
@@ -171,7 +191,6 @@ export class ChartComponent implements OnInit, AfterViewInit, OnDestroy {
     clearTimeout(this.resizeTimer);
     this.resizeTimer = setTimeout(() => {
       if (this.chart) {
-        // Mise à jour des options sans réaffectation directe
         const newOptions = this.getChartOptions();
         Object.assign(this.chart.options, newOptions);
         this.chart.update();

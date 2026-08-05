@@ -39,12 +39,12 @@
 
       <div class="mt-5 flex items-center gap-3">
         <span class="text-4xl font-bold text-yellow-500">
-          {{article.prixFinal || article.prix}} $
+          {{article.prixFinal || article.prix}} CDF
         </span>
 
         <span *ngIf="article.reduction > 0"
           class="text-xl line-through text-gray-400">
-          {{article.prix}} $
+          {{article.prix}} CDF
         </span>
 
         <span *ngIf="article.reduction > 0"
@@ -143,7 +143,7 @@
         <div>
           <label class="text-sm font-semibold dark:text-gray-300 block mb-1">
             <i class="fa-solid fa-dollar-sign text-yellow-500 mr-1"></i>
-            Prix ($)
+            Prix (CDF)
           </label>
           <input [(ngModel)]="formData.prix"
             type="number"

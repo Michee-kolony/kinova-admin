@@ -1,0 +1,35 @@
+/* chart.component.css - Uniquement pour les animations et styles supplémentaires */
+:host {
+  display: block;
+}
+
+/* Animation de transition pour le changement de thème */
+.bg-gray-50,
+.dark\:bg-\[\#1d1d1d\] {
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Style personnalisé pour le conteneur du graphique */
+canvas {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* Scrollbar personnalisée pour le conteneur du graphique */
+.overflow-x-auto::-webkit-scrollbar {
+  height: 4px;
+}
+
+.overflow-x-auto::-webkit-scrollbar-track {
+  background: rgba(234, 179, 8, 0.05);
+  border-radius: 4px;
+}
+
+.overflow-x-auto::-webkit-scrollbar-thumb {
+  background: rgba(234, 179, 8, 0.3);
+  border-radius: 4px;
+}
+
+.overflow-x-auto::-webkit-scrollbar-thumb:hover {
+  background: rgba(234, 179, 8, 0.5);
+}
