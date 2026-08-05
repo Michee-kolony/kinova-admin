@@ -89,7 +89,6 @@
             <th>Client</th>
             <th>Article</th>
             <th>Prix</th>
-            <th>Vendeur</th>
             <th>Statut</th>
             <th>Date</th>
             <th>Actions</th>
@@ -115,12 +114,6 @@
               </div>
             </td>
             <td class="font-semibold" style="color: #ffbf00;">{{ order.price }}</td>
-            <td>
-              <div class="flex items-center gap-2">
-                <img [src]="order.vendorAvatar" alt="Vendeur" class="w-6 h-6 rounded-full">
-                <span class="text-gray-700 dark:text-gray-300">{{ order.vendor }}</span>
-              </div>
-            </td>
             <td>
               <span [class]="order.statusClass">{{ order.status }}</span>
             </td>
