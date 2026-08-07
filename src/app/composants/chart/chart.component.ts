@@ -1,6 +1,6 @@
-// chart.component.ts
 import { Component, OnInit, AfterViewInit, ElementRef, ViewChild, OnDestroy, HostListener } from '@angular/core';
 import { Chart, ChartConfiguration } from 'chart.js/auto';
+import { CommandesService } from '../../services/commandes.service';
 
 @Component({
   selector: 'app-chart',
@@ -13,12 +13,14 @@ export class ChartComponent implements OnInit, AfterViewInit, OnDestroy {
   private chart!: Chart;
   private resizeTimer: any;
 
-  ventesMensuelles = {
+  // Données réelles des commandes
+  commandesData: any[] = [];
+  ventesMensuelles: any = {
     labels: ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Aoû', 'Sep', 'Oct', 'Nov', 'Déc'],
     datasets: [
       {
-        label: 'Ventes 2024',
-        data: [12000, 15000, 18000, 22000, 20000, 25000, 28000, 30000, 27000, 32000, 35000, 38000],
+        label: 'Ventes 2026',
+        data: Array(12).fill(0),
         backgroundColor: 'rgba(234, 179, 8, 0.12)',
         borderColor: '#eab308',
         borderWidth: 2.5,
@@ -30,25 +32,181 @@ export class ChartComponent implements OnInit, AfterViewInit, OnDestroy {
         pointHoverRadius: 6,
         pointHoverBackgroundColor: '#fbbf24',
         fill: true
-      },
-      {
-        label: 'Ventes 2023',
-        data: [8000, 10000, 12000, 15000, 14000, 18000, 20000, 22000, 19000, 24000, 26000, 28000],
-        backgroundColor: 'rgba(234, 179, 8, 0.06)',
-        borderColor: 'rgba(234, 179, 8, 0.5)',
-        borderWidth: 2,
-        tension: 0.4,
-        pointBackgroundColor: 'rgba(234, 179, 8, 0.5)',
-        pointBorderColor: '#1d1d1d',
-        pointBorderWidth: 2,
-        pointRadius: 3,
-        pointHoverRadius: 5,
-        pointHoverBackgroundColor: '#fbbf24',
-        fill: true,
-        borderDash: [6, 4]
       }
     ]
   };
+
+  // Statistiques
+  statistiques = {
+    totalCommandes: 0,
+    montantTotal: 0,
+    moisPlusCommandes: '',
+    nbCommandesMoisPlus: 0,
+    moisPlusVentes: '',
+    montantMoisPlusVentes: 0,
+    commandesParMois: Array(12).fill(0),
+    ventesParMois: Array(12).fill(0)
+  };
+
+  // Propriétés pour le template
+  today: Date = new Date();
+  currentYear: number = new Date().getFullYear();
+
+  constructor(
+    private commandesService: CommandesService
+  ) {}
+
+  ngOnInit(): void {
+    this.chargerDonnees();
+  }
+
+  ngAfterViewInit(): void {
+    // Le graphique sera initialisé après le chargement des données
+    setTimeout(() => {
+      if (this.ventesMensuelles.datasets[0].data.some((v: number) => v > 0)) {
+        this.initChart();
+      }
+    }, 500);
+
+    // Observer les changements de thème
+    this.observeThemeChanges();
+  }
+
+  // Charger les données des commandes
+  chargerDonnees(): void {
+    this.commandesService.getToutesLesCommandes().subscribe({
+      next: (reponse: any) => {
+        if (reponse && reponse.commandes) {
+          this.commandesData = reponse.commandes;
+          this.traiterDonneesCommandes();
+        }
+      },
+      error: (erreur: any) => {
+        console.error('Erreur lors du chargement des commandes:', erreur);
+        // Utiliser des données de démonstration en cas d'erreur
+        this.utiliserDonneesDemo();
+      }
+    });
+  }
+
+  // Traiter les données des commandes
+  traiterDonneesCommandes(): void {
+    const commandes = this.commandesData;
+    
+    // Initialiser les tableaux pour chaque mois (0-11)
+    const commandesParMois = Array(12).fill(0);
+    const montantParMois = Array(12).fill(0);
+    let totalCommandes = commandes.length;
+    let montantTotal = 0;
+
+    // Parcourir toutes les commandes
+    commandes.forEach((commande: any) => {
+      const date = new Date(commande.createdAt);
+      const mois = date.getMonth(); // 0-11
+      
+      // Compter les commandes par mois
+      commandesParMois[mois] += 1;
+      
+      // Additionner les montants
+      const montant = commande.montantAPayer || 0;
+      montantParMois[mois] += montant;
+      montantTotal += montant;
+    });
+
+    // Mettre à jour les statistiques
+    this.statistiques.totalCommandes = totalCommandes;
+    this.statistiques.montantTotal = montantTotal;
+    this.statistiques.commandesParMois = commandesParMois;
+    this.statistiques.ventesParMois = montantParMois;
+
+    // Trouver le mois avec le plus de commandes
+    const maxCommandes = Math.max(...commandesParMois);
+    const moisMaxIndex = commandesParMois.indexOf(maxCommandes);
+    if (maxCommandes > 0) {
+      const moisNoms = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
+      this.statistiques.moisPlusCommandes = moisNoms[moisMaxIndex];
+      this.statistiques.nbCommandesMoisPlus = maxCommandes;
+    } else {
+      this.statistiques.moisPlusCommandes = 'Aucune donnée';
+      this.statistiques.nbCommandesMoisPlus = 0;
+    }
+
+    // Trouver le mois avec le plus de ventes (montant)
+    const maxVentes = Math.max(...montantParMois);
+    const moisVentesMaxIndex = montantParMois.indexOf(maxVentes);
+    if (maxVentes > 0) {
+      const moisNoms = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
+      this.statistiques.moisPlusVentes = moisNoms[moisVentesMaxIndex];
+      this.statistiques.montantMoisPlusVentes = maxVentes;
+    } else {
+      this.statistiques.moisPlusVentes = 'Aucune donnée';
+      this.statistiques.montantMoisPlusVentes = 0;
+    }
+
+    // Mettre à jour les données du graphique
+    this.ventesMensuelles.datasets[0].data = montantParMois;
+    this.ventesMensuelles.datasets[0].label = `Ventes ${this.currentYear}`;
+
+    // Initialiser le graphique si le canvas est prêt
+    if (this.chartCanvas) {
+      this.initChart();
+    }
+  }
+
+  // Données de démonstration (au cas où l'API ne répond pas)
+  utiliserDonneesDemo(): void {
+    const commandesDemo = [
+      { createdAt: '2026-08-05T21:05:53.861Z', montantAPayer: 833250 },
+      { createdAt: '2026-08-05T20:53:07.255Z', montantAPayer: 458900 },
+      { createdAt: '2026-08-05T07:57:55.854Z', montantAPayer: 75000 }
+    ];
+    this.commandesData = commandesDemo;
+    this.traiterDonneesCommandes();
+  }
+
+  // Observer les changements de thème
+  observeThemeChanges(): void {
+    const observer = new MutationObserver(() => {
+      if (this.chart) {
+        const newOptions = this.getChartOptions();
+        Object.assign(this.chart.options, newOptions);
+        this.chart.update();
+      }
+    });
+
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['class']
+    });
+  }
+
+  @HostListener('window:resize')
+  onResize(): void {
+    clearTimeout(this.resizeTimer);
+    this.resizeTimer = setTimeout(() => {
+      if (this.chart) {
+        const newOptions = this.getChartOptions();
+        Object.assign(this.chart.options, newOptions);
+        this.chart.update();
+      }
+    }, 250);
+  }
+
+  // Formater les montants en CDF
+  formatMontantCDF(montant: number): string {
+    if (montant >= 1000000) {
+      return (montant / 1000000).toFixed(1) + ' M CDF';
+    } else if (montant >= 1000) {
+      return (montant / 1000).toFixed(1) + ' K CDF';
+    } else {
+      return montant.toFixed(0) + ' CDF';
+    }
+  }
+
+  // Arrondir les nombres pour le template
+  roundNumber(value: number): number {
+    return Math.round(value);
+  }
 
   getChartOptions(): ChartConfiguration['options'] {
     const isMobile = window.innerWidth < 640;
@@ -77,22 +235,24 @@ export class ChartComponent implements OnInit, AfterViewInit, OnDestroy {
             size: isMobile ? 10 : 12
           },
           callbacks: {
-            label: function(context) {
+            label: function(context: any) {
               let label = context.dataset.label || '';
               if (label) {
                 label += ' : ';
               }
               if (context.parsed.y !== null) {
                 const value = typeof context.parsed.y === 'number' ? context.parsed.y : 0;
-                if (value >= 1000) {
-                  label += (value / 1000).toFixed(1) + 'k $';
+                if (value >= 1000000) {
+                  label += (value / 1000000).toFixed(1) + ' M CDF';
+                } else if (value >= 1000) {
+                  label += (value / 1000).toFixed(1) + ' K CDF';
                 } else {
-                  label += value + ' $';
+                  label += value + ' CDF';
                 }
               }
               return label;
             },
-            title: function(context) {
+            title: function(context: any) {
               return context[0].label;
             }
           }
@@ -116,10 +276,12 @@ export class ChartComponent implements OnInit, AfterViewInit, OnDestroy {
               family: "'Inter', sans-serif"
             },
             maxTicksLimit: isMobile ? 5 : 8,
-            callback: function(value) {
+            callback: function(value: any) {
               const numValue = typeof value === 'number' ? value : 0;
-              if (numValue >= 1000) {
-                return (numValue / 1000) + '$';
+              if (numValue >= 1000000) {
+                return (numValue / 1000000) + 'M';
+              } else if (numValue >= 1000) {
+                return (numValue / 1000) + 'K';
               }
               return numValue;
             }
@@ -160,47 +322,14 @@ export class ChartComponent implements OnInit, AfterViewInit, OnDestroy {
     };
   }
 
-  constructor() {}
-
-  ngOnInit(): void {}
-
-  ngAfterViewInit(): void {
-    this.initChart();
-    // Observer les changements de thème
-    this.observeThemeChanges();
-  }
-
-  // Observer les changements de thème pour mettre à jour le graphique
-  observeThemeChanges(): void {
-    const observer = new MutationObserver(() => {
-      if (this.chart) {
-        const newOptions = this.getChartOptions();
-        Object.assign(this.chart.options, newOptions);
-        this.chart.update();
-      }
-    });
-
-    observer.observe(document.documentElement, {
-      attributes: true,
-      attributeFilter: ['class']
-    });
-  }
-
-  @HostListener('window:resize')
-  onResize(): void {
-    clearTimeout(this.resizeTimer);
-    this.resizeTimer = setTimeout(() => {
-      if (this.chart) {
-        const newOptions = this.getChartOptions();
-        Object.assign(this.chart.options, newOptions);
-        this.chart.update();
-      }
-    }, 250);
-  }
-
   initChart(): void {
     const canvas = this.chartCanvas.nativeElement;
     if (canvas) {
+      // Détruire le graphique existant s'il y en a un
+      if (this.chart) {
+        this.chart.destroy();
+      }
+      
       this.chart = new Chart(canvas, {
         type: 'line',
         data: this.ventesMensuelles,
