@@ -1,11 +1,11 @@
 <div class="commandes-container">
-  <!-- En-tête -->
+  <!-- En-tete -->
   <div class="commandes-header">
     <div>
       <h1 class="text-2xl font-bold text-gray-900 dark:text-white">
         Gestion des commandes
       </h1>
-      <p class="text-gray-600 dark:text-gray-400 mt-1">Gérez toutes les commandes de votre plateforme</p>
+      <p class="text-gray-600 dark:text-gray-400 mt-1">Gerez toutes les commandes de votre plateforme</p>
     </div>
     <div class="flex items-center gap-3 flex-wrap">
       <div class="relative">
@@ -35,14 +35,14 @@
     </div>
   </div>
 
-  <!-- Dernière mise à jour -->
+  <!-- Derniere mise a jour -->
   <div class="last-update-info pb-5">
     <span class="text-sm text-gray-500 dark:text-gray-400">
       <i class="fas fa-clock mr-1"></i>
-      Dernière mise à jour : {{ lastUpdate | date:'HH:mm:ss' }}
+      Derniere mise a jour : {{ lastUpdate | date:'HH:mm:ss' }}
       <span class="ml-2" *ngIf="autoRefreshEnabled">
         <span class="inline-block w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
-        Actualisation automatique activée (30s)
+        Actualisation automatique activee (30s)
       </span>
     </span>
   </div>
@@ -59,15 +59,15 @@
         <select 
           (change)="onSortChange($event)"
           class="px-3 py-1.5 border bg-transparent border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400">
-          <option value="recent">Plus récentes</option>
+          <option value="recent">Plus recentes</option>
           <option value="oldest">Plus anciennes</option>
           <option value="price-asc">Prix croissant</option>
-          <option value="price-desc">Prix décroissant</option>
+          <option value="price-desc">Prix decroissant</option>
         </select>
       </div>
     </div>
 
-    <!-- État de chargement -->
+    <!-- Etat de chargement -->
     <div *ngIf="loading" class="loading-spinner">
       Chargement des commandes <i class="fas fa-spinner fa-spin text-yellow-500"></i>
     </div>
@@ -118,11 +118,9 @@
             </td>
             <td>
               <div class="flex flex-col">
-                <!-- Affichage du temps écoulé (à l'instant, 2 min, 1h, etc.) -->
                 <span class="text-sm font-medium text-gray-800 dark:text-gray-200">
                   {{ getTimeAgo(order.createdAt) }}
                 </span>
-                <!-- Affichage de la date complète en petit -->
                 <span class="text-xs text-gray-400 dark:text-gray-500">
                   {{ order.date }}
                 </span>
@@ -142,7 +140,7 @@
       <div *ngIf="filteredOrders.length === 0 && !loading" class="empty-state">
         <div class="text-center py-12">
           <i class="fas fa-shopping-cart text-4xl text-gray-300 mb-4"></i>
-          <p class="text-gray-500 dark:text-gray-400">Aucune commande trouvée</p>
+          <p class="text-gray-500 dark:text-gray-400">Aucune commande trouvee</p>
           <p class="text-sm text-gray-400 dark:text-gray-500 mt-1">
             {{ searchTerm ? 'Essayez de modifier votre recherche' : 'Aucune commande disponible' }}
           </p>

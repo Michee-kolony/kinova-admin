@@ -2,21 +2,16 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
-
 @Injectable({
   providedIn: 'root'
 })
 export class CommandesService {
 
-
   private urlCommande = "https://kinova-backend.tech/commandes/admin";
-
 
   constructor(
     private http: HttpClient
   ) {}
-
-
 
   // Récupérer toutes les commandes pour l'administration
   getToutesLesCommandes(): Observable<any> {
@@ -28,7 +23,6 @@ export class CommandesService {
   }
 
 
-
   // Récupérer une commande par son ID
   getCommandeById(id: string): Observable<any> {
 
@@ -38,5 +32,15 @@ export class CommandesService {
 
   }
 
+
+  // Modifier une commande
+  modifierCommande(id: string, data: any): Observable<any> {
+
+    return this.http.put<any>(
+      `${this.urlCommande}/${id}`,
+      data
+    );
+
+  }
 
 }
