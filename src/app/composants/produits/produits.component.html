@@ -170,11 +170,11 @@
           <!-- Prix -->
           <div class="flex items-center gap-2 mb-3">
             <span class="text-2xl font-bold text-yellow-600 dark:text-yellow-400">
-              {{ article.prixFinal || article.prix }} €
+              {{ article.prixFinal || article.prix }} $
             </span>
             <span *ngIf="article.reduction > 0" 
                   class="text-sm text-gray-400 line-through">
-              {{ article.prix }} €
+              {{ article.prix }} $
             </span>
           </div>
 

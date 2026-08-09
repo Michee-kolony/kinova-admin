@@ -1,4 +1,3 @@
-// commandes.component.ts
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ThemeService } from '../../services/theme.service';
 import { CommandesService } from '../../services/commandes.service';
@@ -141,7 +140,7 @@ export class CommandesComponent implements OnInit, OnDestroy {
       const totalArticles = order.articles ? order.articles.length : 0;
       
       return {
-        _id: order._id || index,  // ✅ IMPORTANT : Conserver _id pour le routerLink
+        _id: order._id || index,
         id: order._id || index,
         numeroCommande: order.numeroCommande || `CMD-${index + 1}`,
         client: order.emailUtilisateur || 'Client inconnu',
@@ -150,7 +149,8 @@ export class CommandesComponent implements OnInit, OnDestroy {
         productImage: firstArticle && firstArticle.images && firstArticle.images.length > 0 
           ? firstArticle.images[0] 
           : 'https://picsum.photos/seed/1/40/40',
-        price: this.formatPrice(order.montantAPayer || 0, order.devise || 'CDF'),
+        // ✅ FORCER CDF ici
+        price: this.formatPrice(order.montantAPayer || 0, 'CDF'),
         vendor: firstArticle && firstArticle.vendeurNom ? firstArticle.vendeurNom : 'Vendeur inconnu',
         vendorAvatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(firstArticle?.vendeurNom || 'Vendeur')}&background=ffbf00&color=1a1a1a&size=24`,
         status: this.statusMap[order.statutCommande] || order.statutCommande || 'En attente',
@@ -166,12 +166,14 @@ export class CommandesComponent implements OnInit, OnDestroy {
     });
   }
 
-  // Formater le prix
+  // ✅ FORMATER LE PRIX EN FRANCS CONGOLAIS (CDF)
   formatPrice(amount: number, currency: string): string {
-    if (!amount) return '0,00 €';
+    if (!amount) return '0 CDF';
+    
+    // Formatage avec devise CDF
     const formatter = new Intl.NumberFormat('fr-FR', {
       style: 'currency',
-      currency: currency === 'CDF' ? 'CDF' : 'EUR',
+      currency: 'CDF',
       minimumFractionDigits: 0,
       maximumFractionDigits: 0
     });

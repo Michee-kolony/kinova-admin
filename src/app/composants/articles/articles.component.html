@@ -168,9 +168,9 @@
         </div>
 
         <div class="article-prices">
-          <span class="price-original" *ngIf="article.reduction > 0">{{ article.prix }}CDF</span>
+          <span class="price-original" *ngIf="article.reduction > 0">{{ article.prix }}$</span>
           <span class="price-current" [class.has-reduction]="article.reduction > 0">
-            {{ article.reduction > 0 ? (article.prix - (article.prix * article.reduction / 100)) : article.prix }} CDF
+            {{ article.reduction > 0 ? (article.prix - (article.prix * article.reduction / 100)) : article.prix }} $
           </span>
           <span class="price-reduction" *ngIf="article.reduction > 0" style="color: #22c55e;">
             <i class="fas fa-percent" style="color: #22c55e;"></i>
@@ -253,7 +253,7 @@
         <!-- Prix -->
         <div class="form-group">
           <label class="form-label">
-            <span class="mr-2" style="color:#ffbf00;">CDF</span> Prix *
+            <span class="mr-2" style="color:#ffbf00;">$</span> Prix *
           </label>
           <input type="number" [(ngModel)]="articleData.prix" name="prix" class="form-input" placeholder="Prix en CDF" required min="0">
         </div>

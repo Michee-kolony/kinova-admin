@@ -107,7 +107,7 @@ export class ChartComponent implements OnInit, AfterViewInit, OnDestroy {
       // Compter les commandes par mois
       commandesParMois[mois] += 1;
       
-      // Additionner les montants
+      // Additionner les montants (en supposant que les montants sont déjà en USD)
       const montant = commande.montantAPayer || 0;
       montantParMois[mois] += montant;
       montantTotal += montant;
@@ -156,9 +156,9 @@ export class ChartComponent implements OnInit, AfterViewInit, OnDestroy {
   // Données de démonstration (au cas où l'API ne répond pas)
   utiliserDonneesDemo(): void {
     const commandesDemo = [
-      { createdAt: '2026-08-05T21:05:53.861Z', montantAPayer: 833250 },
-      { createdAt: '2026-08-05T20:53:07.255Z', montantAPayer: 458900 },
-      { createdAt: '2026-08-05T07:57:55.854Z', montantAPayer: 75000 }
+      { createdAt: '2026-08-05T21:05:53.861Z', montantAPayer: 833.25 },
+      { createdAt: '2026-08-05T20:53:07.255Z', montantAPayer: 458.90 },
+      { createdAt: '2026-08-05T07:57:55.854Z', montantAPayer: 75.00 }
     ];
     this.commandesData = commandesDemo;
     this.traiterDonneesCommandes();
@@ -192,14 +192,14 @@ export class ChartComponent implements OnInit, AfterViewInit, OnDestroy {
     }, 250);
   }
 
-  // Formater les montants en CDF
-  formatMontantCDF(montant: number): string {
+  // ✅ FORMATER LES MONTANTS EN USD
+  formatMontantUSD(montant: number): string {
     if (montant >= 1000000) {
-      return (montant / 1000000).toFixed(1) + ' M CDF';
+      return '$' + (montant / 1000000).toFixed(1) + 'M';
     } else if (montant >= 1000) {
-      return (montant / 1000).toFixed(1) + ' K CDF';
+      return '$' + (montant / 1000).toFixed(1) + 'K';
     } else {
-      return montant.toFixed(0) + ' CDF';
+      return '$' + montant.toFixed(2);
     }
   }
 
@@ -243,11 +243,11 @@ export class ChartComponent implements OnInit, AfterViewInit, OnDestroy {
               if (context.parsed.y !== null) {
                 const value = typeof context.parsed.y === 'number' ? context.parsed.y : 0;
                 if (value >= 1000000) {
-                  label += (value / 1000000).toFixed(1) + ' M CDF';
+                  label += '$' + (value / 1000000).toFixed(1) + 'M';
                 } else if (value >= 1000) {
-                  label += (value / 1000).toFixed(1) + ' K CDF';
+                  label += '$' + (value / 1000).toFixed(1) + 'K';
                 } else {
-                  label += value + ' CDF';
+                  label += '$' + value.toFixed(2);
                 }
               }
               return label;
@@ -279,11 +279,11 @@ export class ChartComponent implements OnInit, AfterViewInit, OnDestroy {
             callback: function(value: any) {
               const numValue = typeof value === 'number' ? value : 0;
               if (numValue >= 1000000) {
-                return (numValue / 1000000) + 'M';
+                return '$' + (numValue / 1000000) + 'M';
               } else if (numValue >= 1000) {
-                return (numValue / 1000) + 'K';
+                return '$' + (numValue / 1000) + 'K';
               }
-              return numValue;
+              return '$' + numValue;
             }
           }
         },

@@ -81,11 +81,11 @@
         <div class="mt-8">
           <div class="flex items-center gap-4 flex-wrap">
             <span class="text-3xl font-bold text-yellow-600">
-              {{ getPrixFinal() | currency:'EUR':'symbol':'1.2-2' }}
+              {{ getPrixFinal() | currency:'USD':'symbol':'1.2-2' }}
             </span>
             
             <span *ngIf="product.reduction && product.reduction > 0" class="text-lg text-gray-400 line-through">
-              {{ product.prix | currency:'EUR':'symbol':'1.2-2' }}
+              {{ product.prix | currency:'USD':'symbol':'1.2-2' }}
             </span>
 
             <span *ngIf="product.reduction && product.reduction > 0" class="bg-red-500 text-white px-3 py-1 rounded-full">
