@@ -1,0 +1,899 @@
+<div
+  class="min-h-screen bg-gray-100 px-4 py-6 text-gray-900 transition-colors dark:bg-black dark:text-white sm:px-6 lg:px-8"
+>
+
+  <!-- =====================================================
+       HEADER
+  ====================================================== -->
+
+  <div
+    class="mx-auto mb-8 flex max-w-7xl flex-col gap-3 sm:flex-row sm:items-end sm:justify-between"
+  >
+
+    <div>
+
+      <div class="mb-2 flex items-center gap-2">
+
+        <span
+          class="h-2 w-2 rounded-full bg-yellow-500"
+        ></span>
+
+        <span
+          class="text-xs font-semibold uppercase tracking-[0.2em] text-yellow-600 dark:text-yellow-500"
+        >
+          Finance
+        </span>
+
+      </div>
+
+      <h1
+        class="text-2xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-3xl lg:text-4xl"
+      >
+        Transactions
+      </h1>
+
+      <p
+        class="mt-1 text-sm text-gray-500 dark:text-gray-500"
+      >
+        Gérez les payouts vendeurs et consultez leur historique.
+      </p>
+
+    </div>
+
+    <!-- TOTAL -->
+
+    <div class="flex items-center gap-3">
+
+      <div class="text-right">
+
+        <p
+          class="text-[10px] uppercase tracking-widest text-gray-500 dark:text-gray-600"
+        >
+          Transactions
+        </p>
+
+        <p
+          class="text-xl font-bold text-yellow-600 dark:text-yellow-500"
+        >
+          {{ payouts.length }}
+        </p>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- =====================================================
+       MESSAGE SUCCÈS
+  ====================================================== -->
+
+  <div
+    *ngIf="messageSucces"
+    class="mx-auto mb-5 max-w-7xl"
+  >
+
+    <div
+      class="flex items-center gap-3 rounded-xl bg-green-100 px-4 py-3 dark:bg-green-500/10"
+    >
+
+      <div
+        class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-green-200 text-green-600 dark:bg-green-500/10 dark:text-green-400"
+      >
+
+        <svg
+          class="h-4 w-4"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M5 13l4 4L19 7"
+          />
+
+        </svg>
+
+      </div>
+
+      <p
+        class="text-sm text-green-600 dark:text-green-400"
+      >
+        {{ messageSucces }}
+      </p>
+
+    </div>
+
+  </div>
+
+
+  <!-- =====================================================
+       MESSAGE ERREUR
+  ====================================================== -->
+
+  <div
+    *ngIf="erreur"
+    class="mx-auto mb-5 max-w-7xl"
+  >
+
+    <div
+      class="flex items-center gap-3 rounded-xl bg-red-100 px-4 py-3 dark:bg-red-500/10"
+    >
+
+      <div
+        class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-red-200 text-red-600 dark:bg-red-500/10 dark:text-red-400"
+      >
+
+        <svg
+          class="h-4 w-4"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M6 18L18 6M6 6l12 12"
+          />
+
+        </svg>
+
+      </div>
+
+      <p
+        class="text-sm text-red-600 dark:text-red-400"
+      >
+        {{ erreur }}
+      </p>
+
+    </div>
+
+  </div>
+
+
+  <!-- =====================================================
+       CONTENU
+  ====================================================== -->
+
+  <div
+    class="mx-auto grid max-w-7xl grid-cols-1 gap-8 lg:grid-cols-[330px_1fr]"
+  >
+
+
+    <!-- ===================================================
+         GAUCHE : CARD FORMULAIRE PAYOUT
+    ==================================================== -->
+
+    <aside>
+
+      <div
+        class="sticky top-6 rounded-2xl bg-gray-50 p-5 shadow-sm transition-colors dark:bg-[#1d1d1d]"
+      >
+
+        <!-- TITRE -->
+
+        <div class="mb-6">
+
+          <p
+            class="text-xs font-semibold uppercase tracking-widest text-yellow-600 dark:text-yellow-500"
+          >
+            Nouveau payout
+          </p>
+
+          <h2
+            class="mt-1 text-xl font-bold text-gray-900 dark:text-white"
+          >
+            Payer un vendeur
+          </h2>
+
+          <p
+            class="mt-1 text-xs leading-5 text-gray-500 dark:text-gray-600"
+          >
+            Le paiement sera envoyé via PawaPay après validation de la commande.
+          </p>
+
+        </div>
+
+
+        <!-- FORMULAIRE -->
+
+        <form
+          (ngSubmit)="effectuerPayout()"
+          class="space-y-5"
+        >
+
+
+          <!-- VENDEUR -->
+
+          <div>
+
+            <label
+              class="mb-2 block text-xs font-medium text-gray-600 dark:text-gray-400"
+            >
+              ID du vendeur
+            </label>
+
+            <input
+              type="text"
+              name="vendeurId"
+              [(ngModel)]="payoutForm.vendeurId"
+              placeholder="Ex: 6a63855d02eada0e436d8c6c"
+              autocomplete="off"
+              class="w-full rounded-xl bg-gray-100 px-4 py-3 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:bg-gray-200 focus:ring-1 focus:ring-yellow-500 dark:bg-[#151515] dark:text-white dark:placeholder:text-gray-700 dark:focus:bg-[#111111]"
+            />
+
+          </div>
+
+
+          <!-- COMMANDE -->
+
+          <div>
+
+            <label
+              class="mb-2 block text-xs font-medium text-gray-600 dark:text-gray-400"
+            >
+              Numéro de commande
+            </label>
+
+            <input
+              type="text"
+              name="numeroCommande"
+              [(ngModel)]="payoutForm.numeroCommande"
+              placeholder="KINOVA-1786399494035"
+              autocomplete="off"
+              class="w-full rounded-xl bg-gray-100 px-4 py-3 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:bg-gray-200 focus:ring-1 focus:ring-yellow-500 dark:bg-[#151515] dark:text-white dark:placeholder:text-gray-700 dark:focus:bg-[#111111]"
+            />
+
+          </div>
+
+
+          <!-- TELEPHONE -->
+
+          <div>
+
+            <label
+              class="mb-2 block text-xs font-medium text-gray-600 dark:text-gray-400"
+            >
+              Téléphone du vendeur
+            </label>
+
+            <input
+              type="tel"
+              name="telephone"
+              [(ngModel)]="payoutForm.telephone"
+              placeholder="243810303519"
+              autocomplete="off"
+              class="w-full rounded-xl bg-gray-100 px-4 py-3 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:bg-gray-200 focus:ring-1 focus:ring-yellow-500 dark:bg-[#151515] dark:text-white dark:placeholder:text-gray-700 dark:focus:bg-[#111111]"
+            />
+
+          </div>
+
+
+          <!-- OPERATEUR -->
+
+          <div>
+
+            <label
+              class="mb-2 block text-xs font-medium text-gray-600 dark:text-gray-400"
+            >
+              Opérateur
+            </label>
+
+            <select
+              name="operateur"
+              [(ngModel)]="payoutForm.operateur"
+              class="w-full rounded-xl appearance-none bg-gray-100 px-4 py-3 text-sm text-gray-900 outline-none transition focus:bg-gray-200 focus:ring-1 focus:ring-yellow-500 dark:bg-[#151515] dark:text-white dark:focus:bg-[#111111]"
+            >
+
+              <option
+                value="VODACOM_MPESA_COD"
+                class="bg-gray-100 text-gray-900 dark:bg-[#151515] dark:text-white"
+              >
+                Vodacom M-Pesa
+              </option>
+
+              <option
+                value="AIRTEL_COD"
+                class="bg-gray-100 text-gray-900 dark:bg-[#151515] dark:text-white"
+              >
+                Airtel Money
+              </option>
+
+              <option
+                value="ORANGE_COD"
+                class="bg-gray-100 text-gray-900 dark:bg-[#151515] dark:text-white"
+              >
+                Orange Money
+              </option>
+
+            </select>
+
+          </div>
+
+
+          <!-- INFO -->
+
+          <div
+            class="rounded-xl bg-yellow-50 px-4 py-3 dark:bg-yellow-500/[0.06]"
+          >
+
+            <div class="flex gap-3">
+
+              <svg
+                class="mt-0.5 h-4 w-4 shrink-0 text-yellow-600 dark:text-yellow-500"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M13 16h-1v-4h-1m1-4h.01M12 20a8 8 0 100-16 8 8 0 000 16z"
+                />
+
+              </svg>
+
+              <p
+                class="text-[11px] leading-5 text-gray-500 dark:text-gray-500"
+              >
+                Le montant est calculé automatiquement à partir des articles
+                livrés de cette commande pour ce vendeur.
+              </p>
+
+            </div>
+
+          </div>
+
+
+          <!-- BOUTON -->
+
+          <button
+            type="submit"
+            [disabled]="chargement"
+            class="flex w-full items-center justify-center gap-2 rounded-xl bg-yellow-500 px-5 py-3.5 text-sm font-bold text-black transition hover:bg-yellow-400 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+
+            <svg
+              *ngIf="chargement"
+              class="h-4 w-4 animate-spin"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+
+              <circle
+                class="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                stroke-width="4"
+              ></circle>
+
+              <path
+                class="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+              ></path>
+
+            </svg>
+
+            <svg
+              *ngIf="!chargement"
+              class="h-4 w-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 19V5m0 0l-6 6m6-6l6 6"
+              />
+
+            </svg>
+
+            <span>
+              {{
+                chargement
+                  ? 'Traitement...'
+                  : 'Payer'
+              }}
+            </span>
+
+          </button>
+
+        </form>
+
+      </div>
+
+    </aside>
+
+
+    <!-- ===================================================
+         DROITE : HISTORIQUE
+    ==================================================== -->
+
+    <main>
+
+      <!-- CARD HISTORIQUE -->
+
+      <div
+        class="rounded-2xl bg-gray-50 p-5 shadow-sm transition-colors dark:bg-[#1d1d1d] sm:p-6"
+      >
+
+        <!-- TITRE + RECHERCHE -->
+
+        <div
+          class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
+        >
+
+          <div>
+
+            <h2
+              class="text-lg font-bold text-gray-900 dark:text-white"
+            >
+              Historique des payouts
+            </h2>
+
+            <p
+              class="mt-1 text-xs text-gray-500 dark:text-gray-600"
+            >
+              Les transactions les plus récentes apparaissent en premier.
+            </p>
+
+          </div>
+
+
+          <!-- RECHERCHE -->
+
+          <div
+            class="relative w-full sm:w-80"
+          >
+
+            <svg
+              class="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400 dark:text-gray-600"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="m21 21-4.35-4.35m2.35-5.65a8 8 0 11-16 0 8 8 0 0116 0z"
+              />
+
+            </svg>
+
+            <input
+              type="text"
+              [(ngModel)]="recherche"
+              (ngModelChange)="onRechercheChange()"
+              placeholder="Rechercher commande, payout, téléphone, vendeur, statut..."
+              class="w-full rounded-xl bg-gray-100 py-3 pl-10 pr-4 text-xs text-gray-900 outline-none transition placeholder:text-gray-400 focus:bg-gray-200 focus:ring-1 focus:ring-yellow-500 dark:bg-[#151515] dark:text-white dark:placeholder:text-gray-700 dark:focus:bg-[#111111]"
+            />
+
+          </div>
+
+        </div>
+
+
+        <!-- =================================================
+             CHARGEMENT
+        ================================================== -->
+
+        <div
+          *ngIf="chargement && !payouts.length"
+          class="flex min-h-48 items-center justify-center"
+        >
+
+          <div
+            class="flex flex-col items-center gap-3"
+          >
+
+            <div
+              class="h-7 w-7 animate-spin rounded-full border-2 border-yellow-500 border-t-transparent"
+            ></div>
+
+            <p
+              class="text-xs text-gray-500 dark:text-gray-600"
+            >
+              Chargement des transactions...
+            </p>
+
+          </div>
+
+        </div>
+
+
+        <!-- =================================================
+             AUCUN RÉSULTAT
+        ================================================== -->
+
+        <div
+          *ngIf="!chargement && !payoutsFiltres.length"
+          class="flex min-h-56 flex-col items-center justify-center text-center"
+        >
+
+          <div
+            class="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-gray-100 dark:bg-[#151515]"
+          >
+
+            <svg
+              class="h-5 w-5 text-gray-400 dark:text-gray-700"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+
+            </svg>
+
+          </div>
+
+          <p
+            class="text-sm font-medium text-gray-600 dark:text-gray-400"
+          >
+            Aucun payout trouvé
+          </p>
+
+          <p
+            class="mt-1 text-xs text-gray-400 dark:text-gray-700"
+          >
+            Modifiez votre recherche ou effectuez un nouveau payout.
+          </p>
+
+        </div>
+
+
+        <!-- =================================================
+             LISTE
+        ================================================== -->
+
+        <div
+          *ngIf="payoutsFiltres.length"
+          class="space-y-2"
+        >
+
+          <!-- PAYOUT -->
+
+          <div
+            *ngFor="
+              let payout of payoutsFiltres;
+              trackBy: trackByPayout
+            "
+            class="group rounded-xl bg-gray-100 px-4 py-4 transition hover:bg-gray-200 dark:bg-[#151515] dark:hover:bg-[#181818] sm:px-5"
+          >
+
+            <!-- LIGNE PRINCIPALE -->
+
+            <div
+              class="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between"
+            >
+
+              <!-- GAUCHE -->
+
+              <div
+                class="min-w-0 flex-1"
+              >
+
+                <!-- COMMANDE + STATUT -->
+
+                <div
+                  class="flex flex-wrap items-center gap-x-3 gap-y-2"
+                >
+
+                  <span
+                    class="truncate text-sm font-bold text-gray-900 dark:text-white"
+                  >
+                    {{ payout.commandeNumero }}
+                  </span>
+
+
+                  <!-- COMPLETED -->
+
+                  <span
+                    *ngIf="isCompleted(payout)"
+                    class="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wide text-green-600 dark:text-green-400"
+                  >
+
+                    <span
+                      class="h-1.5 w-1.5 rounded-full bg-green-500"
+                    ></span>
+
+                    COMPLETED
+
+                  </span>
+
+
+                  <!-- ACCEPTED -->
+
+                  <span
+                    *ngIf="
+                      isAccepted(payout)
+                      &&
+                      !isCompleted(payout)
+                    "
+                    class="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wide text-yellow-600 dark:text-yellow-500"
+                  >
+
+                    <span
+                      class="h-1.5 w-1.5 rounded-full bg-yellow-500"
+                    ></span>
+
+                    ACCEPTED
+
+                  </span>
+
+
+                  <!-- FAILED -->
+
+                  <span
+                    *ngIf="isFailed(payout)"
+                    class="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wide text-red-600 dark:text-red-400"
+                  >
+
+                    <span
+                      class="h-1.5 w-1.5 rounded-full bg-red-500"
+                    ></span>
+
+                    FAILED
+
+                  </span>
+
+                </div>
+
+
+                <!-- PAYOUT ID -->
+
+                <p
+                  class="mt-1 truncate font-mono text-[10px] text-gray-400 dark:text-gray-700"
+                >
+                  {{ payout.payoutId }}
+                </p>
+
+
+                <!-- INFORMATIONS -->
+
+                <div
+                  class="mt-4 grid grid-cols-2 gap-x-5 gap-y-3 sm:grid-cols-4"
+                >
+
+                  <!-- VENDEUR -->
+
+                  <div>
+
+                    <p
+                      class="text-[9px] uppercase tracking-widest text-gray-400 dark:text-gray-700"
+                    >
+                      Vendeur
+                    </p>
+
+                    <p
+                      class="mt-0.5 truncate text-xs font-medium text-gray-700 dark:text-gray-300"
+                    >
+                      {{ payout.vendeurNom }}
+                    </p>
+
+                    <p
+                      *ngIf="payout.vendeurEmail"
+                      class="mt-0.5 truncate text-[9px] text-gray-500 dark:text-gray-600"
+                    >
+                      {{ payout.vendeurEmail }}
+                    </p>
+
+                  </div>
+
+
+                  <!-- TELEPHONE -->
+
+                  <div>
+
+                    <p
+                      class="text-[9px] uppercase tracking-widest text-gray-400 dark:text-gray-700"
+                    >
+                      Téléphone
+                    </p>
+
+                    <p
+                      class="mt-0.5 truncate font-mono text-xs text-gray-600 dark:text-gray-400"
+                    >
+                      {{ payout.telephone }}
+                    </p>
+
+                  </div>
+
+
+                  <!-- OPERATEUR -->
+
+                  <div>
+
+                    <p
+                      class="text-[9px] uppercase tracking-widest text-gray-400 dark:text-gray-700"
+                    >
+                      Opérateur
+                    </p>
+
+                    <p
+                      class="mt-0.5 truncate text-xs text-gray-600 dark:text-gray-400"
+                    >
+                      {{ payout.operateur }}
+                    </p>
+
+                  </div>
+
+
+                  <!-- MONTANT -->
+
+                  <div>
+
+                    <p
+                      class="text-[9px] uppercase tracking-widest text-gray-400 dark:text-gray-700"
+                    >
+                      Montant
+                    </p>
+
+                    <p
+                      class="mt-0.5 text-xs font-bold text-yellow-600 dark:text-yellow-500"
+                    >
+                      {{ payout.montant | number:'1.2-2' }}
+                      {{ payout.devise }}
+                    </p>
+
+                  </div>
+
+                </div>
+
+              </div>
+
+
+              <!-- DROITE -->
+
+              <div
+                class="shrink-0 xl:text-right"
+              >
+
+                <p
+                  class="text-[10px] text-gray-500 dark:text-gray-600"
+                >
+                  {{
+                    formatDate(
+                      payout.datePaiement
+                      ||
+                      payout.updatedAt
+                      ||
+                      payout.createdAt
+                    )
+                  }}
+                </p>
+
+                <p
+                  class="mt-1 text-[10px] text-gray-400 dark:text-gray-700"
+                >
+                  {{ payout.nombreArticles }} article(s)
+                </p>
+
+              </div>
+
+            </div>
+
+
+            <!-- INFORMATIONS TECHNIQUES -->
+
+            <div
+              class="mt-4 flex flex-col gap-1.5 text-[9px] text-gray-500 dark:text-gray-700 sm:flex-row sm:flex-wrap sm:gap-x-5"
+            >
+
+              <!-- PROVIDER -->
+
+              <span
+                *ngIf="payout.providerTransactionId"
+              >
+
+                Provider :
+
+                <span
+                  class="font-mono text-gray-600 dark:text-gray-500"
+                >
+                  {{ payout.providerTransactionId }}
+                </span>
+
+              </span>
+
+
+              <!-- PAWAPAY -->
+
+              <span>
+
+                PawaPay :
+
+                <span
+                  [class.text-green-600]="isCompleted(payout)"
+                  [class.dark:text-green-500]="isCompleted(payout)"
+                  [class.text-yellow-600]="
+                    isAccepted(payout)
+                    &&
+                    !isCompleted(payout)
+                  "
+                  [class.dark:text-yellow-500]="
+                    isAccepted(payout)
+                    &&
+                    !isCompleted(payout)
+                  "
+                  [class.text-red-600]="isFailed(payout)"
+                  [class.dark:text-red-400]="isFailed(payout)"
+                >
+                  {{ payout.pawapayStatus || '-' }}
+                </span>
+
+              </span>
+
+
+              <!-- ERREUR -->
+
+              <span
+                *ngIf="payout.failureReason"
+                class="text-red-600 dark:text-red-400"
+              >
+
+                Erreur :
+
+                {{ payout.failureReason }}
+
+              </span>
+
+            </div>
+
+
+            <!-- ARTICLES -->
+
+            <div
+              *ngIf="payout.articles?.length"
+              class="mt-3 flex flex-wrap gap-x-4 gap-y-1"
+            >
+
+              <span
+                *ngFor="let article of payout.articles"
+                class="text-[9px] text-gray-500 dark:text-gray-700"
+              >
+
+                {{ article.nomArticle }}
+
+                <span
+                  class="text-gray-600 dark:text-gray-600"
+                >
+                  ×{{ article.quantite }}
+                </span>
+
+              </span>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </main>
+
+  </div>
+
+</div>
