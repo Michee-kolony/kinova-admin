@@ -7,8 +7,8 @@ import { Observable } from 'rxjs';
 })
 export class ArticleService {
   
-  private articleUrl = "https://backend-kinova.onrender.com/article/";
-  private apiUrl = "https://backend-kinova.onrender.com/categorie/";
+  private articleUrl = "https://kinova-backend.tech/article/";
+  private apiUrl = "https://kinova-backend.tech/categorie/";
 
   constructor(private http: HttpClient) { }
 

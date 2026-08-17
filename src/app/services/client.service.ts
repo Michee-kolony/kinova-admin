@@ -8,7 +8,7 @@ import { Observable } from 'rxjs';
 export class ClientService {
 
   // URL de l'API
-  private apiUrl = 'https://backend-kinova.onrender.com/client';
+  private apiUrl = 'https://kinova-backend.tech/client';
 
   constructor(
     private http: HttpClient,
