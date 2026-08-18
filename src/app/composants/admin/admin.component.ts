@@ -83,7 +83,7 @@ private generateInitial(name: string): string {
 
 sendNotification(){
 
-  const url = "https://backend-kinova.onrender.com/notification/test";
+  const url = "https://kinova-backend.tech/notification/test";
 
   this.http.get(url).subscribe({
 
