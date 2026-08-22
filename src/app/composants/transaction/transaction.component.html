@@ -162,7 +162,7 @@
   ====================================================== -->
 
   <div
-    class="mx-auto grid max-w-7xl grid-cols-1 gap-8 lg:grid-cols-[330px_1fr]"
+    class="mx-auto grid max-w-7xl grid-cols-1 gap-8"
   >
 
 
@@ -173,7 +173,7 @@
     <aside>
 
       <div
-        class="sticky top-6 rounded-2xl bg-gray-50 p-5 shadow-sm transition-colors dark:bg-[#1d1d1d]"
+        class="sticky top-6 w-full rounded-2xl bg-gray-50 p-5 shadow-sm transition-colors dark:bg-[#1d1d1d] sm:p-8"
       >
 
         <!-- TITRE -->
@@ -205,7 +205,7 @@
 
         <form
           (ngSubmit)="effectuerPayout()"
-          class="space-y-5"
+          class="grid gap-5 lg:grid-cols-2"
         >
 
 
@@ -320,7 +320,7 @@
           <!-- INFO -->
 
           <div
-            class="rounded-xl bg-yellow-50 px-4 py-3 dark:bg-yellow-500/[0.06]"
+            class="rounded-xl bg-yellow-50 px-4 py-3 dark:bg-yellow-500/[0.06] lg:col-span-2"
           >
 
             <div class="flex gap-3">
@@ -358,7 +358,7 @@
           <button
             type="submit"
             [disabled]="chargement"
-            class="flex w-full items-center justify-center gap-2 rounded-xl bg-yellow-500 px-5 py-3.5 text-sm font-bold text-black transition hover:bg-yellow-400 disabled:cursor-not-allowed disabled:opacity-50"
+            class="flex w-full items-center justify-center gap-2 rounded-xl bg-yellow-500 px-5 py-3.5 text-sm font-bold text-black transition hover:bg-yellow-400 disabled:cursor-not-allowed disabled:opacity-50 lg:col-span-2"
           >
 
             <svg
@@ -419,18 +419,25 @@
     </aside>
 
 
+    <div class="flex items-center justify-center rounded-2xl bg-gray-50 p-5 shadow-sm transition-colors dark:bg-[#1d1d1d] sm:p-6">
+      <button
+        type="button"
+        routerLink="/admin/historique-transaction"
+        class="flex items-center gap-2 rounded-xl bg-yellow-500 px-5 py-3 text-sm font-bold text-black transition hover:bg-yellow-400"
+      >
+        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        Historique des transactions
+      </button>
+    </div>
+
     <!-- ===================================================
          DROITE : HISTORIQUE
     ==================================================== -->
 
-    <main>
-
-      <!-- CARD HISTORIQUE -->
-
-      <div
-        class="rounded-2xl bg-gray-50 p-5 shadow-sm transition-colors dark:bg-[#1d1d1d] sm:p-6"
-      >
-
+    <main *ngIf="false">
+      <div class="rounded-2xl bg-gray-50 p-5 shadow-sm transition-colors dark:bg-[#1d1d1d] sm:p-6">
         <!-- TITRE + RECHERCHE -->
 
         <div
@@ -865,7 +872,7 @@
             <!-- ARTICLES -->
 
             <div
-              *ngIf="payout.articles?.length"
+              *ngIf="payout.articles.length"
               class="mt-3 flex flex-wrap gap-x-4 gap-y-1"
             >
 
@@ -889,11 +896,7 @@
           </div>
 
         </div>
-
       </div>
-
     </main>
 
   </div>
-
-</div>

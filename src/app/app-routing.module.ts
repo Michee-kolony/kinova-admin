@@ -22,6 +22,7 @@ import { DetailsVendeurComponent } from './composants/details-vendeur/details-ve
 import { DecouvrirComponent } from './client/decouvrir/decouvrir.component';
 import { VoircommandesComponent } from './composants/voircommandes/voircommandes.component';
 import { TransactionComponent } from './composants/transaction/transaction.component';
+import { HistoriqueTransactionComponent } from './composants/historique-transaction/historique-transaction.component';
 
 const routes: Routes = [
   {path:'', redirectTo: 'kinova', pathMatch: 'full'},
@@ -43,7 +44,8 @@ const routes: Routes = [
       {path:'client-details/:id', component: ClientDetailsComponent},
       {path:'vendeur-details/:id', component: DetailsVendeurComponent},
       {path:'voircommandes/:id', component: VoircommandesComponent},
-      {path:'transaction', component: TransactionComponent}
+      {path:'transaction', component: TransactionComponent},
+      {path:'historique-transaction', component: HistoriqueTransactionComponent}
 
       ]
   },

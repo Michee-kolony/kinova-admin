@@ -1,0 +1,45 @@
+<div class="min-h-screen bg-gray-100 px-4 py-6 text-gray-900 transition-colors dark:bg-black dark:text-white sm:px-6 lg:px-8">
+  <div class="mx-auto max-w-7xl">
+    <div class="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+      <div>
+        <button routerLink="/admin/transaction" class="mb-4 inline-flex items-center gap-2 text-sm text-gray-500 transition hover:text-yellow-500">
+          <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg>
+          Retour aux transactions
+        </button>
+        <h1 class="text-2xl font-bold tracking-tight sm:text-3xl">Historique des transactions</h1>
+        <p class="mt-1 text-sm text-gray-500 dark:text-gray-500">Consultez les payouts les plus récents.</p>
+      </div>
+      <div class="relative w-full sm:w-80">
+        <svg class="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-4.35-4.35m2.35-5.65a8 8 0 11-16 0 8 8 0 0116 0z" /></svg>
+        <input type="search" [(ngModel)]="recherche" (ngModelChange)="filtrerPayouts()" placeholder="Rechercher une transaction..." class="w-full rounded-xl bg-gray-50 py-3 pl-10 pr-4 text-sm outline-none transition focus:ring-1 focus:ring-yellow-500 dark:bg-[#1d1d1d]" />
+      </div>
+    </div>
+
+    <div *ngIf="chargement" class="flex min-h-48 items-center justify-center text-sm text-gray-500">Chargement des transactions...</div>
+    <div *ngIf="!chargement && erreur" class="rounded-xl bg-red-100 px-4 py-3 text-sm text-red-600 dark:bg-red-500/10 dark:text-red-400">{{ erreur }}</div>
+    <div *ngIf="!chargement && !erreur && !payoutsFiltres.length" class="flex min-h-48 items-center justify-center text-sm text-gray-500">Aucune transaction trouvée.</div>
+
+    <div *ngIf="!chargement && payoutsFiltres.length" class="space-y-3">
+      <article *ngFor="let payout of payoutsFiltres; trackBy: trackByPayout" class="rounded-2xl bg-gray-50 p-5 shadow-sm transition hover:shadow-md dark:bg-[#1d1d1d]">
+        <div class="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+          <div class="min-w-0 flex-1">
+            <div class="flex flex-wrap items-center gap-3">
+              <h2 class="truncate text-sm font-bold">{{ payout.commandeNumero }}</h2>
+              <span *ngIf="isCompleted(payout)" class="text-[10px] font-bold uppercase text-green-600 dark:text-green-400">● COMPLETED</span>
+              <span *ngIf="isAccepted(payout)" class="text-[10px] font-bold uppercase text-yellow-600 dark:text-yellow-500">● ACCEPTED</span>
+              <span *ngIf="isFailed(payout)" class="text-[10px] font-bold uppercase text-red-600 dark:text-red-400">● FAILED</span>
+            </div>
+            <p class="mt-1 truncate font-mono text-[10px] text-gray-400">{{ payout.payoutId }}</p>
+            <div class="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-4">
+              <div><p class="text-[9px] uppercase tracking-widest text-gray-400">Vendeur</p><p class="mt-1 truncate text-xs font-medium">{{ payout.vendeurNom }}</p></div>
+              <div><p class="text-[9px] uppercase tracking-widest text-gray-400">Téléphone</p><p class="mt-1 text-xs">{{ payout.telephone }}</p></div>
+              <div><p class="text-[9px] uppercase tracking-widest text-gray-400">Opérateur</p><p class="mt-1 text-xs">{{ payout.operateur }}</p></div>
+              <div><p class="text-[9px] uppercase tracking-widest text-gray-400">Montant</p><p class="mt-1 text-xs font-bold text-yellow-600 dark:text-yellow-500">{{ payout.montant | number:'1.2-2' }} {{ payout.devise }}</p></div>
+            </div>
+          </div>
+          <div class="shrink-0 text-xs text-gray-500 lg:text-right">{{ formatDate(payout.datePaiement || payout.updatedAt || payout.createdAt) }}<br /><span class="text-gray-400">{{ payout.nombreArticles }} article(s)</span></div>
+        </div>
+      </article>
+    </div>
+  </div>
+</div>
