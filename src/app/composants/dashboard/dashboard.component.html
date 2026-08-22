@@ -77,10 +77,7 @@
       </div>
       <div class="stat-info">
         <h3>Commandes totales</h3>
-        <p class="stat-number">1,563</p>
-        <span class="stat-change positive">
-          <i class="fas fa-arrow-up mr-1"></i>+22.1%
-        </span>
+        <p class="stat-number">{{ totalCommandes }}</p>
       </div>
     </div>
 
@@ -91,10 +88,7 @@
       </div>
       <div class="stat-info">
         <h3>Articles livrés</h3>
-        <p class="stat-number">1,563</p>
-        <span class="stat-change positive">
-          <i class="fas fa-arrow-up mr-1"></i>+22.1%
-        </span>
+        <p class="stat-number">{{ totalArticlesLivres }}</p>
       </div>
     </div>
 
@@ -104,11 +98,8 @@
         <i class="fas fa-clock" style="color: #1a1a1a;"></i>
       </div>
       <div class="stat-info">
-        <h3>Articles en attente</h3>
-        <p class="stat-number">1,563</p>
-        <span class="stat-change positive">
-          <i class="fas fa-arrow-up mr-1"></i>+22.1%
-        </span>
+        <h3>Articles non livrés</h3>
+        <p class="stat-number">{{ totalArticlesNonLivres }}</p>
       </div>
     </div>
   </div>
@@ -132,8 +123,41 @@
       </button>
     </div>
 
-    <!-- Liste des commandes -->
-    <div class="orders-list">
+    <div *ngIf="ordersLoading" class="py-8 text-center text-gray-500">
+      Chargement des commandes <i class="fas fa-spinner fa-spin text-yellow-500"></i>
+    </div>
+
+    <div *ngIf="!ordersLoading && ordersError" class="py-8 text-center text-red-500">
+      {{ ordersError }}
+    </div>
+
+    <div *ngIf="!ordersLoading && !ordersError && recentOrders.length === 0" class="py-8 text-center text-gray-500">
+      Aucune commande trouvee
+    </div>
+
+    <div *ngIf="!ordersLoading && !ordersError && recentOrders.length > 0" class="orders-list">
+      <div class="order-item" *ngFor="let order of recentOrders">
+        <div class="order-product">
+          <img [src]="order.image" alt="Produit" class="order-product-image">
+          <div class="order-product-info">
+            <h4 class="order-product-title">{{ order.product }}</h4>
+            <span class="order-product-price">{{ order.price }}</span>
+          </div>
+        </div>
+        <div class="order-status">
+          <span [class]="'status-badge ' + order.statusClass">{{ order.status }}</span>
+        </div>
+        <div class="order-actions">
+          <button class="order-btn" [routerLink]="['/admin/voircommandes', order.id]">
+            <i class="fas fa-eye"></i>
+            Voir
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Ancienne liste statique conservee temporairement -->
+    <div *ngIf="false" class="orders-list">
       <!-- Commande 1 -->
       <div class="order-item">
         <div class="order-product">

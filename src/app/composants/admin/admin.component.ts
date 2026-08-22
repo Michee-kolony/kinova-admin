@@ -10,6 +10,7 @@ import { HttpClient } from '@angular/common/http';
   templateUrl: './admin.component.html',
   styleUrl: './admin.component.css'
 })
+
 export class AdminComponent {
   sidebarOpen = false;
   private isBrowser: boolean;
