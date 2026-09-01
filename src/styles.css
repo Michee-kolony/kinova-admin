@@ -56,3 +56,13 @@ router-outlet + * {
   display: block;
   min-height: 100%;
 }
+
+/* Masquer la barre de défilement tout en gardant le scroll fonctionnel */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}

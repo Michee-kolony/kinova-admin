@@ -16,7 +16,12 @@ export class ProduitsComponent implements OnInit {
   searchTerm: string = '';
   isLoading: boolean = true;
   sortOrder: string = 'recent';
+  genreFilter: string = '';
   errorMessage: string = '';
+
+  categoryTabs: { label: string; value: string; icon: string }[] = [
+    { label: 'Tous', value: 'all', icon: 'fas fa-th-list' }
+  ];
 
   constructor(private articleService: ArticleService) { }
 
@@ -67,6 +72,7 @@ export class ProduitsComponent implements OnInit {
       next: (categories) => {
         console.log('Catégories reçues:', categories);
         this.categories = categories || [];
+        this.updateCategoryTabs();
         this.applyFilters();
         this.isLoading = false;
       },
@@ -76,6 +82,19 @@ export class ProduitsComponent implements OnInit {
         this.categories = [];
         this.applyFilters();
         this.isLoading = false;
+      }
+    });
+  }
+
+  updateCategoryTabs(): void {
+    this.categories.forEach(cat => {
+      const catName = cat.nom || cat;
+      if (!this.categoryTabs.find(tab => tab.value === catName)) {
+        this.categoryTabs.push({
+          label: catName,
+          value: catName,
+          icon: 'fas fa-tag'
+        });
       }
     });
   }
@@ -106,6 +125,13 @@ export class ProduitsComponent implements OnInit {
       console.log(`🔎 Recherche "${this.searchTerm}": ${filtered.length} articles`);
     }
 
+    // Filtre par genre
+    if (this.genreFilter) {
+      filtered = filtered.filter(article =>
+        article.genre === this.genreFilter
+      );
+    }
+
     // Tri
     switch(this.sortOrder) {
       case 'price-asc':
@@ -129,6 +155,10 @@ export class ProduitsComponent implements OnInit {
   onCategoryChange(category: string): void {
     this.selectedCategory = category;
     this.applyFilters();
+  }
+
+  selectCategory(category: string): void {
+    this.onCategoryChange(category);
   }
 
   getCategoryCount(category: string): number {
@@ -222,6 +252,7 @@ export class ProduitsComponent implements OnInit {
     this.searchTerm = '';
     this.selectedCategory = 'all';
     this.sortOrder = 'recent';
+    this.genreFilter = '';
     this.applyFilters();
   }
 
