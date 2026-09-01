@@ -1,0 +1,13 @@
+:host {
+  display: block;
+}
+
+.bg-gray-50,
+.dark\:bg-\[\#1d1d1d\] {
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+canvas {
+  width: 100% !important;
+  height: 100% !important;
+}

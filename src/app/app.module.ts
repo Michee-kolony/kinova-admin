@@ -45,6 +45,7 @@ import {
 import { adminAuthInterceptor } from './interceptors/admin-auth.interceptor';
 import { DecouvrirComponent } from './client/decouvrir/decouvrir.component';
 import { ChartComponent } from './composants/chart/chart.component';
+import { OperateursChartComponent } from './composants/operateurs-chart/operateurs-chart.component';
 import { VoircommandesComponent } from './composants/voircommandes/voircommandes.component';
 import { TransactionComponent } from './composants/transaction/transaction.component';
 import { HistoriqueTransactionComponent } from './composants/historique-transaction/historique-transaction.component';
@@ -83,6 +84,7 @@ import { HistoriqueTransactionComponent } from './composants/historique-transact
     DeletecountComponent,
     DecouvrirComponent,
     ChartComponent,
+    OperateursChartComponent,
     VoircommandesComponent,
     TransactionComponent,
     HistoriqueTransactionComponent

@@ -1,0 +1,73 @@
+<div class="bg-gray-50 dark:bg-[#1d1d1d] p-4 sm:p-6 rounded-2xl transition-all duration-300">
+  <!-- En-tête -->
+  <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4 mb-4 sm:mb-8">
+    <div>
+      <h2 class="text-xl sm:text-2xl text-gray-900 dark:text-white tracking-tight">
+        Analyse par opérateur
+      </h2>
+      <p class="text-gray-500 dark:text-white/30 text-xs sm:text-sm font-light mt-0.5 sm:mt-1 tracking-wide">
+        Répartition des commandes par moyen de paiement
+      </p>
+    </div>
+    <div class="flex items-center gap-2 sm:gap-4">
+      <div class="flex items-center gap-2 bg-yellow-500/10 dark:bg-yellow-500/10 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full">
+        <span class="w-1.5 sm:w-2 h-1.5 sm:h-2 rounded-full bg-yellow-500"></span>
+        <span class="text-yellow-600 dark:text-yellow-500/80 text-[10px] sm:text-xs font-medium tracking-wide">{{ totalCommandes }} commandes</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Chargement -->
+  <div *ngIf="chargement" class="py-10 text-center text-gray-500 dark:text-white/40">
+    Chargement des données <i class="fas fa-spinner fa-spin text-yellow-500"></i>
+  </div>
+
+  <!-- Aucune donnée -->
+  <div *ngIf="!chargement && stats.length === 0" class="py-10 text-center text-gray-500 dark:text-white/40">
+    Aucune commande trouvée
+  </div>
+
+  <!-- Contenu -->
+  <div *ngIf="!chargement && stats.length > 0" class="flex flex-col lg:flex-row items-center gap-6 sm:gap-8">
+
+    <!-- Graphique en anneau -->
+    <div class="relative w-[200px] h-[200px] sm:w-[220px] sm:h-[220px] flex-shrink-0">
+      <canvas #operateursChart class="w-full h-full"></canvas>
+      <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+        <span class="text-2xl sm:text-3xl font-semibold text-gray-900 dark:text-white">{{ totalCommandes }}</span>
+        <span class="text-[10px] sm:text-xs text-gray-500 dark:text-white/40 font-light tracking-wide">commandes</span>
+      </div>
+    </div>
+
+    <!-- Légende / statistiques par opérateur -->
+    <div class="w-full flex-1 flex flex-col gap-2.5 sm:gap-3">
+      <div *ngFor="let stat of stats"
+           class="flex items-center gap-3 sm:gap-4 bg-gray-100 dark:bg-[#2a2a2a] rounded-xl p-3 transition-all duration-300 hover:bg-yellow-500/5">
+
+        <!-- Icône colorée -->
+        <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center flex-shrink-0"
+             [style.background]="stat.colorLight + '1f'">
+          <i class="fas" [ngClass]="stat.icone" [style.color]="stat.colorLight"></i>
+        </div>
+
+        <div class="flex-1 min-w-0">
+          <div class="flex items-center justify-between gap-2">
+            <span class="text-sm sm:text-base font-medium text-gray-900 dark:text-white truncate">{{ stat.nom }}</span>
+            <span class="text-sm sm:text-base font-semibold text-gray-900 dark:text-white flex-shrink-0">{{ stat.pourcentage.toFixed(1) }}%</span>
+          </div>
+
+          <!-- Barre de progression -->
+          <div class="w-full h-1.5 rounded-full bg-gray-200 dark:bg-white/10 mt-2 overflow-hidden">
+            <div class="h-full rounded-full transition-all duration-500"
+                 [style.width.%]="stat.pourcentage"
+                 [style.background]="stat.colorLight"></div>
+          </div>
+
+          <span class="text-[11px] sm:text-xs text-gray-500 dark:text-white/40 font-light tracking-wide mt-1 inline-block">
+            {{ stat.nombre }} commande{{ stat.nombre > 1 ? 's' : '' }}
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
