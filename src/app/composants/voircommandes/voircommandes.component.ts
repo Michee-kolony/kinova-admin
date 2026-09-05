@@ -42,6 +42,8 @@ interface Commande {
   providerTransactionId: string | null;
   statutPaiement: string;
   statutCommande: string;
+  idLivreur: string | null;
+  statutLivraison: string;
   adresseLivraison: string;
   metadata: any;
   createdAt: string;
@@ -58,24 +60,10 @@ export class VoircommandesComponent implements OnInit, OnDestroy {
   loading: boolean = true;
   error: string | null = null;
   commandeId: string = '';
-  isUpdating: boolean = false;
-  updatingArticleId: string | null = null;
-  adminId: string = '';
-  isAuthorized: boolean = false;
 
   // Refresh automatique
   private refreshInterval: any = null;
   private readonly REFRESH_INTERVAL = 30000;
-
-  // Mapping des statuts
-  statusMap: { [key: string]: { label: string, class: string } } = {
-    'CONFIRMEE': { label: 'Confirmée', class: 'bg-yellow-500/20 text-yellow-600 dark:text-yellow-400 border border-yellow-500/30' },
-    'EN_ATTENTE': { label: 'En attente', class: 'bg-orange-500/20 text-orange-600 dark:text-orange-400 border border-orange-500/30' },
-    'EXPEDIEE': { label: 'Expédiée', class: 'bg-blue-500/20 text-blue-600 dark:text-blue-400 border border-blue-500/30' },
-    'LIVREE': { label: 'Livrée', class: 'bg-green-500/20 text-green-600 dark:text-green-400 border border-green-500/30' },
-    'ANNULEE': { label: 'Annulée', class: 'bg-red-500/20 text-red-600 dark:text-red-400 border border-red-500/30' },
-    'PAYE': { label: 'Payée', class: 'bg-yellow-500/20 text-yellow-600 dark:text-yellow-400 border border-yellow-500/30' }
-  };
 
   paiementStatusMap: { [key: string]: { label: string, class: string } } = {
     'PAYE': { label: 'Payé', class: 'bg-green-500/20 text-green-600 dark:text-green-400 border border-green-500/30' },
@@ -87,10 +75,22 @@ export class VoircommandesComponent implements OnInit, OnDestroy {
     'ANNULE': { label: 'Annulé', class: 'bg-red-500/20 text-red-600 dark:text-red-400 border border-red-500/30' }
   };
 
-  livraisonStatusMap: { [key: string]: { label: string, class: string } } = {
-    'NON_LIVRE': { label: 'Non livré', class: 'bg-orange-500/20 text-orange-600 dark:text-orange-400 border border-orange-500/30' },
+  // Statut de livraison global de la commande (4 états de l'enum backend)
+  statutLivraisonCommandeMap: { [key: string]: { label: string, class: string } } = {
+    'EN_ATTENTE': { label: 'En attente', class: 'bg-orange-500/20 text-orange-600 dark:text-orange-400 border border-orange-500/30' },
+    'EN_COURS_PREPARATION': { label: 'En préparation', class: 'bg-blue-500/20 text-blue-600 dark:text-blue-400 border border-blue-500/30' },
+    'EN_COURS_LIVRAISON': { label: 'En livraison', class: 'bg-purple-500/20 text-purple-600 dark:text-purple-400 border border-purple-500/30' },
     'LIVRE': { label: 'Livré', class: 'bg-green-500/20 text-green-600 dark:text-green-400 border border-green-500/30' }
   };
+
+  statutsLivraisonDisponibles: string[] = [
+    'EN_ATTENTE',
+    'EN_COURS_PREPARATION',
+    'EN_COURS_LIVRAISON',
+    'LIVRE'
+  ];
+
+  isUpdatingLivraison: boolean = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -100,9 +100,6 @@ export class VoircommandesComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    // Récupérer l'ID de l'administrateur connecté depuis localStorage
-    this.loadAdminData();
-    
     this.route.params.subscribe(params => {
       this.commandeId = params['id'];
       if (this.commandeId) {
@@ -117,61 +114,6 @@ export class VoircommandesComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.stopAutoRefresh();
-  }
-
-  /**
-   * Charger les données de l'administrateur depuis localStorage
-   */
-  loadAdminData(): void {
-    try {
-      // Essayer de récupérer depuis user_data d'abord
-      const userDataStr = localStorage.getItem('user_data');
-      if (userDataStr) {
-        const userData = JSON.parse(userDataStr);
-        this.adminId = userData.adminId || userData.id || userData._id || '';
-        console.log('🆔 Admin ID (user_data):', this.adminId);
-        return;
-      }
-
-      // Sinon essayer depuis user
-      const userStr = localStorage.getItem('user');
-      if (userStr) {
-        const user = JSON.parse(userStr);
-        this.adminId = user.adminId || user.id || user._id || '';
-        console.log('🆔 Admin ID (user):', this.adminId);
-        return;
-      }
-
-      // Sinon essayer depuis auth_token
-      const tokenStr = localStorage.getItem('auth_token');
-      if (tokenStr) {
-        // Essayer de décoder le token JWT
-        try {
-          const tokenParts = tokenStr.split('.');
-          if (tokenParts.length === 3) {
-            const payload = JSON.parse(atob(tokenParts[1]));
-            this.adminId = payload.adminId || payload.id || payload._id || payload.sub || '';
-            console.log('🆔 Admin ID (token):', this.adminId);
-          }
-        } catch (e) {
-          console.error('Erreur décodage token:', e);
-        }
-      }
-
-      if (!this.adminId) {
-        console.warn('⚠️ Aucun ID administrateur trouvé dans localStorage');
-      }
-    } catch (error) {
-      console.error('Erreur chargement données admin:', error);
-    }
-  }
-
-  /**
-   * Vérifie si l'article appartient à l'administrateur connecté
-   */
-  isAdminArticle(article: Article): boolean {
-    if (!this.adminId || !article) return false;
-    return String(article.vendeurId) === String(this.adminId);
   }
 
   startAutoRefresh(): void {
@@ -208,8 +150,6 @@ export class VoircommandesComponent implements OnInit, OnDestroy {
 
         if (commandeData && commandeData._id) {
           this.commande = commandeData;
-          // Vérifier si l'admin a au moins un article dans cette commande
-          this.checkAuthorization();
         } else {
           this.error = 'Commande non trouvée';
         }
@@ -224,105 +164,41 @@ export class VoircommandesComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Vérifie si l'administrateur a des articles dans cette commande
+   * Met à jour le statut de livraison global de la commande (4 états)
    */
-  checkAuthorization(): void {
-    if (!this.commande || !this.adminId) {
-      this.isAuthorized = false;
+  updateCommandeStatutLivraison(newStatus: string): void {
+    if (!this.commande || this.isUpdatingLivraison || this.commande.statutLivraison === newStatus) {
       return;
     }
 
-    // Vérifier si l'admin a au moins un article dans cette commande
-    const hasAdminArticle = this.commande.articles.some(article => 
-      String(article.vendeurId) === String(this.adminId)
-    );
-
-    this.isAuthorized = hasAdminArticle;
-    
-    if (!hasAdminArticle) {
-      console.warn('⚠️ Aucun article de cet administrateur dans la commande');
-    }
-  }
-
-  /**
-   * Met à jour le statut de livraison d'un article
-   */
-  async updateArticleLivraisonStatus(article: Article, newStatus: string): Promise<void> {
-    // Empêcher les doubles clics
-    if (this.isUpdating || this.updatingArticleId === article.articleId) {
-      return;
-    }
-
-    // Vérifier que l'admin est bien le propriétaire de l'article
-    if (!this.isAdminArticle(article)) {
-      this.showMessage('❌ Vous n\'êtes pas autorisé à modifier cet article', 'error');
-      return;
-    }
-
-    const oldStatus = article.statutLivraison;
-    this.isUpdating = true;
-    this.updatingArticleId = article.articleId;
+    const oldStatus = this.commande.statutLivraison;
+    this.isUpdatingLivraison = true;
 
     // Mise à jour optimiste de l'UI
-    article.statutLivraison = newStatus;
+    this.commande.statutLivraison = newStatus;
 
-    try {
-      // Format attendu par le backend : { articleId, statutLivraison, vendeurId }
-      const updateData = {
-        articleId: article.articleId,
-        statutLivraison: newStatus,
-        vendeurId: this.adminId // Envoyer l'ID de l'admin comme vendeurId
-      };
+    this.commandesService.updateStatutLivraison(this.commandeId, newStatus).subscribe({
+      next: () => {
+        this.isUpdatingLivraison = false;
+        this.showMessage(`✅ Statut de livraison mis à jour : ${this.getStatutLivraisonCommande(newStatus).label}`, 'success');
+      },
+      error: (error) => {
+        console.error('❌ Erreur mise à jour statut livraison commande:', error);
 
-      console.log('📤 Envoi requête de mise à jour:', updateData);
-
-      // Utiliser la méthode modifierCommande existante
-      this.commandesService.modifierCommande(this.commandeId, updateData).subscribe({
-        next: (response) => {
-          console.log('✅ Statut de livraison mis à jour avec succès:', response);
-          this.isUpdating = false;
-          this.updatingArticleId = null;
-          
-          // Recharger la commande pour avoir les données à jour
-          this.loadCommande();
-          
-          const message = `✅ "${article.nom}" ${newStatus === 'LIVRE' ? 'livré' : 'non livré'} avec succès`;
-          this.showMessage(message, 'success');
-        },
-        error: (error) => {
-          console.error('❌ Erreur détaillée:', error);
-          console.error('❌ Corps de l\'erreur:', error.error);
-          
-          // Restaurer l'ancien statut en cas d'erreur
-          article.statutLivraison = oldStatus;
-          this.isUpdating = false;
-          this.updatingArticleId = null;
-          
-          // Récupérer le message d'erreur du backend
-          let errorMsg = 'Impossible de mettre à jour le statut. ';
-          if (error.error) {
-            if (typeof error.error === 'string') {
-              errorMsg += error.error;
-            } else if (error.error.message) {
-              errorMsg += error.error.message;
-            } else if (error.message) {
-              errorMsg += error.message;
-            }
-          } else if (error.message) {
-            errorMsg += error.message;
-          }
-          
-          this.showMessage('❌ ' + errorMsg, 'error');
+        // Restaurer l'ancien statut en cas d'erreur
+        if (this.commande) {
+          this.commande.statutLivraison = oldStatus;
         }
-      });
-    } catch (error: any) {
-      console.error('❌ Erreur catch:', error);
-      // Restaurer l'ancien statut
-      article.statutLivraison = oldStatus;
-      this.isUpdating = false;
-      this.updatingArticleId = null;
-      this.showMessage('❌ Erreur lors de la mise à jour', 'error');
-    }
+        this.isUpdatingLivraison = false;
+
+        const errorMsg = error.error?.message || error.message || 'Impossible de mettre à jour le statut de livraison.';
+        this.showMessage('❌ ' + errorMsg, 'error');
+      }
+    });
+  }
+
+  getStatutLivraisonCommande(status: string): any {
+    return this.statutLivraisonCommandeMap[status] || { label: status || 'Inconnu', class: 'bg-gray-500/20 text-gray-600 dark:text-gray-400 border border-gray-500/30' };
   }
 
   /**
@@ -376,16 +252,8 @@ export class VoircommandesComponent implements OnInit, OnDestroy {
     }
   }
 
-  getStatus(status: string): any {
-    return this.statusMap[status] || { label: status || 'Inconnu', class: 'bg-gray-500/20 text-gray-600 dark:text-gray-400 border border-gray-500/30' };
-  }
-
   getPaiementStatus(status: string): any {
     return this.paiementStatusMap[status] || { label: status || 'Inconnu', class: 'bg-gray-500/20 text-gray-600 dark:text-gray-400 border border-gray-500/30' };
-  }
-
-  getLivraisonStatus(status: string): any {
-    return this.livraisonStatusMap[status] || { label: status || 'Inconnu', class: 'bg-gray-500/20 text-gray-600 dark:text-gray-400 border border-gray-500/30' };
   }
 
   getTimeAgo(dateString: string): string {

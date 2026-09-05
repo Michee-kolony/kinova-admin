@@ -42,6 +42,20 @@ export class CommandesComponent implements OnInit, OnDestroy {
     'PAYE': 'status-badge-processing'
   };
 
+  livraisonStatusMap: { [key: string]: string } = {
+    'EN_ATTENTE': 'En attente',
+    'EN_COURS_PREPARATION': 'En préparation',
+    'EN_COURS_LIVRAISON': 'En livraison',
+    'LIVRE': 'Livré'
+  };
+
+  livraisonStatusClassMap: { [key: string]: string } = {
+    'EN_ATTENTE': 'status-badge-pending',
+    'EN_COURS_PREPARATION': 'status-badge-processing',
+    'EN_COURS_LIVRAISON': 'status-badge-shipped',
+    'LIVRE': 'status-badge-delivered'
+  };
+
   constructor(
     public themeService: ThemeService,
     private commandesService: CommandesService
@@ -145,6 +159,8 @@ export class CommandesComponent implements OnInit, OnDestroy {
         vendorAvatar: 'https://ui-avatars.com/api/?name=' + encodeURIComponent(firstArticle?.vendeurNom || 'Vendeur') + '&background=ffbf00&color=1a1a1a&size=24',
         status: this.statusMap[order.statutCommande] || order.statutCommande || 'En attente',
         statusClass: this.statusClassMap[order.statutCommande] || 'status-badge-pending',
+        livraisonStatus: this.livraisonStatusMap[order.statutLivraison] || order.statutLivraison || 'En attente',
+        livraisonStatusClass: this.livraisonStatusClassMap[order.statutLivraison] || 'status-badge-pending',
         date: this.formatDate(order.createdAt),
         createdAt: order.createdAt,
         totalArticles: totalArticles,

@@ -47,7 +47,10 @@ export class VendeursComponent implements OnInit {
         
         // Transformer les données pour correspondre au format attendu
         this.allVendeurs = data.map((vendeur: any) => this.transformVendeurData(vendeur));
-        
+
+        // Trier par date/heure d'inscription (la plus récente en premier)
+        this.allVendeurs.sort((a, b) => this.getVendeurTimestamp(b) - this.getVendeurTimestamp(a));
+
         // Mettre à jour les statistiques
         this.updateStats();
         
@@ -86,11 +89,29 @@ export class VendeursComponent implements OnInit {
       status: vendeur.status || 'pending',
       paymentMethod: vendeur.paymentMethod || 'Non renseigné',
       mobileMoneyNumber: vendeur.mobileMoneyNumber || 'Non renseigné',
-      createdAt: vendeur.createdAt || new Date().toISOString(),
-      updatedAt: vendeur.updatedAt || new Date().toISOString(),
+      createdAt: vendeur.createdAt || null,
+      updatedAt: vendeur.updatedAt || null,
       // Garder les données brutes pour référence
       rawData: vendeur
     };
+  }
+
+  // Renvoie un horodatage (ms) fiable pour trier du plus récent au plus ancien.
+  // Utilise createdAt si présent, sinon extrait la date/heure/minute/seconde
+  // encodée dans l'_id MongoDB (ObjectId), toujours disponible et croissant dans le temps.
+  getVendeurTimestamp(vendeur: any): number {
+    if (vendeur.createdAt) {
+      const parsed = new Date(vendeur.createdAt).getTime();
+      if (!isNaN(parsed)) return parsed;
+    }
+
+    const id = vendeur._id || vendeur.id;
+    if (typeof id === 'string' && id.length >= 8) {
+      const seconds = parseInt(id.substring(0, 8), 16);
+      if (!isNaN(seconds)) return seconds * 1000;
+    }
+
+    return 0;
   }
 
   updateStats() {

@@ -81,31 +81,80 @@
       </div>
     </div>
 
-    <!-- Articles livrés -->
+    <!-- Commandes livrées -->
     <div class="stat-card">
       <div class="stat-icon" style="background: #ffbf00;">
         <i class="fas fa-truck" style="color: #1a1a1a;"></i>
       </div>
       <div class="stat-info">
-        <h3>Articles livrés</h3>
-        <p class="stat-number">{{ totalArticlesLivres }}</p>
+        <h3>Commandes livrées</h3>
+        <p class="stat-number">{{ totalCommandesLivrees }}</p>
       </div>
     </div>
 
-    <!-- Articles en attente -->
+    <!-- Commandes non livrées -->
     <div class="stat-card">
       <div class="stat-icon" style="background: #ffbf00;">
         <i class="fas fa-clock" style="color: #1a1a1a;"></i>
       </div>
       <div class="stat-info">
-        <h3>Articles non livrés</h3>
-        <p class="stat-number">{{ totalArticlesNonLivres }}</p>
+        <h3>Commandes non livrées</h3>
+        <p class="stat-number">{{ totalCommandesNonLivrees }}</p>
       </div>
     </div>
   </div>
 
+  <!-- Suivi en temps réel des livreurs en cours de livraison -->
+  <div class="orders-section mt-5">
+    <div class="flex items-center justify-between mb-4 flex-wrap gap-2">
+      <h2 class="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
+        <i class="fas fa-map-marked-alt" style="color: #ffbf00;"></i>
+        Livreurs en cours de livraison
+      </h2>
+      <span class="text-xs text-gray-500 dark:text-gray-400 flex items-center gap-1.5">
+        <span class="inline-block w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+        Temps réel · {{ livraisonsEnCours.length }} en cours
+      </span>
+    </div>
 
- <app-chart></app-chart>
+    <div *ngIf="livraisonsError" class="mb-3 text-sm text-red-600 dark:text-red-400">
+      {{ livraisonsError }}
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+      <!-- Carte (Leaflet) -->
+      <div class="lg:col-span-2 rounded-lg overflow-hidden" style="height: 420px;">
+        <div #livraisonsMap style="height: 100%; width: 100%;"></div>
+      </div>
+
+      <!-- Liste des livreurs en cours (adresse résolue via TomTom) -->
+      <div class="flex flex-col gap-2 max-h-[420px] overflow-y-auto pr-1">
+        <div *ngIf="livraisonsEnCours.length === 0 && !isLoadingLivraisons" class="text-sm text-gray-500 dark:text-gray-400 text-center py-8">
+          Aucun livreur en cours de livraison actuellement
+        </div>
+
+        <button *ngFor="let livraison of livraisonsEnCours" (click)="centrerSurLivreur(livraison)"
+          class="text-left bg-gray-50 dark:bg-black rounded-lg p-3 hover:ring-2 hover:ring-yellow-400 transition-all">
+          <div class="flex items-center gap-2">
+            <img [src]="livraison.photoLivreur" [alt]="livraison.nomLivreur"
+              class="w-8 h-8 rounded-full object-cover border shrink-0"
+              style="border-color: #ffbf00;"
+              onerror="this.src='https://ui-avatars.com/api/?name=Livreur&background=ffbf00&color=1a1a1a&size=64'">
+            <div class="min-w-0">
+              <p class="text-sm font-semibold text-gray-900 dark:text-white truncate">{{ livraison.nomLivreur }}</p>
+              <p class="text-xs text-gray-500 dark:text-gray-400 truncate">Commande #{{ livraison.numeroCommande }}</p>
+            </div>
+          </div>
+          <p class="text-xs text-gray-600 dark:text-gray-300 mt-2 flex items-start gap-1.5">
+            <i class="fas fa-map-pin mt-0.5" style="color: #ffbf00;"></i>
+            <span>{{ adressesLivreurs[livraison.numeroCommande] || 'Localisation en cours...' }}</span>
+          </p>
+        </button>
+      </div>
+    </div>
+  </div>
+
+ <app-chart class="block mt-5"></app-chart>
 
  <div class="mt-5">
    <app-operateurs-chart></app-operateurs-chart>
@@ -141,6 +190,7 @@
           <img [src]="order.image" alt="Produit" class="order-product-image">
           <div class="order-product-info">
             <h4 class="order-product-title">{{ order.product }}</h4>
+            <span class="order-product-number">#{{ order.numeroCommande }}</span>
             <span class="order-product-price">{{ order.price }}</span>
           </div>
         </div>

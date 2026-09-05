@@ -151,7 +151,7 @@
       </a>
 
   
-      <a 
+      <a
         routerLink="/admin/vendeurlist"
         (click)="closeSidebar()"
         routerLinkActive="active"
@@ -160,6 +160,28 @@
           <i class="fas fa-users"></i>
         </span>
         <span class="nav-text">Liste des Vendeurs</span>
+      </a>
+
+      <a
+        routerLink="/admin/livreurs"
+        (click)="closeSidebar()"
+        routerLinkActive="active"
+        class="nav-item">
+        <span class="nav-icon">
+          <i class="fas fa-motorcycle"></i>
+        </span>
+        <span class="nav-text">Gestion des Livreurs</span>
+      </a>
+
+      <a
+        routerLink="/admin/affecter-livraison"
+        (click)="closeSidebar()"
+        routerLinkActive="active"
+        class="nav-item">
+        <span class="nav-icon">
+          <i class="fas fa-truck-fast"></i>
+        </span>
+        <span class="nav-text">Affecter une Livraison</span>
       </a>
 
         <a 

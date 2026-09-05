@@ -49,6 +49,8 @@ import { OperateursChartComponent } from './composants/operateurs-chart/operateu
 import { VoircommandesComponent } from './composants/voircommandes/voircommandes.component';
 import { TransactionComponent } from './composants/transaction/transaction.component';
 import { HistoriqueTransactionComponent } from './composants/historique-transaction/historique-transaction.component';
+import { LivreurComponent } from './composants/livreur/livreur.component';
+import { AffecterLivraisonComponent } from './composants/affecter-livraison/affecter-livraison.component';
 
 @NgModule({
   declarations: [
@@ -87,7 +89,9 @@ import { HistoriqueTransactionComponent } from './composants/historique-transact
     OperateursChartComponent,
     VoircommandesComponent,
     TransactionComponent,
-    HistoriqueTransactionComponent
+    HistoriqueTransactionComponent,
+    LivreurComponent,
+    AffecterLivraisonComponent
   ],
 
   imports: [

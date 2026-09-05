@@ -43,4 +43,24 @@ export class CommandesService {
 
   }
 
+  // Affecter un livreur à une commande
+  affecterLivreur(id: string, idLivreur: string): Observable<any> {
+
+    return this.http.put<any>(
+      `${this.urlCommande}/${id}/livreur`,
+      { idLivreur }
+    );
+
+  }
+
+  // Modifier le statut de livraison global d'une commande
+  updateStatutLivraison(id: string, statutLivraison: string): Observable<any> {
+
+    return this.http.put<any>(
+      `${this.urlCommande}/${id}/statut-livraison`,
+      { statutLivraison }
+    );
+
+  }
+
 }

@@ -1,0 +1,204 @@
+<div class="p-4 sm:p-6">
+  <!-- En-tête -->
+  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+    <div>
+      <h1 class="text-2xl font-bold text-gray-900 dark:text-white">
+        <i class="fas fa-truck-fast mr-3" style="color: #ffbf00;"></i>
+        Affecter une livraison
+      </h1>
+      <p class="text-gray-600 dark:text-gray-400 mt-1">Assignez un livreur à chaque commande à livrer</p>
+    </div>
+    <button (click)="loadData()" [disabled]="isLoading"
+      class="w-10 h-10 flex items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors disabled:opacity-50 self-start sm:self-auto">
+      <i class="fas fa-sync-alt" [class.fa-spin]="isLoading"></i>
+    </button>
+  </div>
+
+  <!-- Messages -->
+  <div *ngIf="successMessage" class="mb-4 flex items-center gap-2 px-4 py-3 rounded-lg bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400">
+    <i class="fas fa-check-circle"></i> {{ successMessage }}
+  </div>
+  <div *ngIf="errorMessage" class="mb-4 flex items-center gap-2 px-4 py-3 rounded-lg bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400">
+    <i class="fas fa-exclamation-circle"></i> {{ errorMessage }}
+  </div>
+
+  <ng-container *ngIf="!isLoading">
+    <!-- Onglets de filtre -->
+    <div class="flex flex-wrap gap-2 mb-5">
+      <button (click)="setFilter('non_affectees')"
+        class="px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2"
+        [ngClass]="activeFilter === 'non_affectees' ? 'text-black' : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'"
+        [style.background]="activeFilter === 'non_affectees' ? '#ffbf00' : null">
+        <i class="fas fa-clock"></i> À affecter
+        <span class="px-2 py-0.5 rounded-full text-xs bg-black/10 dark:bg-white/10">{{ countNonAffectees() }}</span>
+      </button>
+      <button (click)="setFilter('affectees')"
+        class="px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2"
+        [ngClass]="activeFilter === 'affectees' ? 'text-black' : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'"
+        [style.background]="activeFilter === 'affectees' ? '#ffbf00' : null">
+        <i class="fas fa-user-check"></i> Affectées
+        <span class="px-2 py-0.5 rounded-full text-xs bg-black/10 dark:bg-white/10">{{ countAffectees() }}</span>
+      </button>
+      <button (click)="setFilter('toutes')"
+        class="px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2"
+        [ngClass]="activeFilter === 'toutes' ? 'text-black' : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'"
+        [style.background]="activeFilter === 'toutes' ? '#ffbf00' : null">
+        <i class="fas fa-list"></i> Toutes
+        <span class="px-2 py-0.5 rounded-full text-xs bg-black/10 dark:bg-white/10">{{ commandes.length }}</span>
+      </button>
+    </div>
+
+    <!-- Recherche -->
+    <div class="relative mb-6">
+      <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+      <input
+        type="text"
+        [(ngModel)]="searchTerm"
+        (ngModelChange)="applyFilter()"
+        placeholder="Rechercher par numéro de commande ou email client..."
+        class="w-full h-12 pl-11 pr-11 rounded-xl bg-gray-100 dark:bg-[#171515] text-gray-900 dark:text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-400 transition-all">
+      <button *ngIf="searchTerm" (click)="clearSearch()" class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200">
+        <i class="fas fa-times-circle"></i>
+      </button>
+    </div>
+  </ng-container>
+
+  <!-- Chargement -->
+  <div *ngIf="isLoading" class="flex flex-col items-center justify-center py-20">
+    <i class="fas fa-spinner fa-spin text-3xl" style="color: #ffbf00;"></i>
+    <p class="text-gray-500 dark:text-gray-400 mt-3">Chargement des commandes...</p>
+  </div>
+
+  <!-- Aucune commande -->
+  <div *ngIf="!isLoading && filteredCommandes.length === 0" class="flex flex-col items-center justify-center py-20 text-center">
+    <i class="fas fa-box-open text-5xl" style="color: #ffbf00;"></i>
+    <h3 class="text-xl font-semibold mt-4 text-gray-900 dark:text-white">Aucune commande trouvée</h3>
+    <p class="text-gray-500 dark:text-gray-400 mt-1">
+      {{ searchTerm ? 'Aucune commande ne correspond à votre recherche' : 'Il n\'y a rien à afficher dans ce filtre' }}
+    </p>
+  </div>
+
+  <!-- Liste des commandes -->
+  <div *ngIf="!isLoading && filteredCommandes.length > 0" class="flex flex-col gap-4">
+    <div *ngFor="let commande of filteredCommandes"
+      class="bg-gray-100 dark:bg-[#171515] rounded-2xl shadow-lg p-5 flex flex-col lg:flex-row lg:items-center gap-4">
+
+      <!-- Infos commande -->
+      <div class="flex-1 min-w-0">
+        <div class="flex flex-wrap items-center gap-2 mb-2">
+          <span class="font-semibold text-gray-900 dark:text-white">#{{ commande.numeroCommande }}</span>
+          <span class="px-2.5 py-0.5 rounded-full text-xs font-medium" [ngClass]="getStatutLivraison(commande.statutLivraison).class">
+            {{ getStatutLivraison(commande.statutLivraison).label }}
+          </span>
+        </div>
+        <div class="flex flex-wrap items-center gap-x-5 gap-y-1 text-sm text-gray-600 dark:text-gray-300">
+          <span class="flex items-center gap-2">
+            <i class="fas fa-envelope w-4" style="color: #ffbf00;"></i>
+            {{ commande.emailUtilisateur }}
+          </span>
+          <span class="flex items-center gap-2">
+            <i class="fas fa-map-marker-alt w-4" style="color: #ffbf00;"></i>
+            {{ getAdresse(commande) }}
+          </span>
+          <span class="flex items-center gap-2">
+            <i class="fas fa-box w-4" style="color: #ffbf00;"></i>
+            {{ getTotalArticles(commande) }} article(s)
+          </span>
+          <span class="flex items-center gap-2">
+            <i class="fas fa-dollar-sign w-4" style="color: #ffbf00;"></i>
+            {{ formatPrice(commande.montantAPayer) }}
+          </span>
+        </div>
+        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Commandée le {{ formatDate(commande.createdAt) }}</p>
+      </div>
+
+      <!-- Livreur affecté / bouton d'affectation -->
+      <div class="flex items-center gap-3 shrink-0">
+        <div *ngIf="getLivreurAssigne(commande) as livreur" class="flex items-center gap-2 pr-3 border-r border-gray-300 dark:border-gray-700">
+          <img [src]="livreur.photo" [alt]="livreur.nom" class="w-9 h-9 rounded-full object-cover border-2" style="border-color: #ffbf00;"
+            onerror="this.src='https://ui-avatars.com/api/?name=Livreur&background=ffbf00&color=1a1a1a&size=40'">
+          <div class="min-w-0">
+            <p class="text-sm font-medium text-gray-900 dark:text-white truncate">{{ livreur.nom }}</p>
+            <p class="text-xs text-gray-500 dark:text-gray-400">{{ livreur.telephone }}</p>
+          </div>
+        </div>
+        <div *ngIf="!getLivreurAssigne(commande)" class="flex items-center gap-2 pr-3 border-r border-gray-300 dark:border-gray-700 text-sm text-gray-400 italic">
+          <i class="fas fa-user-slash"></i> Aucun livreur
+        </div>
+
+        <button (click)="openAssignModal(commande)"
+          class="px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors"
+          style="background: #ffbf00; color: #1a1a1a;">
+          <i class="fas fa-truck"></i>
+          {{ getLivreurAssigne(commande) ? 'Réaffecter' : 'Affecter' }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MODALE D'AFFECTATION D'UN LIVREUR ===== -->
+<div *ngIf="isAssignModalOpen" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm p-4" (click)="closeAssignModal()">
+  <div class="bg-gray-100 dark:bg-[#171515] rounded-2xl shadow-2xl max-w-lg w-full max-h-[85vh] flex flex-col" (click)="$event.stopPropagation()">
+
+    <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-gray-700 shrink-0">
+      <div>
+        <h2 class="text-lg font-bold text-gray-900 dark:text-white">
+          <i class="fas fa-truck mr-2" style="color: #ffbf00;"></i>
+          Affecter un livreur
+        </h2>
+        <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">Commande #{{ commandeToAssign?.numeroCommande }}</p>
+      </div>
+      <button (click)="closeAssignModal()" class="w-9 h-9 flex items-center justify-center rounded-full text-gray-500 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    <div class="px-6 pt-4 shrink-0">
+      <div class="relative">
+        <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+        <input
+          type="text"
+          [(ngModel)]="livreurSearchTerm"
+          (ngModelChange)="filterLivreursModal()"
+          placeholder="Rechercher un livreur..."
+          class="w-full h-11 pl-11 pr-4 rounded-lg bg-gray-200 dark:bg-black text-gray-900 dark:text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-400">
+      </div>
+    </div>
+
+    <div class="flex-1 overflow-y-auto px-6 py-4 space-y-2">
+      <p *ngIf="filteredLivreursForModal.length === 0" class="text-center text-sm text-gray-500 dark:text-gray-400 py-8">
+        Aucun livreur disponible
+      </p>
+
+      <button *ngFor="let livreur of filteredLivreursForModal" type="button" (click)="selectLivreur(livreur)"
+        class="w-full flex items-center gap-3 p-3 rounded-xl border-2 transition-colors text-left"
+        [ngClass]="selectedLivreurId === livreur._id
+          ? 'bg-yellow-50 dark:bg-yellow-500/10'
+          : 'border-transparent bg-gray-50 dark:bg-gray-800/50 hover:bg-gray-100 dark:hover:bg-gray-800'"
+        [style.border-color]="selectedLivreurId === livreur._id ? '#ffbf00' : null">
+        <img [src]="livreur.photo" [alt]="livreur.nom" class="w-11 h-11 rounded-full object-cover border-2" style="border-color: #ffbf00;"
+          onerror="this.src='https://ui-avatars.com/api/?name=Livreur&background=ffbf00&color=1a1a1a&size=44'">
+        <div class="flex-1 min-w-0">
+          <p class="text-sm font-medium text-gray-900 dark:text-white truncate">{{ livreur.nom }}</p>
+          <p class="text-xs text-gray-500 dark:text-gray-400 truncate">{{ livreur.telephone }} • {{ livreur.email }}</p>
+        </div>
+        <i *ngIf="selectedLivreurId === livreur._id" class="fas fa-check-circle text-xl" style="color: #ffbf00;"></i>
+      </button>
+    </div>
+
+    <div class="flex flex-col sm:flex-row gap-3 px-6 py-4 border-t border-gray-200 dark:border-gray-700 shrink-0">
+      <button type="button" (click)="closeAssignModal()"
+        class="flex-1 px-4 py-2.5 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 rounded-lg transition-colors">
+        Annuler
+      </button>
+      <button type="button" (click)="confirmAssignment()" [disabled]="isAssigning || !selectedLivreurId"
+        class="flex-1 px-4 py-2.5 text-sm font-semibold rounded-lg flex items-center justify-center gap-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        style="background: #ffbf00; color: #1a1a1a;">
+        <i class="fas fa-spinner fa-spin" *ngIf="isAssigning"></i>
+        <i class="fas fa-check" *ngIf="!isAssigning"></i>
+        {{ isAssigning ? 'Affectation...' : 'Confirmer l\'affectation' }}
+      </button>
+    </div>
+  </div>
+</div>
