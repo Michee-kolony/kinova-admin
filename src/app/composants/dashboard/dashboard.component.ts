@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnDestroy, ViewChild, ElementRef, HostListener } from '@angular/core';
 import * as L from 'leaflet';
 import { ThemeService } from '../../services/theme.service';
 import { HttpClient } from '@angular/common/http';
@@ -46,6 +46,20 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   private livraisonsInterval: any = null;
   private readonly LIVRAISONS_REFRESH_INTERVAL = 8000;
 
+  // ===== Modale des réclamations (bouton flottant + ouverture auto) =====
+  private readonly urlMessages = 'https://kinova-backend.tech/messages';
+  private readonly RECLAMATIONS_AUTO_OPEN_DELAY = 5000;
+  private readonly RECLAMATIONS_CLOSE_ANIMATION = 300;
+  private reclamationsAutoOpenTimeout: any = null;
+  private reclamationsCloseTimeout: any = null;
+
+  reclamations: any[] = [];
+  reclamationsLoading = true;
+  reclamationsError: string | null = null;
+  showReclamationsModal = false;
+  isClosingReclamationsModal = false;
+  selectedReclamation: any = null;
+
   private readonly PHOTO_PLACEHOLDER = 'https://ui-avatars.com/api/?name=Livreur&background=ffbf00&color=1a1a1a&size=64';
 
   constructor(
@@ -55,7 +69,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     private article: ArticleService,
     private vendeur: VendeurService,
     private commandesService: CommandesService,
-    private livraisonService: LivraisonService
+    private livraisonService: LivraisonService,
+    private http: HttpClient
   ) {}
 
 
@@ -66,6 +81,13 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.loadmesArticles();
     this.loadVendeurs(); // Appel de la méthode pour charger les vendeurs
     this.loadRecentOrders();
+    this.loadReclamations();
+
+    // Ouverture automatique de la modale des réclamations 5s après l'arrivée sur le dashboard
+    this.reclamationsAutoOpenTimeout = setTimeout(
+      () => this.ouvrirReclamationsModal(),
+      this.RECLAMATIONS_AUTO_OPEN_DELAY
+    );
 
     this.token = localStorage.getItem('auth_token');
 
@@ -91,8 +113,98 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.livraisonsInterval) {
       clearInterval(this.livraisonsInterval);
     }
+    clearTimeout(this.reclamationsAutoOpenTimeout);
+    clearTimeout(this.reclamationsCloseTimeout);
     this.themeObserver?.disconnect();
     this.map?.remove();
+  }
+
+  // ===== Modale des réclamations =====
+
+  loadReclamations(): void {
+    this.reclamationsLoading = true;
+    this.reclamationsError = null;
+
+    this.http.get<any[]>(this.urlMessages).subscribe({
+      next: (data) => {
+        this.reclamations = (Array.isArray(data) ? data : []).sort(
+          (a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        );
+        this.reclamationsLoading = false;
+      },
+      error: (error) => {
+        console.error('Erreur lors du chargement des réclamations:', error);
+        this.reclamationsError = 'Impossible de charger les réclamations.';
+        this.reclamationsLoading = false;
+      }
+    });
+  }
+
+  ouvrirReclamationsModal(): void {
+    clearTimeout(this.reclamationsAutoOpenTimeout);
+    clearTimeout(this.reclamationsCloseTimeout);
+    this.isClosingReclamationsModal = false;
+    this.showReclamationsModal = true;
+  }
+
+  // Joue l'animation de sortie avant de retirer la modale du DOM
+  fermerReclamationsModal(): void {
+    if (!this.showReclamationsModal || this.isClosingReclamationsModal) return;
+
+    this.isClosingReclamationsModal = true;
+    this.reclamationsCloseTimeout = setTimeout(() => {
+      this.showReclamationsModal = false;
+      this.isClosingReclamationsModal = false;
+      this.selectedReclamation = null;
+    }, this.RECLAMATIONS_CLOSE_ANIMATION);
+  }
+
+  // Le bouton flottant ouvre/ferme le panneau, comme un widget de chat
+  toggleReclamationsModal(): void {
+    if (this.showReclamationsModal && !this.isClosingReclamationsModal) {
+      this.fermerReclamationsModal();
+    } else {
+      this.ouvrirReclamationsModal();
+    }
+  }
+
+  // Échap : revient d'abord à la liste, puis ferme le panneau
+  @HostListener('document:keydown.escape')
+  onEscape(): void {
+    if (this.selectedReclamation) {
+      this.selectedReclamation = null;
+    } else {
+      this.fermerReclamationsModal();
+    }
+  }
+
+  lireReclamation(reclamation: any): void {
+    this.selectedReclamation = reclamation;
+  }
+
+  retourListeReclamations(): void {
+    this.selectedReclamation = null;
+  }
+
+  getInitiales(nom: string): string {
+    if (!nom) return '';
+    return nom
+      .split(' ')
+      .map(m => m.charAt(0))
+      .join('')
+      .toUpperCase()
+      .slice(0, 2);
+  }
+
+  formaterDate(date: string): string {
+    if (!date) return '';
+    const dateObj = new Date(date);
+    const heure = `${dateObj.getHours().toString().padStart(2, '0')}:${dateObj.getMinutes().toString().padStart(2, '0')}`;
+    const diffDays = Math.floor((Date.now() - dateObj.getTime()) / (1000 * 60 * 60 * 24));
+
+    if (diffDays === 0) return `Aujourd'hui - ${heure}`;
+    if (diffDays === 1) return `Hier - ${heure}`;
+    return dateObj.toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' });
   }
 
   // ===== Carte Leaflet =====

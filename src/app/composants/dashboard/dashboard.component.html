@@ -410,5 +410,126 @@
     </div>
   </div>
 
+  <!-- ===================== WIDGET RÉCLAMATIONS (style chatbot) ===================== -->
+
+  <!-- Panneau ancré en bas à droite, au-dessus du bouton flottant -->
+  <div
+    *ngIf="showReclamationsModal"
+    class="reclam-panel"
+    [class.is-closing]="isClosingReclamationsModal"
+    role="dialog"
+    aria-labelledby="reclam-panel-title">
+
+    <!-- En-tête -->
+    <div class="reclam-panel-header">
+      <button
+        *ngIf="selectedReclamation"
+        type="button"
+        class="reclam-header-btn"
+        (click)="retourListeReclamations()"
+        aria-label="Retour à la liste">
+        <i class="fas fa-arrow-left"></i>
+      </button>
+
+      <div class="reclam-header-avatar" *ngIf="!selectedReclamation">
+        <i class="fas fa-headset"></i>
+      </div>
+      <div class="reclam-header-avatar" *ngIf="selectedReclamation">
+        {{ getInitiales(selectedReclamation.nom) }}
+      </div>
+
+      <div class="flex-1 min-w-0">
+        <h2 id="reclam-panel-title" class="reclam-header-title">
+          {{ selectedReclamation ? selectedReclamation.nom : 'Réclamations' }}
+        </h2>
+        <p class="reclam-header-subtitle">
+          <ng-container *ngIf="!selectedReclamation">
+            <span class="reclam-online-dot"></span>
+            {{ reclamations.length }} message{{ reclamations.length > 1 ? 's' : '' }} reçu{{ reclamations.length > 1 ? 's' : '' }}
+          </ng-container>
+          <ng-container *ngIf="selectedReclamation">{{ selectedReclamation.email }}</ng-container>
+        </p>
+      </div>
+
+      <button type="button" class="reclam-header-btn" (click)="fermerReclamationsModal()" aria-label="Réduire">
+        <i class="fas fa-minus"></i>
+      </button>
+    </div>
+
+    <!-- ===== Vue liste ===== -->
+    <div class="reclam-panel-body" *ngIf="!selectedReclamation">
+
+      <div *ngIf="reclamationsLoading" class="reclam-state">
+        <i class="fas fa-spinner fa-spin text-2xl text-[#ffbf00]"></i>
+        <p>Chargement des réclamations...</p>
+      </div>
+
+      <div *ngIf="!reclamationsLoading && reclamationsError" class="reclam-state">
+        <i class="fas fa-exclamation-circle text-2xl text-red-500"></i>
+        <p>{{ reclamationsError }}</p>
+        <button type="button" class="reclam-retry" (click)="loadReclamations()">Réessayer</button>
+      </div>
+
+      <div *ngIf="!reclamationsLoading && !reclamationsError && reclamations.length === 0" class="reclam-state">
+        <i class="fas fa-inbox text-3xl text-gray-400"></i>
+        <p>Aucune réclamation pour le moment</p>
+      </div>
+
+      <ng-container *ngIf="!reclamationsLoading && !reclamationsError">
+        <button
+          type="button"
+          *ngFor="let reclamation of reclamations; let i = index"
+          class="reclam-item"
+          [style.animation-delay.ms]="i < 10 ? 150 + i * 45 : 0"
+          (click)="lireReclamation(reclamation)">
+
+          <div class="reclam-avatar">{{ getInitiales(reclamation.nom) }}</div>
+
+          <div class="flex-1 min-w-0 text-left">
+            <div class="flex items-center justify-between gap-2">
+              <h3 class="reclam-item-name">{{ reclamation.nom }}</h3>
+              <span class="reclam-item-date">{{ formaterDate(reclamation.createdAt) }}</span>
+            </div>
+            <p class="reclam-item-subject">{{ reclamation.objet }}</p>
+            <p class="reclam-item-preview">{{ reclamation.message }}</p>
+          </div>
+        </button>
+      </ng-container>
+    </div>
+
+    <!-- ===== Vue lecture (conversation) ===== -->
+    <div class="reclam-panel-body reclam-chat" *ngIf="selectedReclamation">
+      <div class="reclam-chat-date">{{ formaterDate(selectedReclamation.createdAt) }}</div>
+
+      <div class="reclam-bubble-row">
+        <div class="reclam-avatar reclam-avatar--sm">{{ getInitiales(selectedReclamation.nom) }}</div>
+        <div class="reclam-bubble">
+          <p class="reclam-bubble-subject">{{ selectedReclamation.objet }}</p>
+          <p class="reclam-bubble-text">{{ selectedReclamation.message }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pied -->
+    <div class="reclam-panel-footer">
+      <a class="reclam-footer-btn" routerLink="/admin/reclamations">
+        Gérer les réclamations <i class="fas fa-arrow-right text-xs"></i>
+      </a>
+    </div>
+  </div>
+
+  <!-- Bouton flottant : ouvre / ferme le panneau -->
+  <button
+    type="button"
+    class="reclam-fab"
+    [class.is-open]="showReclamationsModal && !isClosingReclamationsModal"
+    (click)="toggleReclamationsModal()"
+    [attr.aria-label]="showReclamationsModal ? 'Fermer les réclamations' : 'Voir les réclamations'">
+    <i class="fas fa-comment-dots reclam-fab-icon reclam-fab-icon--open"></i>
+    <i class="fas fa-times reclam-fab-icon reclam-fab-icon--close"></i>
+    <span class="reclam-fab-badge" *ngIf="reclamations.length > 0 && !showReclamationsModal">
+      {{ reclamations.length > 99 ? '99+' : reclamations.length }}
+    </span>
+  </button>
 
 </div>
