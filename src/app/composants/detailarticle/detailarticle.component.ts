@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 
@@ -10,6 +10,7 @@ import { HttpClient } from '@angular/common/http';
 export class DetailarticleComponent implements OnInit {
 
   private articleUrl = "https://kinova-backend.tech/article/";
+  private categorieUrl = "https://kinova-backend.tech/categorie/";
 
   article: any = null;
   imagePrincipale = '';
@@ -18,6 +19,10 @@ export class DetailarticleComponent implements OnInit {
   // MODAL
   showModal = false;
   loadingUpdate = false;
+
+  // CATÉGORIES (select)
+  categories: any[] = [];
+  loadingCategories = false;
 
   // FORM DATA
   formData: any = {
@@ -41,6 +46,26 @@ export class DetailarticleComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadArticle();
+    this.loadCategories();
+  }
+
+  loadCategories() {
+    this.loadingCategories = true;
+
+    this.http.get<any[]>(this.categorieUrl).subscribe({
+      next: (data) => {
+        this.categories = data.sort((a, b) => (a.nom || '').localeCompare(b.nom || ''));
+        this.loadingCategories = false;
+      },
+      error: (err) => {
+        console.error('Erreur chargement catégories:', err);
+        this.loadingCategories = false;
+      }
+    });
+  }
+
+  categorieExiste(nom: string): boolean {
+    return this.categories.some(cat => cat.nom === nom);
   }
 
   loadArticle() {
@@ -63,6 +88,32 @@ export class DetailarticleComponent implements OnInit {
 
   changerImage(image: string) {
     this.imagePrincipale = image;
+  }
+
+  get stockStatus(): { type: string; label: string } {
+    const stock = Number(this.article?.stock);
+    if (this.article?.stock === undefined || this.article?.stock === null || this.article?.stock === '') {
+      return { type: 'unknown', label: 'Stock non spécifié' };
+    }
+    if (stock <= 0) return { type: 'out', label: 'Rupture de stock' };
+    if (stock <= 5) return { type: 'low', label: 'Stock faible' };
+    return { type: 'in', label: 'En stock' };
+  }
+
+  // Aperçu du prix final dans le formulaire
+  get prixFinalApercu(): number {
+    const prix = parseFloat(this.formData.prix) || 0;
+    const reduction = Math.min(Math.max(parseFloat(this.formData.reduction) || 0, 0), 100);
+    return prix * (1 - reduction / 100);
+  }
+
+  splitList(value: string): string[] {
+    return (value || '').split(',').map(v => v.trim()).filter(v => v);
+  }
+
+  @HostListener('document:keydown.escape')
+  onEscape() {
+    if (this.showModal && !this.loadingUpdate) this.closeModal();
   }
 
   openModal() {

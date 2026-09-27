@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, HostListener, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ArticleService } from '../../services/article.service';
 import { Subject, takeUntil } from 'rxjs';
@@ -6,7 +6,8 @@ import { Subject, takeUntil } from 'rxjs';
 @Component({
   selector: 'app-produit-details',
   templateUrl: './produit-details.component.html',
-  styleUrls: ['./produit-details.component.css']
+  // Réutilise le design de la page détails article (classes da-*)
+  styleUrls: ['../detailarticle/detailarticle.component.css', './produit-details.component.css']
 })
 export class ProduitDetailsComponent implements OnInit, OnDestroy {
   product: any = null;
@@ -78,6 +79,21 @@ export class ProduitDetailsComponent implements OnInit, OnDestroy {
   getPrixFinal(): number {
     if (!this.product) return 0;
     return this.product.prixreduit || this.product.prix || 0;
+  }
+
+  get stockStatus(): { type: string; label: string } {
+    const stock = this.product?.stock;
+    if (stock === undefined || stock === null || stock === '') {
+      return { type: 'unknown', label: 'Stock non spécifié' };
+    }
+    if (Number(stock) <= 0) return { type: 'out', label: 'Rupture de stock' };
+    if (Number(stock) <= 5) return { type: 'low', label: 'Stock faible' };
+    return { type: 'in', label: 'En stock' };
+  }
+
+  @HostListener('document:keydown.escape')
+  onEscape(): void {
+    if (this.showDeleteModal && !this.deleting) this.closeDeleteModal();
   }
 
   openDeleteModal(): void {

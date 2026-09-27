@@ -110,7 +110,7 @@
     <div class="flex items-center space-x-2 w-full sm:w-auto justify-end sm:justify-start">
       <!-- Bouton Supprimer -->
       <button
-        (click)="supprimerCategorie(cat._id)"
+        (click)="ouvrirModalSuppression(cat)"
         class="px-2.5 sm:px-3 py-1.5 rounded-lg bg-red-500 text-white hover:bg-red-600 transition-colors flex items-center space-x-1">
         <i class="fas fa-trash-alt text-[10px] sm:text-xs"></i>
         <span class="text-[10px] sm:text-xs font-medium hidden sm:inline">Supprimer</span>
@@ -122,5 +122,47 @@
 
 
 </div>
+
+  <!-- MODAL CONFIRMATION SUPPRESSION -->
+  <div
+    *ngIf="categorieASupprimer"
+    class="delete-modal-overlay"
+    (click)="fermerModalSuppression()"
+  >
+    <div class="delete-modal" (click)="$event.stopPropagation()">
+      <div class="delete-modal-icon">
+        <i class="fas fa-exclamation-triangle"></i>
+      </div>
+
+      <h3 class="delete-modal-title">Supprimer la catégorie ?</h3>
+
+      <p class="delete-modal-text">
+        Voulez-vous vraiment supprimer
+        <strong>« {{ categorieASupprimer.nom }} »</strong> ?
+        Cette action est irréversible.
+      </p>
+
+      <div class="delete-modal-actions">
+        <button
+          type="button"
+          class="delete-modal-btn delete-modal-btn-cancel"
+          (click)="fermerModalSuppression()"
+          [disabled]="loadingDelete"
+        >
+          Non
+        </button>
+
+        <button
+          type="button"
+          class="delete-modal-btn delete-modal-btn-confirm"
+          (click)="confirmerSuppression()"
+          [disabled]="loadingDelete"
+        >
+          <i *ngIf="loadingDelete" class="fas fa-spinner fa-spin"></i>
+          {{ loadingDelete ? 'Suppression...' : 'Oui, supprimer' }}
+        </button>
+      </div>
+    </div>
+  </div>
 
 </div>

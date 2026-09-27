@@ -15,6 +15,9 @@ export class CategorieComponent implements OnInit, OnDestroy {
 
   loading = true;
   loadingCreate = false;
+  loadingDelete = false;
+
+  categorieASupprimer: any = null;
 
   categorie = {
     nom: '',
@@ -86,17 +89,33 @@ export class CategorieComponent implements OnInit, OnDestroy {
     });
   }
 
-  // 🗑️ SUPPRESSION PAR ID
-  supprimerCategorie(id: string) {
+  // 🪟 MODAL DE CONFIRMATION
+  ouvrirModalSuppression(cat: any) {
+    this.categorieASupprimer = cat;
+  }
 
-    if (!confirm("Voulez-vous vraiment supprimer cette catégorie ?")) return;
+  fermerModalSuppression() {
+    if (this.loadingDelete) return;
+    this.categorieASupprimer = null;
+  }
+
+  // 🗑️ SUPPRESSION PAR ID (après confirmation)
+  confirmerSuppression() {
+
+    if (!this.categorieASupprimer) return;
+
+    const id = this.categorieASupprimer._id;
+    this.loadingDelete = true;
 
     this.http.delete(this.url + id).subscribe({
       next: () => {
         this.categories = this.categories.filter(cat => cat._id !== id);
+        this.loadingDelete = false;
+        this.categorieASupprimer = null;
       },
       error: (err) => {
         console.error("Erreur suppression catégorie", err);
+        this.loadingDelete = false;
       }
     });
   }

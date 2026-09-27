@@ -1,205 +1,233 @@
-<div class="min-h-screen bg-gray-100 dark:bg-[#171515] p-8 rounded-lg">
+<div class="da-page">
 
-  <!-- Loading -->
-  <div *ngIf="loading" class="flex justify-center py-20">
-    <div class="w-14 h-14 border-4 border-yellow-500 border-t-transparent rounded-full animate-spin"></div>
-  </div>
+  <!-- BARRE DU HAUT -->
+  <div class="da-topbar">
+    <div class="da-breadcrumb">
+      <button type="button" [routerLink]="['/admin/produits']" class="da-back" aria-label="Retour aux produits">
+        <i class="fa-solid fa-arrow-left"></i>
+      </button>
+      <div>
+        <p class="da-breadcrumb-path">
+          <a [routerLink]="['/admin/produits']">Produits</a>
+          <i class="fa-solid fa-chevron-right"></i>
+          <span>Détails</span>
+        </p>
+        <h1 class="da-page-title">Détails du produit</h1>
+      </div>
+    </div>
 
-  <!-- Message d'erreur -->
-  <div *ngIf="errorMessage" class="max-w-6xl mx-auto bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-4 flex items-center justify-between">
-    <span>{{ errorMessage }}</span>
-    <button (click)="errorMessage = null" class="text-red-700 font-bold hover:text-red-900">
-      <i class="fas fa-times"></i>
+    <button *ngIf="!loading && product" type="button" class="da-btn da-btn-danger" (click)="openDeleteModal()">
+      <i class="fa-solid fa-trash-can"></i>
+      <span>Supprimer le produit</span>
     </button>
   </div>
 
-  <button [routerLink]="['/admin/produits']" class="pb-5 flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-yellow-500 transition">
-  <i class="fa-solid fa-circle-arrow-left"></i> Retourner
-</button>
+  <!-- MESSAGE D'ERREUR -->
+  <div *ngIf="errorMessage && !showDeleteModal" class="pd-alert">
+    <i class="fa-solid fa-circle-exclamation"></i>
+    <span>{{ errorMessage }}</span>
+    <button type="button" (click)="errorMessage = null" aria-label="Fermer">
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+  </div>
 
+  <!-- CHARGEMENT -->
+  <div *ngIf="loading" class="da-grid">
+    <div class="da-card da-skeleton-media"></div>
+    <div class="da-card da-skeleton-info">
+      <div class="da-skeleton-line w-40"></div>
+      <div class="da-skeleton-line w-80 lg"></div>
+      <div class="da-skeleton-line w-60"></div>
+      <div class="da-skeleton-block"></div>
+      <div class="da-skeleton-line w-100"></div>
+      <div class="da-skeleton-line w-90"></div>
+    </div>
+  </div>
 
-  <!-- Produit -->
-  <div *ngIf="!loading && product" class="max-w-6xl mx-auto rounded-2xl shadow-xl overflow-hidden">
+  <!-- INTROUVABLE -->
+  <div *ngIf="!loading && !product" class="da-card da-empty">
+    <i class="fa-solid fa-box-open"></i>
+    <h2>Produit introuvable</h2>
+    <p>Ce produit n'existe pas ou a été supprimé.</p>
+    <button type="button" class="da-btn da-btn-secondary" [routerLink]="['/admin/produits']">
+      Retour aux produits
+    </button>
+  </div>
 
-    <div class="grid md:grid-cols-2 gap-0">
+  <!-- PRODUIT -->
+  <div *ngIf="!loading && product" class="da-grid">
 
-      <!-- Section Image avec Galerie -->
-      <div class="p-8">
-        <!-- Image principale -->
-        <div class="flex items-center justify-center min-h-[400px]  rounded-xl mb-4">
-          <img
-            [src]="selectedImage || getFirstImage()"
-            [alt]="product.nom || 'Produit'"
-            class="rounded-xl max-h-[500px] w-full object-contain"
-            (error)="selectedImage = 'assets/placeholder-image.jpg'">
-        </div>
+    <!-- GALERIE -->
+    <section class="da-card da-gallery">
+      <div class="da-main-image">
+        <img
+          [src]="selectedImage || getFirstImage()"
+          [alt]="product.nom || 'Produit'"
+          (error)="selectedImage = 'assets/placeholder-image.jpg'">
 
-        <!-- Miniatures -->
-        <div *ngIf="getImages().length > 1" class="grid grid-cols-4 gap-3 mt-4">
-          <div 
-            *ngFor="let img of getImages(); let i = index"
-            (click)="selectedImage = img"
-            class="cursor-pointer rounded-lg overflow-hidden border-2 transition-all hover:border-yellow-400"
-            [class.border-yellow-500]="selectedImage === img">
-            <img
-              [src]="img"
-              [alt]="'Image ' + (i+1)"
-              class="w-full h-20 object-cover hover:scale-105 transition-transform"
-              >
-          </div>
-        </div>
-
-        <!-- Indicateur si une seule image -->
-        <div *ngIf="getImages().length === 1" class="text-center text-gray-400 text-sm mt-2">
-          <i class="fas fa-image mr-1"></i> 1 image
-        </div>
+        <span *ngIf="product.reduction > 0" class="da-discount-badge">-{{ product.reduction }}%</span>
+        <span *ngIf="getImages().length > 1" class="da-image-counter">
+          {{ getImages().indexOf(selectedImage || '') + 1 || 1 }} / {{ getImages().length }}
+        </span>
       </div>
 
-      <!-- Informations -->
-      <div class="p-10">
+      <div *ngIf="getImages().length > 1" class="da-thumbs">
+        <button
+          type="button"
+          *ngFor="let img of getImages(); let i = index"
+          class="da-thumb"
+          [class.is-active]="selectedImage === img"
+          (click)="selectedImage = img"
+          [attr.aria-label]="'Voir l\'image ' + (i + 1)">
+          <img [src]="img" [alt]="'Image ' + (i + 1)">
+        </button>
+      </div>
+    </section>
 
-        <div class="flex flex-wrap items-center gap-2 mb-5">
-          <span class="inline-block bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-sm">
-            {{ product.categorie || 'Non catégorisé' }}
+    <!-- INFORMATIONS -->
+    <section class="da-info">
+
+      <!-- En-tête produit -->
+      <div class="da-card da-header">
+        <div class="da-chips">
+          <span class="da-chip da-chip-brand">
+            <i class="fa-solid fa-layer-group"></i> {{ product.categorie || 'Non catégorisé' }}
           </span>
-          <span class="inline-block bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm">
-            {{ product.genre || 'Mixte' }}
+          <span class="da-chip">
+            <i class="fa-solid fa-venus-mars"></i> {{ product.genre || 'Mixte' }}
           </span>
-          <span *ngIf="product.stock === 0" class="inline-block bg-red-100 text-red-700 px-3 py-1 rounded-full text-sm">
-            Rupture de stock
+          <span class="da-chip" [ngClass]="'da-stock-' + stockStatus.type">
+            <span class="da-dot"></span> {{ stockStatus.label }}
           </span>
         </div>
 
-        <h1 class="text-4xl font-bold  mb-2">
-          {{ product.nom || 'Nom du produit' }}
-        </h1>
-
-        <p class="text-gray-500 mt-4 leading-8">
-          {{ product.description || 'Aucune description disponible.' }}
+        <h2 class="da-title">{{ product.nom || 'Nom du produit' }}</h2>
+        <p *ngIf="product.createdAt" class="da-subtitle">
+          <i class="fa-regular fa-calendar"></i>
+          Ajouté le {{ product.createdAt | date:'dd MMMM yyyy à HH:mm' }}
         </p>
 
-        <div class="mt-8">
-          <div class="flex items-center gap-4 flex-wrap">
-            <span class="text-3xl font-bold text-yellow-600">
-              {{ getPrixFinal() | currency:'USD':'symbol':'1.2-2' }}
-            </span>
-            
-            <span *ngIf="product.reduction && product.reduction > 0" class="text-lg text-gray-400 line-through">
-              {{ product.prix | currency:'USD':'symbol':'1.2-2' }}
-            </span>
-
-            <span *ngIf="product.reduction && product.reduction > 0" class="bg-red-500 text-white px-3 py-1 rounded-full">
-              -{{ product.reduction }}%
-            </span>
-          </div>
-        </div>
-
-        <!-- Vendeur -->
-        <div class="mt-6  rounded-xl p-4">
-          <p class="text-sm">Vendeur</p>
-          <p class="font-semibold">{{ product.vendeurNom || 'Vendeur inconnu' }}</p>
-          <p class="text-sm" *ngIf="product.vendeurTelephone">
-            {{ product.vendeurTelephone }}
-          </p>
-        </div>
-
-        <div class="grid grid-cols-2 gap-4 mt-6">
-          <div class="rounded-xl p-5">
-            <p class="text-gray-500 text-sm">Stock</p>
-            <p class="text-2xl font-bold" [class.text-red-500]="product.stock <= 5">
-              {{ product.stock ?? 0 }}
-            </p>
-            <p *ngIf="product.stock <= 5 && product.stock > 0" class="text-xs text-red-500">
-              Stock faible
-            </p>
-          </div>
-
-
-        </div>
-
-        <!-- Caractéristiques -->
-        <div *ngIf="product.couleurs?.length || product.tailles?.length" class="mt-6">
-          <div *ngIf="product.couleurs?.length" class="mb-3">
-            <p class="text-sm text-gray-500 mb-2">Couleurs disponibles :</p>
-            <div class="flex gap-2 flex-wrap">
-              <span *ngFor="let couleur of product.couleurs" 
-                    class="w-8 h-8 rounded-full border-2 border-gray-300 inline-block"
-                    [style.background-color]="couleur"
-                    [title]="couleur"></span>
-            </div>
-          </div>
-          
-          <div *ngIf="product.tailles?.length">
-            <p class="text-sm text-gray-500 mb-2">Tailles :</p>
-            <div class="flex gap-2 flex-wrap">
-              <span *ngFor="let taille of product.tailles" 
-                    class="px-3 py-1  rounded-lg text-sm">
-                {{ taille }}
+        <div class="da-price-box">
+          <div>
+            <p class="da-label">Prix de vente</p>
+            <div class="da-price-row">
+              <span class="da-price">{{ getPrixFinal() | currency:'USD':'symbol':'1.2-2' }}</span>
+              <span *ngIf="product.reduction > 0" class="da-price-old">
+                {{ product.prix | currency:'USD':'symbol':'1.2-2' }}
               </span>
             </div>
           </div>
+          <span *ngIf="product.reduction > 0" class="da-saving">
+            <i class="fa-solid fa-tag"></i>
+            Économie de {{ product.reduction }}%
+          </span>
+        </div>
+      </div>
+
+      <!-- Statistiques -->
+      <div class="da-stats">
+        <div class="da-card da-stat">
+          <span class="da-stat-icon"><i class="fa-solid fa-boxes-stacked"></i></span>
+          <div>
+            <p class="da-label">Stock</p>
+            <p class="da-stat-value">{{ product.stock ?? 0 }}</p>
+          </div>
+        </div>
+        <div class="da-card da-stat">
+          <span class="da-stat-icon"><i class="fa-solid fa-percent"></i></span>
+          <div>
+            <p class="da-label">Réduction</p>
+            <p class="da-stat-value">{{ product.reduction || 0 }}%</p>
+          </div>
+        </div>
+        <div class="da-card da-stat">
+          <span class="da-stat-icon"><i class="fa-solid fa-images"></i></span>
+          <div>
+            <p class="da-label">Images</p>
+            <p class="da-stat-value">{{ product.images?.length || (product.image ? 1 : 0) }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Variantes -->
+      <div class="da-card">
+        <h3 class="da-section-title"><i class="fa-solid fa-swatchbook"></i> Variantes</h3>
+
+        <div class="da-variant">
+          <p class="da-label">Couleurs disponibles</p>
+          <div *ngIf="product.couleurs?.length; else aucuneCouleur" class="da-swatches">
+            <span *ngFor="let couleur of product.couleurs" class="da-swatch" [title]="couleur">
+              <span class="da-swatch-color" [style.backgroundColor]="couleur"></span>
+              {{ couleur }}
+            </span>
+          </div>
+          <ng-template #aucuneCouleur><p class="da-muted">Non spécifiées</p></ng-template>
         </div>
 
-        <!-- Actions -->
-        <div class="mt-10 flex gap-4 flex-wrap">
-
-          <button
-            (click)="openDeleteModal()"
-            class="px-6 py-3 bg-red-600 hover:bg-red-700 text-white rounded-lg font-semibold transition-colors">
-            <i class="fas fa-trash mr-2"></i> Supprimer
-          </button>
-
+        <div class="da-variant">
+          <p class="da-label">Tailles disponibles</p>
+          <div *ngIf="product.tailles?.length; else aucuneTaille" class="da-sizes">
+            <span *ngFor="let taille of product.tailles" class="da-size">{{ taille }}</span>
+          </div>
+          <ng-template #aucuneTaille><p class="da-muted">Non spécifiées</p></ng-template>
         </div>
-
       </div>
-    </div>
 
-  </div>
-</div>
-
-<!-- Modal de suppression -->
-<div *ngIf="showDeleteModal" class=" fixed inset-0 bg-black/60 flex items-center justify-center z-50" (click)="!deleting && closeDeleteModal()">
-  <div class="rounded-2xl w-[420px] shadow-2xl p-8 max-w-[95%] mx-4 bg-gray-100 dark:bg-[#171515]" (click)="$event.stopPropagation()">
-    
-    <div class="flex justify-center">
-      <div class="w-20 h-20 rounded-full bg-red-100 flex items-center justify-center">
-        <i class="fas fa-trash text-red-600 text-3xl"></i>
+      <!-- Vendeur -->
+      <div class="da-card">
+        <h3 class="da-section-title"><i class="fa-solid fa-store"></i> Vendeur</h3>
+        <div class="da-seller">
+          <span class="da-avatar">{{ (product.vendeurNom || 'V')[0] | uppercase }}</span>
+          <div class="da-seller-info">
+            <p class="da-seller-name">{{ product.vendeurNom || 'Vendeur inconnu' }}</p>
+            <p class="da-muted">{{ product.vendeurTelephone || 'Aucun téléphone' }}</p>
+          </div>
+          <a *ngIf="product.vendeurTelephone" [href]="'tel:' + product.vendeurTelephone"
+             class="da-btn da-btn-secondary da-btn-sm">
+            <i class="fa-solid fa-phone"></i> Appeler
+          </a>
+        </div>
       </div>
-    </div>
 
-    <h2 class="text-2xl font-bold text-center mt-6">
-      Confirmer la suppression
-    </h2>
+      <!-- Description -->
+      <div class="da-card">
+        <h3 class="da-section-title"><i class="fa-solid fa-align-left"></i> Description</h3>
+        <p class="da-description">{{ product.description || 'Aucune description disponible.' }}</p>
+      </div>
 
-    <p class="text-center text-gray-500 mt-3">
-      Voulez-vous vraiment supprimer
-      <strong class="text-gray-800">{{ product?.nom }}</strong> ?
-      <br>
-      <span class="text-red-500 font-semibold">Cette action est irréversible.</span>
-    </p>
-
-    <div *ngIf="errorMessage" class="mt-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg text-sm">
-      {{ errorMessage }}
-    </div>
-
-    <div class="flex justify-center gap-4 mt-8">
-      <button
-        (click)="closeDeleteModal()"
-        [disabled]="deleting"
-        class="px-6 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
-        Annuler
-      </button>
-
-     <!-- BOUTON CONFIRMER LA SUPPRESSION - CELUI QUI MANQUE -->
-      <button
-        (click)="confirmDelete()"
-        [disabled]="deleting"
-        class="px-6 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2">
-        <span *ngIf="deleting" class="animate-spin inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full"></span>
-        {{ deleting ? 'Suppression...' : 'Oui, supprimer' }}
-      </button>
-    
-    </div>
-
+    </section>
   </div>
+
+  <!-- MODAL DE SUPPRESSION -->
+  <div *ngIf="showDeleteModal" class="da-modal-overlay" (click)="!deleting && closeDeleteModal()">
+    <div class="da-modal pd-delete-modal" (click)="$event.stopPropagation()" role="dialog" aria-modal="true">
+
+      <div class="pd-delete-body">
+        <span class="pd-delete-icon"><i class="fa-solid fa-trash-can"></i></span>
+
+        <h2>Supprimer ce produit ?</h2>
+        <p class="da-muted">
+          Voulez-vous vraiment supprimer <strong>« {{ product?.nom }} »</strong> ?
+          Cette action est irréversible.
+        </p>
+
+        <div *ngIf="errorMessage" class="pd-alert pd-alert-inline">
+          <i class="fa-solid fa-circle-exclamation"></i>
+          <span>{{ errorMessage }}</span>
+        </div>
+      </div>
+
+      <div class="da-modal-footer">
+        <button type="button" class="da-btn da-btn-secondary" (click)="closeDeleteModal()" [disabled]="deleting">
+          Non, annuler
+        </button>
+        <button type="button" class="da-btn da-btn-danger" (click)="confirmDelete()" [disabled]="deleting">
+          <i class="fa-solid" [ngClass]="deleting ? 'fa-spinner fa-spin' : 'fa-trash-can'"></i>
+          {{ deleting ? 'Suppression...' : 'Oui, supprimer' }}
+        </button>
+      </div>
+
+    </div>
+  </div>
+
 </div>

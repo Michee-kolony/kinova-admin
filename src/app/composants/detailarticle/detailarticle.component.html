@@ -1,319 +1,335 @@
-<div class="min-h-screen bg-gray-100 dark:bg-[#171515] p-8">
+<div class="da-page">
 
-<button [routerLink]="['/admin/mesarticles']" class="pb-5 flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-yellow-500 transition">
-  <i class="fa-solid fa-circle-arrow-left"></i> Retourner
-</button>
-
-<!-- LOADING -->
-<div *ngIf="loading" class="flex justify-center items-center h-[70vh]">
-  <div class="w-14 h-14 border-4 border-[#ffbf00] border-t-transparent rounded-full animate-spin"></div>
-</div>
-
-<!-- ARTICLE -->
-<div *ngIf="!loading && article"
-  class="max-w-7xl mx-auto bg-white dark:bg-[#171515] rounded-3xl shadow-lg overflow-hidden">
-
-  <div class="grid lg:grid-cols-2 bg-gray-100 dark:bg-[#171515]">
-
-    <!-- IMAGES -->
-    <div class="p-8">
-      <img [src]="imagePrincipale" class="w-full h-[550px] object-cover rounded-2xl">
-
-      <div class="grid grid-cols-3 gap-4 mt-5">
-        <img *ngFor="let img of article.images"
-          [src]="img"
-          (click)="changerImage(img)"
-          class="cursor-pointer rounded-xl h-36 w-full object-cover border-2 hover:border-orange-500 transition"
-          [class.border-orange-500]="img === imagePrincipale">
+  <!-- BARRE DU HAUT -->
+  <div class="da-topbar">
+    <div class="da-breadcrumb">
+      <button type="button" [routerLink]="['/admin/mesarticles']" class="da-back" aria-label="Retour aux articles">
+        <i class="fa-solid fa-arrow-left"></i>
+      </button>
+      <div>
+        <p class="da-breadcrumb-path">
+          <a [routerLink]="['/admin/mesarticles']">Articles</a>
+          <i class="fa-solid fa-chevron-right"></i>
+          <span>Détails</span>
+        </p>
+        <h1 class="da-page-title">Détails de l'article</h1>
       </div>
     </div>
 
-    <!-- INFOS -->
-    <div class="p-10 flex flex-col">
+    <button *ngIf="!loading && article" type="button" class="da-btn da-btn-primary" (click)="openModal()">
+      <i class="fa-solid fa-pen-to-square"></i>
+      <span>Modifier l'article</span>
+    </button>
+  </div>
 
-      <span class="bg-[#ffbf00]/10 text-[#ffbf00] px-4 py-1 rounded-full w-fit">
-        {{article.categorie}}
-      </span>
-
-      <h1 class="text-4xl font-bold mt-4 dark:text-white">{{article.nom}}</h1>
-
-      <div class="mt-5 flex items-center gap-3">
-        <span class="text-4xl font-bold text-yellow-500">
-          {{article.prixFinal || article.prix}} $
-        </span>
-
-        <span *ngIf="article.reduction > 0"
-          class="text-xl line-through text-gray-400">
-          {{article.prix}} $
-        </span>
-
-        <span *ngIf="article.reduction > 0"
-          class="bg-red-500/10 text-red-500 px-3 py-1 rounded-full text-sm font-semibold">
-          -{{article.reduction}}%
-        </span>
-      </div>
-
-      <div class="mt-8 space-y-3 text-gray-700 dark:text-gray-300">
-        <div class="flex items-center gap-2">
-          <i class="fa-solid fa-tag text-yellow-500 w-5"></i>
-          <span><b>Genre:</b> {{article.genre}}</span>
-        </div>
-        <div class="flex items-center gap-2">
-          <i class="fa-solid fa-user text-yellow-500 w-5"></i>
-          <span><b>Vendeur:</b> {{article.vendeurNom}}</span>
-        </div>
-        <div class="flex items-center gap-2">
-          <i class="fa-solid fa-phone text-yellow-500 w-5"></i>
-          <span><b>Téléphone:</b> {{article.vendeurTelephone}}</span>
-        </div>
-        <div class="flex items-center gap-2">
-          <i class="fa-regular fa-calendar text-yellow-500 w-5"></i>
-          <span><b>Date:</b> {{article.createdAt | date:'dd/MM/yyyy à HH:mm'}}</span>
-        </div>
-        <div class="flex items-center gap-2">
-          <i class="fa-solid fa-boxes-stacked text-yellow-500 w-5"></i>
-          <span><b>Stock:</b> {{article.stock || 'Non spécifié'}}</span>
-        </div>
-        <div class="flex items-center gap-2">
-          <i class="fa-solid fa-palette text-yellow-500 w-5"></i>
-          <span><b>Couleurs:</b> 
-            <span *ngFor="let couleur of article.couleurs; let last = last">
-              <span [style.backgroundColor]="couleur" 
-                    class="inline-block w-4 h-4 rounded-full border border-gray-300 align-middle"></span>
-              <span *ngIf="!last">, </span>
-            </span>
-          </span>
-        </div>
-        <div class="flex items-center gap-2">
-          <i class="fa-solid fa-ruler text-yellow-500 w-5"></i>
-          <span><b>Tailles:</b> {{article.tailles?.join(', ') || 'Non spécifiées'}}</span>
-        </div>
-      </div>
-
-      <div class="mt-6">
-        <p class="text-gray-600 dark:text-gray-400 leading-relaxed">{{article.description}}</p>
-      </div>
-
-      <button
-        (click)="openModal()"
-        class="mt-8 bg-[#ffbf00] hover:bg-[#e6a800] text-white py-3 rounded-xl font-bold transition">
-        <i class="fa-solid fa-pen-to-square mr-2"></i>
-        Modifier l'article
-      </button>
-
+  <!-- CHARGEMENT -->
+  <div *ngIf="loading" class="da-grid">
+    <div class="da-card da-skeleton-media"></div>
+    <div class="da-card da-skeleton-info">
+      <div class="da-skeleton-line w-40"></div>
+      <div class="da-skeleton-line w-80 lg"></div>
+      <div class="da-skeleton-line w-60"></div>
+      <div class="da-skeleton-block"></div>
+      <div class="da-skeleton-line w-100"></div>
+      <div class="da-skeleton-line w-90"></div>
     </div>
   </div>
-</div>
 
-<!-- MODAL -->
-<div *ngIf="showModal"
-  class="fixed inset-0 bg-black/60 flex justify-center t items-center z-50 p-3">
+  <!-- INTROUVABLE -->
+  <div *ngIf="!loading && !article" class="da-card da-empty">
+    <i class="fa-solid fa-box-open"></i>
+    <h2>Article introuvable</h2>
+    <p>Cet article n'existe pas ou a été supprimé.</p>
+    <button type="button" class="da-btn da-btn-secondary" [routerLink]="['/admin/mesarticles']">
+      Retour aux articles
+    </button>
+  </div>
 
-  <div class="bg-gray-100 dark:bg-[#171515] p-6 mt-[8%] rounded-xl w-[95%] max-w-3xl
-              max-h-[90vh] overflow-y-auto shadow-xl">
+  <!-- ARTICLE -->
+  <div *ngIf="!loading && article" class="da-grid">
 
-    <!-- HEADER -->
-    <div class="flex justify-between items-center mb-6 border-b dark:border-gray-700 pb-4">
-      <h2 class="text-2xl font-bold dark:text-white">
-        <i class="fa-solid fa-pen-to-square text-yellow-500 mr-2"></i>
-        Modifier l'article
-      </h2>
-
-      <button (click)="closeModal()"
-        class="text-gray-500 hover:text-red-500 text-2xl transition">
-        ✕
-      </button>
-    </div>
-
-    <!-- FORM -->
-    <div class="space-y-4">
-
-      <!-- LIGNE 1: Nom + Prix -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <label class="text-sm font-semibold dark:text-gray-300 block mb-1">
-            <i class="fa-solid fa-tag text-yellow-500 mr-1"></i>
-            Nom de l'article
-          </label>
-          <input [(ngModel)]="formData.nom"
-            class="w-full p-3 bg-gray-100 dark:bg-[#1f1f1f] rounded-lg  focus:border-yellow-500 focus:ring-2 focus:ring-yellow-500/20 outline-none transition dark:text-white"
-            placeholder="Nom du produit">
+    <!-- GALERIE -->
+    <section class="da-card da-gallery">
+      <div class="da-main-image">
+        <img *ngIf="imagePrincipale" [src]="imagePrincipale" [alt]="article.nom">
+        <div *ngIf="!imagePrincipale" class="da-no-image">
+          <i class="fa-regular fa-image"></i>
+          <span>Aucune image</span>
         </div>
 
-        <div>
-          <label class="text-sm font-semibold dark:text-gray-300 block mb-1">
-            <i class="fa-solid fa-dollar-sign text-yellow-500 mr-1"></i>
-            Prix $
-          </label>
-          <input [(ngModel)]="formData.prix"
-            type="number"
-            class="w-full p-3 bg-gray-100 dark:bg-[#1f1f1f] rounded-lg  focus:border-yellow-500 focus:ring-2 focus:ring-yellow-500/20 outline-none transition dark:text-white"
-            placeholder="0.00">
-        </div>
+        <span *ngIf="article.reduction > 0" class="da-discount-badge">-{{ article.reduction }}%</span>
+        <span *ngIf="article.images?.length > 1" class="da-image-counter">
+          {{ article.images.indexOf(imagePrincipale) + 1 }} / {{ article.images.length }}
+        </span>
       </div>
 
-      <!-- LIGNE 2: Réduction + Catégorie -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <label class="text-sm font-semibold dark:text-gray-300 block mb-1">
-            <i class="fa-solid fa-percent text-yellow-500 mr-1"></i>
-            Réduction (%)
-          </label>
-          <input [(ngModel)]="formData.reduction"
-            type="number"
-            min="0"
-            max="100"
-            class="w-full p-3 bg-gray-100 dark:bg-[#1f1f1f] rounded-lg  focus:border-yellow-500 focus:ring-2 focus:ring-yellow-500/20 outline-none transition dark:text-white"
-            placeholder="0">
-        </div>
-
-        <div>
-          <label class="text-sm font-semibold dark:text-gray-300 block mb-1">
-            <i class="fa-solid fa-layer-group text-yellow-500 mr-1"></i>
-            Catégorie
-          </label>
-          <input [(ngModel)]="formData.categorie"
-            class="w-full p-3 bg-gray-100 dark:bg-[#1f1f1f] rounded-lg  focus:border-yellow-500 focus:ring-2 focus:ring-yellow-500/20 outline-none transition dark:text-white"
-            placeholder="Ex: Chaussure, Vêtement...">
-        </div>
+      <div *ngIf="article.images?.length > 1" class="da-thumbs">
+        <button
+          type="button"
+          *ngFor="let img of article.images; let i = index"
+          class="da-thumb"
+          [class.is-active]="img === imagePrincipale"
+          (click)="changerImage(img)"
+          [attr.aria-label]="'Voir l\'image ' + (i + 1)">
+          <img [src]="img" [alt]="article.nom + ' ' + (i + 1)">
+        </button>
       </div>
+    </section>
 
-      <!-- LIGNE 3: Genre + Stock -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <label class="text-sm font-semibold dark:text-gray-300 block mb-1">
-            <i class="fa-solid fa-venus-mars text-yellow-500 mr-1"></i>
-            Genre
-          </label>
-          <select [(ngModel)]="formData.genre"
-            class="w-full p-3 bg-gray-100 dark:bg-[#1f1f1f] rounded-lg  focus:border-yellow-500 focus:ring-2 focus:ring-yellow-500/20 outline-none transition dark:text-white">
-            <option value="Homme">👨 Homme</option>
-            <option value="Femme">👩 Femme</option>
-            <option value="Unisexe">👤 Unisexe</option>
-          </select>
+    <!-- INFORMATIONS -->
+    <section class="da-info">
+
+      <!-- En-tête produit -->
+      <div class="da-card da-header">
+        <div class="da-chips">
+          <span class="da-chip da-chip-brand">
+            <i class="fa-solid fa-layer-group"></i> {{ article.categorie || 'Sans catégorie' }}
+          </span>
+          <span *ngIf="article.genre" class="da-chip">
+            <i class="fa-solid fa-venus-mars"></i> {{ article.genre }}
+          </span>
+          <span class="da-chip" [ngClass]="'da-stock-' + stockStatus.type">
+            <span class="da-dot"></span> {{ stockStatus.label }}
+          </span>
         </div>
 
-        <div>
-          <label class="text-sm font-semibold dark:text-gray-300 block mb-1">
-            <i class="fa-solid fa-boxes-stacked text-yellow-500 mr-1"></i>
-            Stock
-          </label>
-          <input [(ngModel)]="formData.stock"
-            type="number"
-            min="0"
-            class="w-full p-3 bg-gray-100 dark:bg-[#1f1f1f] rounded-lg  focus:border-yellow-500 focus:ring-2 focus:ring-yellow-500/20 outline-none transition dark:text-white"
-            placeholder="Quantité disponible">
-        </div>
-      </div>
+        <h2 class="da-title">{{ article.nom }}</h2>
+        <p class="da-subtitle">
+          <i class="fa-regular fa-calendar"></i>
+          Ajouté le {{ article.createdAt | date:'dd MMMM yyyy à HH:mm' }}
+        </p>
 
-      <!-- LIGNE 4: Vendeur + Téléphone -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div hidden>
-          <label class="text-sm font-semibold dark:text-gray-300 block mb-1">
-            <i class="fa-solid fa-user text-yellow-500 mr-1"></i>
-            Nom du vendeur
-          </label>
-          <input  [(ngModel)]="formData.vendeurNom"
-            class="w-full p-3 bg-gray-200 dark:bg-[#1f1f1f] rounded-lg  focus:border-yellow-500 focus:ring-2 focus:ring-yellow-500/20 outline-none transition dark:text-white"
-            placeholder="Nom du vendeur">
-        </div>
-
-        <div>
-          <label class="text-sm font-semibold dark:text-gray-300 block mb-1">
-            <i class="fa-solid fa-phone text-yellow-500 mr-1"></i>
-            Téléphone
-          </label>
-          <input [(ngModel)]="formData.vendeurTelephone"
-            class="w-full p-3 bg-gray-100 dark:bg-[#1f1f1f] rounded-lg  focus:border-yellow-500 focus:ring-2 focus:ring-yellow-500/20 outline-none transition dark:text-white"
-            placeholder="Numéro de téléphone">
-        </div>
-      </div>
-
-      <!-- LIGNE 5: Couleurs + Tailles -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <label class="text-sm font-semibold dark:text-gray-300 block mb-1">
-            <i class="fa-solid fa-palette text-yellow-500 mr-1"></i>
-            Couleurs (séparées par des virgules)
-          </label>
-          <input [(ngModel)]="formData.couleurs"
-            class="w-full p-3 bg-gray-100 dark:bg-[#1f1f1f] rounded-lg  focus:border-yellow-500 focus:ring-2 focus:ring-yellow-500/20 outline-none transition dark:text-white"
-            placeholder="#000000, #FFFFFF, #FF0000">
-          <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
-            Codes hexadécimaux séparés par des virgules
-          </p>
-        </div>
-
-        <div>
-          <label class="text-sm font-semibold dark:text-gray-300 block mb-1">
-            <i class="fa-solid fa-ruler text-yellow-500 mr-1"></i>
-            Tailles (séparées par des virgules)
-          </label>
-          <input [(ngModel)]="formData.tailles"
-            class="w-full p-3 bg-gray-100 dark:bg-[#1f1f1f] rounded-lg  focus:border-yellow-500 focus:ring-2 focus:ring-yellow-500/20 outline-none transition dark:text-white"
-            placeholder="S, M, L, XL ou 38, 39, 40">
-          <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
-            Séparées par des virgules
-          </p>
-        </div>
-      </div>
-
-      <!-- DESCRIPTION -->
-      <div>
-        <label class="text-sm font-semibold dark:text-gray-300 block mb-1">
-          <i class="fa-solid fa-align-left text-yellow-500 mr-1"></i>
-          Description
-        </label>
-        <textarea [(ngModel)]="formData.description"
-          class="w-full p-3 bg-gray-100 dark:bg-[#1f1f1f] rounded-lg  focus:border-yellow-500 focus:ring-2 focus:ring-yellow-500/20 outline-none transition dark:text-white"
-          rows="4"
-          placeholder="Description détaillée du produit..."></textarea>
-      </div>
-
-      <!-- IMAGES - SECTION INFO -->
-      <div class="bg-yellow-50 dark:bg-yellow-900/20 rounded-lg p-4">
-        <div class="flex items-start gap-3">
-          <i class="fa-solid fa-info-circle text-yellow-500 text-xl mt-1"></i>
+        <div class="da-price-box">
           <div>
-            <p class="text-sm font-semibold text-yellow-700 dark:text-yellow-300">
-              Images du produit
-            </p>
-            <p class="text-sm text-yellow-600 dark:text-yellow-400">
-              Les images ne peuvent pas être modifiées via ce formulaire.
-              Pour changer les images, veuillez supprimer et recréer l'article.
-            </p>
+            <p class="da-label">Prix de vente</p>
+            <div class="da-price-row">
+              <span class="da-price">{{ article.prixFinal || article.prix }} $</span>
+              <span *ngIf="article.reduction > 0" class="da-price-old">{{ article.prix }} $</span>
+            </div>
+          </div>
+          <span *ngIf="article.reduction > 0" class="da-saving">
+            <i class="fa-solid fa-tag"></i>
+            Économie de {{ article.reduction }}%
+          </span>
+        </div>
+      </div>
+
+      <!-- Statistiques -->
+      <div class="da-stats">
+        <div class="da-card da-stat">
+          <span class="da-stat-icon"><i class="fa-solid fa-boxes-stacked"></i></span>
+          <div>
+            <p class="da-label">Stock</p>
+            <p class="da-stat-value">{{ article.stock ?? '—' }}</p>
+          </div>
+        </div>
+        <div class="da-card da-stat">
+          <span class="da-stat-icon"><i class="fa-solid fa-percent"></i></span>
+          <div>
+            <p class="da-label">Réduction</p>
+            <p class="da-stat-value">{{ article.reduction || 0 }}%</p>
+          </div>
+        </div>
+        <div class="da-card da-stat">
+          <span class="da-stat-icon"><i class="fa-solid fa-images"></i></span>
+          <div>
+            <p class="da-label">Images</p>
+            <p class="da-stat-value">{{ article.images?.length || 0 }}</p>
           </div>
         </div>
       </div>
 
-    </div>
+      <!-- Variantes -->
+      <div class="da-card">
+        <h3 class="da-section-title"><i class="fa-solid fa-swatchbook"></i> Variantes</h3>
 
-    <!-- ACTIONS -->
-    <div class="flex justify-end gap-3 mt-6 pt-4 border-t dark:border-gray-700">
+        <div class="da-variant">
+          <p class="da-label">Couleurs disponibles</p>
+          <div *ngIf="article.couleurs?.length; else aucuneCouleur" class="da-swatches">
+            <span *ngFor="let couleur of article.couleurs" class="da-swatch" [title]="couleur">
+              <span class="da-swatch-color" [style.backgroundColor]="couleur"></span>
+              {{ couleur }}
+            </span>
+          </div>
+          <ng-template #aucuneCouleur><p class="da-muted">Non spécifiées</p></ng-template>
+        </div>
 
-      <button (click)="closeModal()"
-        class="px-6 py-3 bg-gray-300 dark:bg-gray-700 hover:bg-gray-400 dark:hover:bg-gray-600 rounded-lg font-semibold transition dark:text-white">
-        Annuler
-      </button>
+        <div class="da-variant">
+          <p class="da-label">Tailles disponibles</p>
+          <div *ngIf="article.tailles?.length; else aucuneTaille" class="da-sizes">
+            <span *ngFor="let taille of article.tailles" class="da-size">{{ taille }}</span>
+          </div>
+          <ng-template #aucuneTaille><p class="da-muted">Non spécifiées</p></ng-template>
+        </div>
+      </div>
 
-      <button (click)="updateArticle()"
-        class="px-6 py-3 bg-green-500 hover:bg-green-600 text-white rounded-lg font-semibold transition disabled:opacity-50 disabled:cursor-not-allowed"
-        [disabled]="loadingUpdate">
+      <!-- Vendeur -->
+      <div class="da-card">
+        <h3 class="da-section-title"><i class="fa-solid fa-store"></i> Vendeur</h3>
+        <div class="da-seller">
+          <span class="da-avatar">{{ (article.vendeurNom || 'V')[0] | uppercase }}</span>
+          <div class="da-seller-info">
+            <p class="da-seller-name">{{ article.vendeurNom || 'Non renseigné' }}</p>
+            <p class="da-muted">{{ article.vendeurTelephone || 'Aucun téléphone' }}</p>
+          </div>
+          <a *ngIf="article.vendeurTelephone" [href]="'tel:' + article.vendeurTelephone"
+             class="da-btn da-btn-secondary da-btn-sm">
+            <i class="fa-solid fa-phone"></i> Appeler
+          </a>
+        </div>
+      </div>
 
-        <span *ngIf="!loadingUpdate">
-          <i class="fa-solid fa-check mr-2"></i>
-          Enregistrer
-        </span>
-        <span *ngIf="loadingUpdate">
-          <i class="fa-solid fa-spinner animate-spin mr-2"></i>
-          Enregistrement...
-        </span>
+      <!-- Description -->
+      <div class="da-card">
+        <h3 class="da-section-title"><i class="fa-solid fa-align-left"></i> Description</h3>
+        <p class="da-description">{{ article.description || 'Aucune description pour cet article.' }}</p>
+      </div>
 
-      </button>
-
-    </div>
-
+    </section>
   </div>
-</div>
+
+  <!-- MODAL DE MODIFICATION -->
+  <div *ngIf="showModal" class="da-modal-overlay" (click)="closeModal()">
+    <div class="da-modal" (click)="$event.stopPropagation()" role="dialog" aria-modal="true">
+
+      <!-- En-tête -->
+      <div class="da-modal-header">
+        <div class="da-modal-heading">
+          <span class="da-stat-icon"><i class="fa-solid fa-pen-to-square"></i></span>
+          <div>
+            <h2>Modifier l'article</h2>
+            <p class="da-muted">{{ article.nom }}</p>
+          </div>
+        </div>
+        <button type="button" class="da-icon-btn" (click)="closeModal()" aria-label="Fermer">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <!-- Formulaire -->
+      <div class="da-modal-body">
+
+        <fieldset class="da-fieldset">
+          <legend>Informations générales</legend>
+          <div class="da-form-grid">
+            <div class="da-field da-col-2">
+              <label for="da-nom">Nom de l'article</label>
+              <input id="da-nom" [(ngModel)]="formData.nom" class="da-input" placeholder="Nom du produit">
+            </div>
+
+            <div class="da-field">
+              <label for="da-categorie">Catégorie</label>
+              <select id="da-categorie" [(ngModel)]="formData.categorie" [disabled]="loadingCategories" class="da-input">
+                <option value="" disabled>
+                  {{ loadingCategories ? 'Chargement des catégories...' : 'Sélectionnez une catégorie' }}
+                </option>
+                <option *ngFor="let cat of categories" [value]="cat.nom">{{ cat.nom }}</option>
+                <!-- Catégorie actuelle absente de l'API (renommée/supprimée) -->
+                <option *ngIf="formData.categorie && !categorieExiste(formData.categorie)" [value]="formData.categorie">
+                  {{ formData.categorie }}
+                </option>
+              </select>
+            </div>
+
+            <div class="da-field">
+              <label for="da-genre">Genre</label>
+              <select id="da-genre" [(ngModel)]="formData.genre" class="da-input">
+                <option value="Homme">Homme</option>
+                <option value="Femme">Femme</option>
+                <option value="Unisexe">Unisexe</option>
+              </select>
+            </div>
+          </div>
+        </fieldset>
+
+        <fieldset class="da-fieldset">
+          <legend>Prix &amp; stock</legend>
+          <div class="da-form-grid da-form-grid-3">
+            <div class="da-field">
+              <label for="da-prix">Prix</label>
+              <div class="da-input-group">
+                <input id="da-prix" [(ngModel)]="formData.prix" type="number" min="0" class="da-input" placeholder="0.00">
+                <span>$</span>
+              </div>
+            </div>
+
+            <div class="da-field">
+              <label for="da-reduction">Réduction</label>
+              <div class="da-input-group">
+                <input id="da-reduction" [(ngModel)]="formData.reduction" type="number" min="0" max="100" class="da-input" placeholder="0">
+                <span>%</span>
+              </div>
+            </div>
+
+            <div class="da-field">
+              <label for="da-stock">Stock</label>
+              <input id="da-stock" [(ngModel)]="formData.stock" type="number" min="0" class="da-input" placeholder="Quantité">
+            </div>
+          </div>
+
+          <div class="da-price-preview">
+            <span>Prix final estimé</span>
+            <strong>{{ prixFinalApercu | number:'1.0-2' }} $</strong>
+          </div>
+        </fieldset>
+
+        <fieldset class="da-fieldset">
+          <legend>Variantes</legend>
+          <div class="da-form-grid">
+            <div class="da-field">
+              <label for="da-couleurs">Couleurs</label>
+              <input id="da-couleurs" [(ngModel)]="formData.couleurs" class="da-input" placeholder="#000000, #FFFFFF, #FF0000">
+              <div *ngIf="formData.couleurs" class="da-swatches da-swatches-sm">
+                <span *ngFor="let c of splitList(formData.couleurs)" class="da-swatch-color" [style.backgroundColor]="c" [title]="c"></span>
+              </div>
+              <small>Codes hexadécimaux séparés par des virgules</small>
+            </div>
+
+            <div class="da-field">
+              <label for="da-tailles">Tailles</label>
+              <input id="da-tailles" [(ngModel)]="formData.tailles" class="da-input" placeholder="S, M, L, XL ou 38, 39, 40">
+              <small>Séparées par des virgules</small>
+            </div>
+          </div>
+        </fieldset>
+
+        <fieldset class="da-fieldset">
+          <legend>Vendeur &amp; description</legend>
+          <div class="da-form-grid">
+            <div class="da-field da-col-2">
+              <label for="da-tel">Téléphone du vendeur</label>
+              <input id="da-tel" [(ngModel)]="formData.vendeurTelephone" class="da-input" placeholder="Numéro de téléphone">
+            </div>
+
+            <div class="da-field da-col-2">
+              <label for="da-description">Description</label>
+              <textarea id="da-description" [(ngModel)]="formData.description" class="da-input" rows="4"
+                placeholder="Description détaillée du produit..."></textarea>
+            </div>
+          </div>
+        </fieldset>
+
+        <div class="da-notice">
+          <i class="fa-solid fa-circle-info"></i>
+          <p>
+            Les images ne peuvent pas être modifiées via ce formulaire.
+            Pour changer les images, veuillez supprimer et recréer l'article.
+          </p>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="da-modal-footer">
+        <button type="button" class="da-btn da-btn-secondary" (click)="closeModal()" [disabled]="loadingUpdate">
+          Annuler
+        </button>
+        <button type="button" class="da-btn da-btn-primary" (click)="updateArticle()" [disabled]="loadingUpdate">
+          <i class="fa-solid" [ngClass]="loadingUpdate ? 'fa-spinner fa-spin' : 'fa-check'"></i>
+          {{ loadingUpdate ? 'Enregistrement...' : 'Enregistrer les modifications' }}
+        </button>
+      </div>
+
+    </div>
+  </div>
 
 </div>

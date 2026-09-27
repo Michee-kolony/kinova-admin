@@ -1,0 +1,27 @@
+/* La mise en page commune (da-*) vient de detailarticle.component.css — voir styleUrls */
+
+.da-btn-danger { background: #ef4444; color: #fff; box-shadow: 0 6px 16px -6px rgba(239, 68, 68, .6); }
+.da-btn-danger:hover:not(:disabled) { background: #dc2626; }
+
+/* Message d'erreur */
+.pd-alert {
+  display: flex; align-items: center; gap: 10px; margin-bottom: 20px; padding: 12px 16px;
+  border-radius: 12px; font-size: 14px; color: #dc2626;
+  background: rgba(239, 68, 68, .1); border: 1px solid rgba(239, 68, 68, .3);
+}
+.pd-alert span { flex: 1; }
+.pd-alert button { opacity: .7; transition: opacity .2s; }
+.pd-alert button:hover { opacity: 1; }
+.pd-alert-inline { margin: 16px 0 0; text-align: left; }
+
+/* Modal de suppression */
+.pd-delete-modal { max-width: 420px; }
+.pd-delete-body { padding: 28px 24px 24px; text-align: center; }
+.pd-delete-body h2 { font-size: 20px; font-weight: 700; margin-bottom: 8px; }
+.pd-delete-body strong { color: var(--text-primary); }
+.pd-delete-icon {
+  width: 64px; height: 64px; margin: 0 auto 16px; display: grid; place-items: center;
+  border-radius: 50%; font-size: 26px; color: #ef4444; background: rgba(239, 68, 68, .12);
+  box-shadow: 0 0 0 8px rgba(239, 68, 68, .06);
+}
+.pd-delete-modal .da-modal-footer .da-btn { flex: 1; }
