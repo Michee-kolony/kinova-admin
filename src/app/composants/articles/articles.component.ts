@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ThemeService } from '../../services/theme.service';
 import { HttpClient } from '@angular/common/http';
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-articles',
@@ -10,6 +11,7 @@ import { HttpClient } from '@angular/common/http';
 export class ArticlesComponent implements OnInit {
   private articleUrl = "https://kinova-backend.tech/article/";
   private categorieUrl = "https://kinova-backend.tech/categorie/";
+  private adminUrl = "https://kinova-backend.tech/auth/";
 
   categories: any[] = [];
   articles: any[] = [];
@@ -114,10 +116,16 @@ export class ArticlesComponent implements OnInit {
 
   loadArticles(): void {
     this.isLoading = true;
-    this.http.get<any[]>(this.articleUrl).subscribe({
-      next: (data) => {
-        this.articles = data
-          .filter(article => article.vendeurId === this.articleData.vendeurId);
+    // Tous les admins voient et gèrent les articles publiés par n'importe quel admin
+    forkJoin({
+      articles: this.http.get<any[]>(this.articleUrl),
+      admins: this.http.get<any[]>(this.adminUrl)
+    }).subscribe({
+      next: ({ articles, admins }) => {
+        const adminIds = new Set(admins.map(admin => admin._id));
+        adminIds.add(this.articleData.vendeurId);
+        this.articles = articles
+          .filter(article => adminIds.has(article.vendeurId));
         this.applyFilters();
         this.isLoading = false;
       },
